@@ -3,7 +3,7 @@
   "note_for_editors": "このファイルは非エンジニアが安全に書き換える設定ファイルです。__で始まる値はBOSSが実データに差し替えるプレースホルダです。標準値(standards)は国税庁が毎年更新するため、READMEの手順で年度更新してください。",
 
   "gas": {
-    "endpoint": "__GAS_EXEC_URL__",
+    "endpoint": "https://script.google.com/macros/s/AKfycbyWkdoDSrFKPZKelEI4YyqY9JTrCH1xMW5e4PtAV8KhcfJHqQD68YwQ7AS9zfJI3JA_jQ/exec",
     "turnstileSitekey": "__TURNSTILE_SITEKEY__"
   },
 
@@ -12,7 +12,7 @@
     "description": "非上場株式（自社株）の相続税評価額を、国税庁の類似業種比準方式（簡易版）で概算します。配当・利益・純資産と会社規模から1株あたりの目安を無料で試算。事業承継・株価対策の検討にどうぞ。※正確な評価には税理士の確認が必要です。",
     "canonical": "https://okane-carte.jp/jikabuka/",
     "ogImage": "https://okane-carte.jp/jikabuka/assets/ogp.png",
-    "indexable": false
+    "indexable": true
   },
 
   "brand": {
