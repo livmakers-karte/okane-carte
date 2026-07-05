@@ -3,863 +3,105 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-<!-- ===== セキュリティ（静的ホスティング用・web-security-baseline J に準拠） ===== -->
-<!-- CSP(meta)：既定は自サイトのみ。Turnstile と GAS 送信先だけ明示的に許可。 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com; form-action 'self' https://script.google.com; frame-ancestors 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; frame-ancestors 'none';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-
-<!-- 公開前は noindex。公開時に config.meta.indexable=true にして下記metaを index,follow へ切替＝公開ボタン。 -->
+<!-- 公開前は noindex（ポータルは準備中）。 -->
 <meta name="robots" content="noindex, nofollow">
-
-<title>自社株評価シミュレーター｜非上場株式の相続税評価額を概算｜お金のカルテ</title>
-<meta name="description" content="非上場株式（自社株）の相続税評価額を、国税庁の類似業種比準方式（簡易版）で概算します。配当・利益・純資産と会社規模から1株あたりの目安を無料で試算。※正確な評価には税理士の確認が必要です。">
+<title>お金のカルテ｜非上場企業オーナーのための経営・資産の診断ポータル</title>
+<meta name="description" content="非上場企業オーナー・後継者のための、自社株評価をはじめとした経営・資産の無料診断ポータル。">
 <link rel="canonical" href="https://okane-carte.jp/">
-
-<!-- OGP / Twitter -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="お金のカルテ">
-<meta property="og:title" content="自社株評価シミュレーター｜非上場株式の相続税評価額を概算">
-<meta property="og:description" content="国税庁の類似業種比準方式（簡易版）で、非上場株式（自社株）の相続税評価額を無料で概算。事業承継・株価対策の出発点に。">
-<meta property="og:url" content="https://okane-carte.jp/">
-<meta property="og:image" content="https://okane-carte.jp/assets/ogp.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="自社株評価シミュレーター｜非上場株式の相続税評価額を概算">
-<meta name="twitter:description" content="国税庁の類似業種比準方式（簡易版）で、非上場株式（自社株）の相続税評価額を無料で概算。">
-
-<!-- ===== 構造化データ（本文と一致・フェイクschema禁止＝web-security-baseline E） =====
-     直接回答・HowTo・FAQ の各テキストは config.json 由来で本文にも可視表示している。 -->
-<script type="application/ld+json" id="ld-webapp">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "自社株評価シミュレーター（お金のカルテ）",
-  "url": "https://okane-carte.jp/",
-  "applicationCategory": "FinanceApplication",
-  "operatingSystem": "Web",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
-  "description": "非上場株式（自社株）の相続税評価額を、国税庁の類似業種比準方式（簡易版）で概算するブラウザ内シミュレーター。"
-}
-</script>
-<script type="application/ld+json" id="ld-faq"></script>
-<script type="application/ld+json" id="ld-howto"></script>
-
 <style>
-  :root{
-    --navy:#12233d;        /* 濃紺（信頼） */
-    --navy-2:#1c3357;
-    --ink:#1a2230;         /* 本文 */
-    --muted:#5b6473;       /* 補足 */
-    --line:#dfe3ea;        /* 罫線 */
-    --bg:#f6f7f9;          /* 背景 */
-    --paper:#ffffff;
-    --gold:#a9843f;        /* 金アクセント（格） */
-    --gold-soft:#f3ead9;
-    --danger:#b4472e;
-    --ok:#2f6b4f;
-    --radius:10px;
-    --serif:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro","HGS明朝E",serif;
-    --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
-  }
+  :root{--navy:#12233d;--navy2:#1c3357;--gold:#a9843f;--ink:#1a2230;--muted:#5b6473;--line:#e4e2d8;
+    --serif:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+    --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;}
   *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);
-    line-height:1.75;font-size:16px;letter-spacing:.01em;
-  }
-  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
-  h1,h2,h3{font-family:var(--serif);font-weight:700;line-height:1.4;color:var(--navy);letter-spacing:.02em}
-  a{color:var(--navy-2)}
-  .small{font-size:13px;color:var(--muted);line-height:1.7}
-  .center{text-align:center}
-
-  /* header */
-  header.site{background:var(--navy);color:#fff}
-  header.site .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .brand{display:flex;align-items:baseline;gap:10px;color:#fff;text-decoration:none}
-  .brand .mark{font-family:var(--serif);font-size:20px;font-weight:700;letter-spacing:.06em}
-  .brand .sub{font-size:12px;color:#c8d2e0}
-  header.site .navlink{color:#d7deea;text-decoration:none;font-size:13px}
-
-  /* hero */
-  .hero{background:linear-gradient(180deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;padding:52px 0 44px}
-  .hero .eyebrow{color:var(--gold);font-size:13px;letter-spacing:.18em;font-weight:700;margin:0 0 14px}
-  .hero h1{color:#fff;font-size:clamp(25px,5.4vw,40px);margin:0 0 18px}
-  .hero p.lead{color:#e7ecf4;font-size:clamp(15px,2.4vw,17px);margin:0 0 26px;max-width:44em}
-  .hero .cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:#241a0a;
-    font-weight:700;text-decoration:none;padding:15px 28px;border-radius:8px;font-size:16px;min-height:52px;box-shadow:0 8px 22px rgba(0,0,0,.22)}
-  .hero .cta:active{transform:translateY(1px)}
-  .hero .metaline{color:#b9c4d6;font-size:12.5px;margin-top:14px}
-
-  /* GEO direct-answer block */
-  .answer{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gold);
-    border-radius:var(--radius);padding:22px 22px;margin:26px 0}
-  .answer .k{font-size:12px;letter-spacing:.12em;color:var(--gold);font-weight:700;margin:0 0 8px}
-  .answer p{margin:0;font-size:15px;color:var(--ink)}
-
-  /* section */
-  section{padding:34px 0}
-  section h2{font-size:clamp(20px,3.6vw,26px);margin:0 0 6px}
-  .sec-sub{color:var(--muted);font-size:14px;margin:0 0 22px}
-  .divider{height:1px;background:var(--line);border:0;margin:0}
-
-  /* card / diagnostic */
-  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 1px 0 rgba(18,35,61,.02)}
-  .card-pad{padding:24px}
-  @media(min-width:640px){.card-pad{padding:30px 34px}}
-
-  .stepbar{display:flex;gap:6px;margin:0 0 22px}
-  .stepbar .seg{flex:1;height:5px;border-radius:3px;background:var(--line)}
-  .stepbar .seg.on{background:var(--gold)}
-  .stepbar .seg.done{background:var(--navy)}
-
-  .steplabel{font-size:12px;color:var(--muted);letter-spacing:.08em;margin:0 0 4px}
-  .step h3{font-size:19px;margin:0 0 6px}
-  .step .hint{color:var(--muted);font-size:13.5px;margin:0 0 18px}
-
-  .opts{display:grid;gap:10px}
-  .opt{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:9px;padding:14px 16px;cursor:pointer;
-    background:#fff;transition:border-color .12s,background .12s;min-height:52px}
-  .opt:hover{border-color:#c3ccdb}
-  .opt.sel{border-color:var(--navy);background:#f4f7fc}
-  .opt input{accent-color:var(--navy);width:18px;height:18px;flex:0 0 auto}
-  .opt .t{font-size:15px}
-
-  .field{margin:0 0 16px}
-  .field label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin:0 0 6px}
-  .field .fh{font-size:12.5px;color:var(--muted);font-weight:400;margin:2px 0 8px}
-  .money{position:relative}
-  .money input{width:100%;font-size:16px;padding:14px 46px 14px 14px;border:1.5px solid var(--line);border-radius:9px;
-    background:#fff;color:var(--ink);text-align:right;min-height:52px;font-variant-numeric:tabular-nums}
-  .money .unit{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
-  input[type=text],input[type=email],input[type=tel],textarea,select{width:100%;font-size:16px;padding:13px 14px;border:1.5px solid var(--line);
-    border-radius:9px;background:#fff;color:var(--ink);min-height:50px;font-family:var(--sans)}
-  textarea{min-height:96px;resize:vertical}
-  input:focus,textarea:focus,select:focus,.opt:focus-within{outline:2px solid var(--navy);outline-offset:1px}
-
-  .nav{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
-  .btn{appearance:none;border:0;border-radius:8px;font-weight:700;font-size:15px;padding:14px 22px;min-height:52px;cursor:pointer;font-family:var(--sans)}
-  .btn.primary{background:var(--navy);color:#fff}
-  .btn.primary:disabled{opacity:.4;cursor:not-allowed}
-  .btn.gold{background:var(--gold);color:#241a0a}
-  .btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
-  .btn:active{transform:translateY(1px)}
-  .err{color:var(--danger);font-size:13px;margin-top:8px;min-height:18px}
-
-  .notice{background:var(--gold-soft);border:1px solid #e8dcc2;border-radius:9px;padding:13px 15px;font-size:12.5px;color:#5a4a2a;line-height:1.65}
-
-  /* result */
-  .resultwrap{display:none}
-  .kpi{background:var(--navy);color:#fff;border-radius:12px;padding:26px 24px;text-align:center;margin:0 0 18px}
-  .kpi .cap{color:#b9c4d6;font-size:13px;letter-spacing:.08em;margin:0 0 8px}
-  .kpi .big{font-family:var(--serif);font-size:clamp(30px,7vw,46px);font-weight:700;line-height:1.1;color:#fff}
-  .kpi .big .yen{font-size:.5em;color:var(--gold);margin-left:4px}
-  .kpi .persh{color:#d7deea;font-size:14px;margin-top:10px}
-  .grid2{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin:0 0 18px}
-  @media(max-width:520px){.grid2{grid-template-columns:1fr}}
-  .stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px}
-  .stat .l{font-size:12px;color:var(--muted);margin:0 0 4px}
-  .stat .v{font-family:var(--serif);font-size:20px;color:var(--navy);font-weight:700}
-  .breakdown{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0 4px}
-  .breakdown th,.breakdown td{text-align:right;padding:9px 8px;border-bottom:1px solid var(--line)}
-  .breakdown th{color:var(--muted);font-weight:600}
-  .breakdown td:first-child,.breakdown th:first-child{text-align:left}
-  details.calc{margin:16px 0 0;border:1px solid var(--line);border-radius:10px;background:#fff}
-  details.calc>summary{cursor:pointer;padding:14px 16px;font-weight:700;font-size:14px;color:var(--navy);list-style:none}
-  details.calc>summary::-webkit-details-marker{display:none}
-  details.calc>summary::before{content:"▸ ";color:var(--gold)}
-  details.calc[open]>summary::before{content:"▾ "}
-  details.calc .inner{padding:0 16px 16px}
-
-  .disclaimer-box{border:1px solid #e6c9bf;background:#fbf1ee;border-radius:10px;padding:16px 18px;font-size:13px;color:#6a3b2c;line-height:1.7;margin:18px 0}
-  .disclaimer-box strong{color:var(--danger)}
-
-  /* consult + form */
-  .consult{background:linear-gradient(180deg,#16294a,#12233d);color:#fff;border-radius:12px;padding:26px 24px;margin:20px 0}
-  .consult h3{color:#fff;font-size:20px;margin:0 0 8px}
-  .consult p{color:#dbe2ee;font-size:14px;margin:0 0 6px}
-  .formcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px}
-  .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
-  #turnstile-holder{margin:6px 0 4px;min-height:0}
-  .consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink);margin:6px 0 14px}
-  .consent input{width:20px;height:20px;margin-top:1px;accent-color:var(--navy)}
-
-  .thanks{display:none;text-align:center;padding:14px 0}
-  .thanks .chk{width:56px;height:56px;border-radius:50%;background:var(--gold-soft);color:var(--gold);display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin:0 0 10px}
-
-  /* method / faq */
-  .steps-ol{counter-reset:s;list-style:none;padding:0;margin:8px 0 0}
-  .steps-ol li{counter-increment:s;position:relative;padding:0 0 14px 44px;color:var(--ink);font-size:14.5px}
-  .steps-ol li::before{content:counter(s);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;
-    background:var(--navy);color:#fff;font-family:var(--serif);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
-  .formula{background:#0f1d33;color:#e9eef6;border-radius:10px;padding:16px 18px;font-size:13.5px;line-height:1.9;margin:14px 0;overflow-x:auto}
-  .formula .hl{color:var(--gold)}
-  .faq details{border-bottom:1px solid var(--line);padding:4px 0}
-  .faq summary{cursor:pointer;list-style:none;padding:15px 30px 15px 4px;font-weight:700;color:var(--navy);font-size:15px;position:relative}
-  .faq summary::-webkit-details-marker{display:none}
-  .faq summary::after{content:"＋";position:absolute;right:6px;top:14px;color:var(--gold);font-weight:700}
-  .faq details[open] summary::after{content:"－"}
-  .faq .a{padding:0 4px 16px;color:var(--ink);font-size:14px;line-height:1.8}
-
-  footer.site{background:var(--navy);color:#c7d0de;padding:30px 0;margin-top:20px;font-size:13px}
-  footer.site a{color:#dbe2ee}
-  footer .foot-discl{font-size:12px;color:#93a1b8;line-height:1.7;margin:12px 0 0}
-  .skip{position:absolute;left:-9999px}
+  body{margin:0;font-family:var(--sans);color:#eef2f8;line-height:1.8;
+    background:
+      radial-gradient(1000px 480px at 80% -10%, rgba(169,132,63,.20), transparent 60%),
+      linear-gradient(to bottom, transparent 27px, rgba(255,255,255,.03) 27px, rgba(255,255,255,.03) 28px),
+      radial-gradient(120% 130% at 50% 0%, #1b3059, #0e1c31 62%);
+    background-size:auto,100% 28px,auto;min-height:100vh;display:flex;flex-direction:column}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px;width:100%}
+  header{padding:22px 0}
+  .brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
+  .emblem{width:40px;height:40px}
+  .brand .mark{font-family:var(--serif);font-size:21px;letter-spacing:.08em}
+  .brand .sub{font-size:11.5px;color:#c8d2e0;letter-spacing:.12em}
+  main{flex:1;display:flex;align-items:center;padding:26px 0 60px}
+  .eyebrow{color:#e6c983;font-size:12.5px;letter-spacing:.2em;font-weight:700;margin:0 0 16px;display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+  h1{font-family:var(--serif);font-size:clamp(26px,5.6vw,40px);line-height:1.45;margin:0 0 18px;color:#fff;letter-spacing:.02em}
+  h1 .g{background:linear-gradient(100deg,#e6c983,#b7935a 55%,#e6c983);-webkit-background-clip:text;background-clip:text;color:transparent}
+  p.lead{color:#d6deec;font-size:16px;max-width:40em;margin:0 0 30px}
+  .card{display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff;
+    background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+    border:1px solid rgba(217,180,95,.34);border-radius:12px;padding:20px 22px;transition:border-color .15s,transform .12s}
+  .card:hover{border-color:rgba(217,180,95,.7);transform:translateY(-1px)}
+  .card .ic{width:46px;height:46px;flex:0 0 auto}
+  .card .t{font-family:var(--serif);font-size:18px;margin:0 0 3px}
+  .card .d{font-size:13px;color:#c3cede;margin:0}
+  .card .arw{margin-left:auto;color:#e6c983;font-size:20px}
+  .soon{margin:16px 0 0;font-size:12.5px;color:#93a1b8}
+  .orn{display:flex;align-items:center;justify-content:center;gap:14px;margin:30px 0 22px;color:var(--gold)}
+  .orn .ln{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+  .orn .ln.r{background:linear-gradient(90deg,var(--gold),transparent)}
+  .orn svg{width:18px;height:18px}
+  footer{padding:22px 0;font-size:12px;color:#8b99b0;border-top:1px solid rgba(255,255,255,.08)}
 </style>
 </head>
 <body>
-<a class="skip" href="#shindan">診断へスキップ</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e6c983"/><stop offset=".5" stop-color="#b7935a"/><stop offset="1" stop-color="#8a6a2f"/>
+    </linearGradient>
+    <symbol id="emblem" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="47" fill="none" stroke="url(#g)" stroke-width="1.6"/>
+      <circle cx="50" cy="50" r="41" fill="none" stroke="url(#g)" stroke-width="0.7"/>
+      <circle cx="50" cy="7.6" r="2.4" fill="url(#g)"/>
+      <polyline points="23,58 35,58 40,46 46,70 51,52 58,52 64,44 71,30" fill="none" stroke="url(#g)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M66,30 71,30 71,35" fill="none" stroke="url(#g)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="orn" viewBox="0 0 24 24">
+      <rect x="7" y="7" width="10" height="10" transform="rotate(45 12 12)" fill="none" stroke="url(#g)" stroke-width="1.4"/>
+      <circle cx="12" cy="12" r="1.6" fill="url(#g)"/>
+    </symbol>
+  </defs>
+</svg>
 
-<header class="site">
+<header>
   <div class="wrap">
     <a class="brand" href="/">
-      <span class="mark" id="brandMark">お金のカルテ</span>
-      <span class="sub" id="brandSub">自社株評価シミュレーター</span>
+      <svg class="emblem" aria-hidden="true"><use href="#emblem"/></svg>
+      <span><span class="mark">お金のカルテ</span><br><span class="sub">経営・資産 診断ポータル</span></span>
     </a>
-    <a class="navlink" href="#method">評価のしくみ</a>
   </div>
 </header>
 
-<!-- ===== HERO ===== -->
-<div class="hero">
+<main>
   <div class="wrap">
-    <p class="eyebrow">非上場企業オーナー・後継者のための</p>
-    <h1>自社株（非上場株式）は、<br>いくらと評価されるのか。</h1>
-    <p class="lead">上場していない会社の株式にも、相続税・贈与税の世界では評価額がつきます。国税庁の<strong>類似業種比準方式（簡易版）</strong>で、あなたの会社の数字から1株あたり・会社全体の概算評価額を無料で試算します。売上の細かい内訳や機密情報は不要です。</p>
-    <a class="cta" href="#shindan">自社株の概算評価を試算する（約1分）</a>
-    <p class="metaline">全ブラウザ内で計算／財務入力値は送信ボタンを押すまで外部に送られません。※概算の目安です。</p>
+    <p class="eyebrow">非上場企業オーナー・後継者のために</p>
+    <h1>会社の<span class="g">お金の健康</span>を、<br>数字で診る。</h1>
+    <p class="lead">自社株の価値、事業承継、資産の組み替え——。オーナーだけが直面する問いに、まず「概算の目安」で答える無料診断シリーズです。</p>
+
+    <a class="card" href="/jikabuka/">
+      <svg class="ic" aria-hidden="true"><use href="#emblem"/></svg>
+      <span>
+        <p class="t">自社株評価シミュレーター</p>
+        <p class="d">非上場株式の相続税評価額を、類似業種比準方式（簡易版）で概算する</p>
+      </span>
+      <span class="arw">→</span>
+    </a>
+    <p class="soon">※ 他の診断も順次公開予定です。</p>
+
+    <div class="orn"><span class="ln"></span><svg aria-hidden="true"><use href="#orn"/></svg><span class="ln r"></span></div>
   </div>
-</div>
+</main>
 
-<div class="wrap">
-  <!-- GEO 直接回答ブロック -->
-  <div class="answer" id="answerBlock">
-    <p class="k">結論から：非上場株式の評価額の決まり方</p>
-    <p id="directAnswer">読み込み中…</p>
-  </div>
-</div>
-
-<!-- ===== 診断 ===== -->
-<section id="shindan">
-  <div class="wrap">
-    <h2>自社株の概算評価シミュレーター</h2>
-    <p class="sec-sub">直近期の決算書の数字をご用意ください。5ステップ・約1分です。</p>
-
-    <div class="card card-pad" id="wizard">
-      <div class="stepbar" id="stepbar" aria-hidden="true"></div>
-
-      <!-- STEP 0: 業種 -->
-      <div class="step" data-step="0">
-        <p class="steplabel">STEP 1 / 5 ・ 業種</p>
-        <h3>会社の業種（大分類）を選んでください</h3>
-        <p class="hint">最も売上構成比の高い事業の業種を1つ。業種別の標準値（類似業種の株価・配当・利益・純資産）を使います。</p>
-        <div class="opts" id="industryOpts"></div>
-        <div class="err" id="err0"></div>
-      </div>
-
-      <!-- STEP 1: 損益（配当・利益） -->
-      <div class="step" data-step="1" hidden>
-        <p class="steplabel">STEP 2 / 5 ・ 直近期の損益</p>
-        <h3>1年間の配当金額と利益金額</h3>
-        <p class="hint">直近事業年度の決算書の数字を万円単位で入力してください。無配なら配当は0のままで構いません。</p>
-        <div class="field">
-          <label for="inDividend">年間の配当金額（総額）</label>
-          <div class="fh">株主へ支払った配当の年間総額。無配は0。</div>
-          <div class="money"><input id="inDividend" inputmode="numeric" placeholder="0"><span class="unit">万円</span></div>
-        </div>
-        <div class="field">
-          <label for="inProfit">年間の利益金額（法人税の課税所得ベース）</label>
-          <div class="fh">おおよそ税引前の所得金額。赤字ならマイナスも可（例：-500）。</div>
-          <div class="money"><input id="inProfit" inputmode="numeric" placeholder="例：5000"><span class="unit">万円</span></div>
-        </div>
-        <div class="err" id="err1"></div>
-      </div>
-
-      <!-- STEP 2: 純資産・資本 -->
-      <div class="step" data-step="2" hidden>
-        <p class="steplabel">STEP 3 / 5 ・ 純資産と資本</p>
-        <h3>簿価純資産・資本金等・発行済株式数</h3>
-        <p class="hint">貸借対照表と登記簿の数字です。1株あたりに換算するために使います。</p>
-        <div class="field">
-          <label for="inNetAsset">簿価純資産額（純資産の部の合計）</label>
-          <div class="fh">貸借対照表の「純資産の部」合計の帳簿価額。</div>
-          <div class="money"><input id="inNetAsset" inputmode="numeric" placeholder="例：30000"><span class="unit">万円</span></div>
-        </div>
-        <div class="field">
-          <label for="inCapital">資本金等の額</label>
-          <div class="fh">登記簿・決算書の資本金（＋資本準備金等）。1株あたりの評価額を出すのに必要です。</div>
-          <div class="money"><input id="inCapital" inputmode="numeric" placeholder="例：1000"><span class="unit">万円</span></div>
-        </div>
-        <div class="field">
-          <label for="inShares">発行済株式数</label>
-          <div class="fh">登記簿の発行済株式の総数。</div>
-          <div class="money"><input id="inShares" inputmode="numeric" placeholder="例：20000"><span class="unit">株</span></div>
-        </div>
-        <div class="err" id="err2"></div>
-      </div>
-
-      <!-- STEP 3: 会社規模 -->
-      <div class="step" data-step="3" hidden>
-        <p class="steplabel">STEP 4 / 5 ・ 会社規模</p>
-        <h3>従業員数と総資産</h3>
-        <p class="hint">会社規模（大・中・小）を判定し、掛ける斟酌率（0.7／0.6／0.5）が決まります。</p>
-        <div class="field">
-          <label for="inEmployees">従業員数（役員除く・常勤換算のおおよそ）</label>
-          <div class="money"><input id="inEmployees" inputmode="numeric" placeholder="例：25"><span class="unit">人</span></div>
-        </div>
-        <div class="field">
-          <label for="inTotalAsset">総資産（帳簿価額の合計）</label>
-          <div class="fh">貸借対照表の資産合計。</div>
-          <div class="money"><input id="inTotalAsset" inputmode="numeric" placeholder="例：50000"><span class="unit">万円</span></div>
-        </div>
-        <div class="err" id="err3"></div>
-      </div>
-
-      <!-- STEP 4: 確認 -->
-      <div class="step" data-step="4" hidden>
-        <p class="steplabel">STEP 5 / 5 ・ 確認</p>
-        <h3>この内容で概算します</h3>
-        <p class="hint">下記の前提で類似業種比準方式（簡易版）の概算を行います。</p>
-        <div class="notice" id="beforeStartNote"></div>
-        <div class="err" id="err4"></div>
-      </div>
-
-      <div class="nav">
-        <button class="btn ghost" id="btnBack" type="button" style="visibility:hidden">戻る</button>
-        <button class="btn primary" id="btnNext" type="button" disabled>次へ</button>
-      </div>
-    </div>
-
-    <!-- ===== 結果 ===== -->
-    <div class="resultwrap" id="resultwrap">
-      <div class="kpi">
-        <p class="cap">あなたの会社の 概算評価額（会社全体）</p>
-        <div class="big" id="totalVal">—<span class="yen"></span></div>
-        <p class="persh" id="perShareVal"></p>
-      </div>
-
-      <div class="grid2">
-        <div class="stat"><div class="l">会社規模の区分</div><div class="v" id="sizeVal">—</div></div>
-        <div class="stat"><div class="l">斟酌率</div><div class="v" id="rateVal">—</div></div>
-      </div>
-
-      <details class="calc">
-        <summary>計算の内訳（類似業種比準方式・簡易版）を見る</summary>
-        <div class="inner">
-          <table class="breakdown" id="bdTable"></table>
-          <p class="small" id="bdFormula"></p>
-        </div>
-      </details>
-
-      <div class="disclaimer-box" id="resultDisclaimer"></div>
-
-      <!-- 相談導線（離脱ゼロ＝この画面内にフォーム埋め込み） -->
-      <div class="consult">
-        <h3 id="consultTitle">この概算を、次の一手につなげる</h3>
-        <p id="consultLead"></p>
-        <p class="small" style="color:#c3cede;margin-top:8px" id="consultOrg"></p>
-      </div>
-
-      <div class="formcard" id="formCard">
-        <h3 style="font-size:18px;margin:0 0 6px" id="formTitle"></h3>
-        <p class="small" id="formBody" style="margin:0 0 16px"></p>
-
-        <form id="leadForm" autocomplete="on" novalidate>
-          <!-- honeypot（人には見えない・botよけ） -->
-          <div class="hp" aria-hidden="true">
-            <label>このフィールドは空のままにしてください
-              <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
-          </div>
-
-          <div class="field"><label for="fCompany" id="lCompany">会社名</label><input type="text" id="fCompany" name="company" maxlength="100" required></div>
-          <div class="field"><label for="fName" id="lName">ご担当者名</label><input type="text" id="fName" name="name" maxlength="60" required></div>
-          <div class="grid2">
-            <div class="field"><label for="fEmail" id="lEmail">メールアドレス</label><input type="email" id="fEmail" name="email" maxlength="120" required></div>
-            <div class="field"><label for="fTel" id="lTel">電話番号（任意）</label><input type="tel" id="fTel" name="tel" maxlength="30"></div>
-          </div>
-          <div class="field"><label for="fMsg" id="lMsg">ご相談内容（任意）</label><textarea id="fMsg" name="message" maxlength="1000"></textarea></div>
-
-          <div id="turnstile-holder"></div>
-
-          <label class="consent"><input type="checkbox" id="fConsent" required><span id="consentLabel"></span></label>
-
-          <!-- 診断結果（hidden・送信時に営業へ渡る濃いリード情報） -->
-          <input type="hidden" name="estTotal" id="hTotal">
-          <input type="hidden" name="estPerShare" id="hPerShare">
-          <input type="hidden" name="companySize" id="hSize">
-          <input type="hidden" name="shakushaku" id="hRate">
-          <input type="hidden" name="industry" id="hIndustry">
-          <input type="hidden" name="dividendMan" id="hDiv">
-          <input type="hidden" name="profitMan" id="hProfit">
-          <input type="hidden" name="netAssetMan" id="hNet">
-          <input type="hidden" name="pageHost" id="hHost">
-          <input type="hidden" name="ua" id="hUa">
-
-          <button class="btn gold" type="submit" id="btnSubmit" style="width:100%">送信する</button>
-          <div class="err center" id="formErr"></div>
-        </form>
-
-        <div class="thanks" id="thanks">
-          <div class="chk">✓</div>
-          <h3 style="font-size:18px" id="thanksTitle"></h3>
-          <p class="small" id="thanksBody"></p>
-        </div>
-      </div>
-
-      <p class="center" style="margin-top:18px">
-        <button class="btn ghost" id="btnRedo" type="button">もう一度、別の数字で試算する</button>
-      </p>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- ===== 評価のしくみ（GEO本文・HowTo と一致） ===== -->
-<section id="method">
-  <div class="wrap">
-    <h2>非上場株式（自社株）の評価のしくみ</h2>
-    <p class="sec-sub">本ツールが使う「類似業種比準方式」の考え方</p>
-
-    <p style="font-size:15px" id="methodIntro">
-      上場株式には市場価格がありますが、非上場株式（自社株）には市場価格がありません。そこで相続税・贈与税の計算では、国税庁の財産評価基本通達にもとづき、主に<strong>類似業種比準方式</strong>と<strong>純資産価額方式</strong>で評価します。会社規模（大・中・小）によって、どちらを使うか（または併用するか）が決まります。
-    </p>
-
-    <div class="formula">
-      1株（50円換算）当たりの比準価額 ＝<br>
-      　類似業種の株価<span class="hl">A</span> ×〔（ <span class="hl">b/B</span> ＋ <span class="hl">c/C</span> ＋ <span class="hl">d/D</span> ）÷ 3 〕× 斟酌率<br>
-      <span style="color:#9fb0c8">　b,c,d＝自社の1株当たり 配当 / 利益 / 簿価純資産</span><br>
-      <span style="color:#9fb0c8">　B,C,D＝類似業種の1株当たり 配当 / 利益 / 簿価純資産</span><br>
-      <span style="color:#9fb0c8">　斟酌率＝大会社0.7 ／ 中会社0.6 ／ 小会社0.5</span>
-    </div>
-
-    <h3 style="font-size:17px;margin:20px 0 4px" id="howToTitle">概算する手順</h3>
-    <ol class="steps-ol" id="howToList"></ol>
-
-    <div class="notice" style="margin-top:20px" id="methodDisclaimer"></div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- ===== FAQ（可視・FAQPage schema と一致） ===== -->
-<section id="faq">
-  <div class="wrap">
-    <h2>よくある質問</h2>
-    <p class="sec-sub">自社株評価・事業承継についての基本</p>
-    <div class="faq" id="faqList"></div>
-  </div>
-</section>
-
-<footer class="site">
-  <div class="wrap">
-    <div id="footConsult"></div>
-    <p class="foot-discl" id="footDisclaimer"></p>
-    <p class="foot-discl">© <span id="year"></span> <span id="footOrg">お金のカルテ</span> ／ 本サイトは自社株評価の概算を提供する情報サービスであり、税務・法務・投資に関する助言を行うものではありません。</p>
-  </div>
+<footer>
+  <div class="wrap">© <span id="y"></span> お金のカルテ ／ 本サイトは概算の情報提供であり、税務・法務・投資助言ではありません。</div>
 </footer>
-
-<script>
-/* =========================================================================
-   お金のカルテ — 自社株評価シミュレーター（類似業種比準方式・簡易版）
-   - 計算は全てブラウザ内で完結（外部API・生成AIを一切呼ばない＝継続課金ゼロ）
-   - 計算ロジックの出典と簡略化の前提は README.md / config.json / 本コメントに明記
-   ---------------------------------------------------------------------------
-   【計算式（国税庁・財産評価基本通達 類似業種比準方式）】
-     1株(50円換算)当たり比準価額
-       = A × ((b/B + c/C + d/D) / 3) × 斟酌率
-     A,B,C,D = 類似業種の 株価/配当/利益/簿価純資産（業種別・国税庁が毎年公表）
-     b,c,d   = 評価会社の 1株(50円換算)当たり 配当/利益/簿価純資産
-     斟酌率  = 大会社0.7 / 中会社0.6 / 小会社0.5
-     3要素の加重は現行 1:1:1（平成29年改正前は利益c/Cを3倍に加重）
-     1株当たり評価額 = 比準価額(50円) × (1株当たり資本金等の額 ÷ 50)
-   【本ツールの簡略化】
-     - 50円換算株式数 N50 = 資本金等の額 ÷ 50 で算出（正式手順どおり）
-     - 配当は「直前期の年額」を用いる（正式には直前2期平均。簡易化）
-     - 会社規模は従業員数と総資産の下位区分で判定（取引金額・中会社細区分は省略）
-     - 純資産価額方式との併用（中・小会社）は行わない → 概算のみ
-     → いずれも「概算の目安」。正確な評価は税理士確認が必要（結果画面・免責に明記）
-   ========================================================================= */
-
-var CONFIG = null;
-var STATE = { industryKey:null, dividend:null, profit:null, netAsset:null, capital:null, shares:null, employees:null, totalAsset:null };
-var STEP = 0;
-var MAX_STEP = 4;
-var lastResult = null;
-
-var yen = function(n){ return Math.round(n).toLocaleString('ja-JP'); };
-var manToYen = function(man){ return man * 10000; };
-
-/* 万円→「〇億〇万円」の読みやすい表記 */
-function jpMoney(y){
-  y = Math.round(y);
-  if (y <= 0) return '0円';
-  var oku = Math.floor(y / 100000000);
-  var man = Math.floor((y % 100000000) / 10000);
-  var rest = y % 10000;
-  var s = '';
-  if (oku) s += oku + '億';
-  if (man) s += yen(man) + '万';
-  if (!oku && !man) s += yen(rest);
-  else if (rest) s += rest;
-  return s + '円';
-}
-
-/* 数値パース（カンマ・全角許容、空は null、マイナス許容） */
-function num(v){
-  if (v === null || v === undefined) return null;
-  var s = String(v).replace(/[，,\s]/g,'').replace(/[０-９．－]/g, function(c){
-    return String.fromCharCode(c.charCodeAt(0) - 0xFEE0);
-  });
-  if (s === '' || s === '-') return null;
-  var n = Number(s);
-  return isFinite(n) ? n : null;
-}
-
-/* ---------- 会社規模の判定（簡易版） ---------- */
-function judgeSize(){
-  var ind = getIndustry();
-  var rules = CONFIG.sizeRules;
-  var emp = STATE.employees || 0;
-  var assets = manToYen(STATE.totalAsset || 0);
-  if (emp >= rules.employeesLargeAll) return 'large';
-  var g = rules.groups[ind.sizeGroup] || rules.groups.other;
-  // 大会社：従業員が大基準超 かつ 総資産が大基準以上
-  if (emp > g.largeEmp && assets >= g.largeAssets) return 'large';
-  // 小会社：従業員が小基準以下 かつ 総資産が小基準未満
-  if (emp <= g.smallEmp && assets < g.smallAssets) return 'small';
-  return 'medium';
-}
-
-function getIndustry(){
-  for (var i=0;i<CONFIG.industries.length;i++){
-    if (CONFIG.industries[i].key === STATE.industryKey) return CONFIG.industries[i];
-  }
-  return CONFIG.industries[0];
-}
-
-/* ---------- 類似業種比準価額（簡易版）本体 ---------- */
-function calcValuation(){
-  var ind = getIndustry();
-  var A = ind.A, B = ind.B, C = ind.C, D = ind.D;
-
-  var capitalYen = manToYen(STATE.capital);
-  var N50 = capitalYen / 50;                         // 50円換算の株式数
-
-  var divYen = manToYen(STATE.dividend || 0);
-  var profYen = manToYen(STATE.profit || 0);
-  var netYen  = manToYen(STATE.netAsset || 0);
-
-  var b = divYen  / N50;                             // 1株(50円)当たり配当
-  var c = profYen / N50;                             // 1株(50円)当たり利益（赤字は0扱い）
-  var d = netYen  / N50;                             // 1株(50円)当たり簿価純資産
-
-  var cEff = Math.max(c, 0);                         // 利益は0未満を0とする（通達に準拠）
-  var rb = b / B, rc = cEff / C, rd = d / D;
-  var ratioAvg = (rb + rc + rd) / 3;
-
-  var size = judgeSize();
-  var rate = CONFIG.method.shakushakuRate[size];
-
-  var per50 = A * ratioAvg * rate;                  // 50円換算1株当たり比準価額
-  var capPerShare = capitalYen / STATE.shares;      // 1株当たり資本金等の額
-  var perShare = per50 * (capPerShare / 50);        // 実際の1株当たり評価額
-  if (perShare < 0) perShare = 0;
-  var total = perShare * STATE.shares;
-
-  return {
-    A:A,B:B,C:C,D:D, b:b,c:c,d:d, cEff:cEff,
-    rb:rb, rc:rc, rd:rd, ratioAvg:ratioAvg,
-    size:size, rate:rate, per50:per50, capPerShare:capPerShare,
-    perShare:perShare, total:total, industryLabel:ind.label
-  };
-}
-
-/* ---------- 描画：ステップ ---------- */
-function renderStepbar(){
-  var bar = document.getElementById('stepbar'); bar.innerHTML='';
-  for (var i=0;i<=MAX_STEP;i++){
-    var seg = document.createElement('div');
-    seg.className = 'seg' + (i<STEP?' done':'') + (i===STEP?' on':'');
-    bar.appendChild(seg);
-  }
-}
-function showStep(n){
-  STEP = n; renderStepbar();
-  var steps = document.querySelectorAll('.step');
-  for (var i=0;i<steps.length;i++){ steps[i].hidden = (Number(steps[i].getAttribute('data-step'))!==n); }
-  document.getElementById('btnBack').style.visibility = n===0 ? 'hidden' : 'visible';
-  var next = document.getElementById('btnNext');
-  next.textContent = (n===MAX_STEP) ? '概算する →' : '次へ';
-  if (n===MAX_STEP) renderConfirm();
-  validateStep();
-  document.getElementById('wizard').scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-function renderConfirm(){
-  var ind = getIndustry();
-  var t = CONFIG.disclaimer.beforeStart +
-    '<br><br><strong>業種：</strong>'+ind.label+
-    '　<strong>利益：</strong>'+ (STATE.profit!=null?yen(STATE.profit)+'万円':'—') +
-    '　<strong>純資産：</strong>'+ (STATE.netAsset!=null?yen(STATE.netAsset)+'万円':'—');
-  document.getElementById('beforeStartNote').innerHTML = t;
-}
-
-/* ---------- バリデーション ---------- */
-function validateStep(){
-  var ok = true, msg = '';
-  if (STEP===0){ ok = !!STATE.industryKey; }
-  else if (STEP===1){
-    STATE.dividend = num(document.getElementById('inDividend').value);
-    STATE.profit   = num(document.getElementById('inProfit').value);
-    if (STATE.dividend===null) STATE.dividend = 0;
-    if (STATE.profit===null){ ok=false; msg='年間の利益金額を入力してください（赤字はマイナスで可）。'; }
-  }
-  else if (STEP===2){
-    STATE.netAsset = num(document.getElementById('inNetAsset').value);
-    STATE.capital  = num(document.getElementById('inCapital').value);
-    STATE.shares   = num(document.getElementById('inShares').value);
-    if (STATE.netAsset===null){ ok=false; msg='簿価純資産額を入力してください。'; }
-    else if (!STATE.capital || STATE.capital<=0){ ok=false; msg='資本金等の額を入力してください（0より大きい値）。'; }
-    else if (!STATE.shares || STATE.shares<=0){ ok=false; msg='発行済株式数を入力してください（0より大きい値）。'; }
-  }
-  else if (STEP===3){
-    STATE.employees  = num(document.getElementById('inEmployees').value);
-    STATE.totalAsset = num(document.getElementById('inTotalAsset').value);
-    if (STATE.employees===null || STATE.employees<0){ ok=false; msg='従業員数を入力してください（0以上）。'; }
-    else if (STATE.totalAsset===null || STATE.totalAsset<0){ ok=false; msg='総資産を入力してください。'; }
-  }
-  var errEl = document.getElementById('err'+STEP);
-  if (errEl) errEl.textContent = ok ? '' : msg;
-  document.getElementById('btnNext').disabled = !ok;
-  return ok;
-}
-
-/* ---------- 結果描画 ---------- */
-function renderResult(){
-  var r = calcValuation();
-  lastResult = r;
-  document.getElementById('wizard').style.display = 'none';
-  var rw = document.getElementById('resultwrap');
-  rw.style.display = 'block';
-
-  document.getElementById('totalVal').innerHTML = jpMoney(r.total) + '<span class="yen"></span>';
-  document.getElementById('perShareVal').textContent = '1株あたり 約 ' + yen(r.perShare) + ' 円 ／ 発行済 ' + yen(STATE.shares) + ' 株';
-  document.getElementById('sizeVal').textContent = CONFIG.method.sizeLabel[r.size];
-  document.getElementById('rateVal').textContent = r.rate.toFixed(1) + '（斟酌率）';
-
-  // 内訳テーブル
-  var rows = [
-    ['要素','自社（1株50円）','類似業種','比率'],
-    ['配当 (b/B)', r.b.toFixed(2)+'円', r.B.toFixed(1)+'円', r.rb.toFixed(2)],
-    ['利益 (c/C)', r.cEff.toFixed(2)+'円', r.C.toFixed(1)+'円', r.rc.toFixed(2)],
-    ['簿価純資産 (d/D)', r.d.toFixed(2)+'円', r.D.toFixed(1)+'円', r.rd.toFixed(2)]
-  ];
-  var html = '';
-  for (var i=0;i<rows.length;i++){
-    var tag = i===0?'th':'td';
-    html += '<tr>';
-    for (var j=0;j<rows[i].length;j++){ html += '<'+tag+'>'+rows[i][j]+'</'+tag+'>'; }
-    html += '</tr>';
-  }
-  document.getElementById('bdTable').innerHTML = html;
-  document.getElementById('bdFormula').innerHTML =
-    '3要素平均 '+r.ratioAvg.toFixed(2)+' × 類似業種株価 '+r.A+'円 × 斟酌率 '+r.rate.toFixed(1)+
-    ' ＝ '+yen(r.per50)+'円（50円換算1株）。1株当たり資本金等 '+yen(r.capPerShare)+'円 で調整し、'+
-    '1株 約'+yen(r.perShare)+'円 × '+yen(STATE.shares)+'株 ＝ 概算 '+jpMoney(r.total)+'。'+
-    '（'+r.industryLabel+'／'+CONFIG.method.sizeLabel[r.size]+'）';
-
-  document.getElementById('resultDisclaimer').innerHTML =
-    '<strong>これは概算の目安です。</strong> ' + CONFIG.disclaimer.onResult + ' ' + CONFIG.disclaimer.method;
-
-  // 相談セクション
-  document.getElementById('consultLead').textContent = CONFIG.consult.leadIn;
-  document.getElementById('consultOrg').textContent =
-    (CONFIG.consult.orgName || '') + (CONFIG.consult.orgTagline ? '｜' + CONFIG.consult.orgTagline : '');
-
-  // hidden へ診断値を格納（送信時に営業へ渡る＝濃いリード）
-  document.getElementById('hTotal').value = jpMoney(r.total);
-  document.getElementById('hPerShare').value = yen(r.perShare)+'円';
-  document.getElementById('hSize').value = CONFIG.method.sizeLabel[r.size];
-  document.getElementById('hRate').value = r.rate.toFixed(1);
-  document.getElementById('hIndustry').value = r.industryLabel;
-  document.getElementById('hDiv').value = (STATE.dividend||0)+'万円';
-  document.getElementById('hProfit').value = (STATE.profit||0)+'万円';
-  document.getElementById('hNet').value = (STATE.netAsset||0)+'万円';
-
-  rw.scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-/* ---------- 静的テキスト差し込み ---------- */
-function hydrateStatic(){
-  var c = CONFIG;
-  document.getElementById('brandMark').textContent = c.brand.siteName;
-  document.getElementById('brandSub').textContent = c.brand.siteNameSub;
-  document.getElementById('directAnswer').textContent = c.geo.directAnswer;
-
-  // 業種オプション
-  var box = document.getElementById('industryOpts'); box.innerHTML='';
-  c.industries.forEach(function(ind){
-    var lab = document.createElement('label');
-    lab.className='opt';
-    lab.innerHTML = '<input type="radio" name="industry" value="'+ind.key+'"><span class="t">'+ind.label+'</span>';
-    lab.querySelector('input').addEventListener('change', function(){
-      STATE.industryKey = ind.key;
-      document.querySelectorAll('#industryOpts .opt').forEach(function(o){o.classList.remove('sel');});
-      lab.classList.add('sel');
-      validateStep();
-    });
-    box.appendChild(lab);
-  });
-
-  // フォームラベル
-  document.getElementById('lCompany').textContent = c.form.fields.company;
-  document.getElementById('lName').textContent = c.form.fields.name;
-  document.getElementById('lEmail').textContent = c.form.fields.email;
-  document.getElementById('lTel').textContent = c.form.fields.tel;
-  document.getElementById('lMsg').textContent = c.form.fields.message;
-  document.getElementById('consentLabel').textContent = c.form.consentLabel;
-  document.getElementById('formTitle').textContent = c.form.title;
-  document.getElementById('formBody').textContent = c.form.body;
-  document.getElementById('consultTitle').textContent = 'この概算を、次の一手につなげる';
-  document.getElementById('thanksTitle').textContent = c.thanks.title;
-  document.getElementById('thanksBody').textContent = c.thanks.body;
-
-  // 手順 / 免責
-  document.getElementById('howToTitle').textContent = c.geo.howToTitle;
-  var ol = document.getElementById('howToList'); ol.innerHTML='';
-  c.geo.howToSteps.forEach(function(s){ var li=document.createElement('li'); li.textContent=s; ol.appendChild(li); });
-  document.getElementById('methodDisclaimer').textContent = c.disclaimer.standardsNote + ' ' + c.disclaimer.method;
-
-  // FAQ（可視 + schema）
-  var fl = document.getElementById('faqList'); fl.innerHTML='';
-  c.geo.faq.forEach(function(f){
-    var d = document.createElement('details');
-    d.innerHTML = '<summary>'+f.q+'</summary><div class="a">'+f.a+'</div>';
-    fl.appendChild(d);
-  });
-
-  // footer
-  document.getElementById('year').textContent = String(new Date().getFullYear());
-  document.getElementById('footOrg').textContent = c.brand.siteName;
-  document.getElementById('footConsult').innerHTML =
-    (c.consult.orgName ? '<strong style="color:#fff">'+c.consult.orgName+'</strong>　' : '') +
-    (c.consult.contactLine ? '<span>'+c.consult.contactLine+'</span>' : '');
-  document.getElementById('footDisclaimer').textContent = c.disclaimer.short + ' ' + c.consult.privacyNote;
-
-  // JSON-LD（本文と一致する内容を注入）
-  var faqLd = { "@context":"https://schema.org","@type":"FAQPage","mainEntity":
-    c.geo.faq.map(function(f){ return {"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}}; }) };
-  document.getElementById('ld-faq').textContent = JSON.stringify(faqLd);
-  var howLd = { "@context":"https://schema.org","@type":"HowTo","name":c.geo.howToTitle,
-    "step": c.geo.howToSteps.map(function(s,i){ return {"@type":"HowToStep","position":i+1,"text":s}; }) };
-  document.getElementById('ld-howto').textContent = JSON.stringify(howLd);
-
-  // meta（config が正）
-  document.title = c.meta.title;
-}
-
-/* ---------- Turnstile ---------- */
-function loadTurnstile(){
-  var sitekey = CONFIG.gas.turnstileSitekey;
-  if (!sitekey || sitekey.indexOf('__') === 0) return; // 未設定なら読み込まない
-  var s = document.createElement('script');
-  s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-  s.async = true; s.defer = true;
-  s.onload = function(){
-    try{
-      window.turnstile.render('#turnstile-holder', { sitekey: sitekey, theme:'light' });
-    }catch(e){}
-  };
-  document.head.appendChild(s);
-}
-
-/* ---------- 送信（fetch no-cors・fire-and-forget） ---------- */
-function submitLead(e){
-  e.preventDefault();
-  var errEl = document.getElementById('formErr'); errEl.textContent='';
-  var f = document.getElementById('leadForm');
-
-  if (f.website.value.trim() !== '') { showThanks(); return; }     // honeypot
-  if (!f.company.value.trim() || !f.name.value.trim() || !f.email.value.trim()){
-    errEl.textContent='会社名・ご担当者名・メールアドレスをご入力ください。'; return;
-  }
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.value.trim())){
-    errEl.textContent='メールアドレスの形式をご確認ください。'; return;
-  }
-  if (!document.getElementById('fConsent').checked){
-    errEl.textContent='プライバシーの取り扱いへの同意にチェックしてください。'; return;
-  }
-  // Turnstile（設定時のみ必須）
-  var sitekey = CONFIG.gas.turnstileSitekey;
-  var needTs = sitekey && sitekey.indexOf('__')!==0;
-  if (needTs){
-    var tokenEl = document.querySelector('#turnstile-holder [name="cf-turnstile-response"]');
-    if (!tokenEl || !tokenEl.value){ errEl.textContent='セキュリティ認証（Turnstile）を完了してください。'; return; }
-  }
-
-  document.getElementById('hHost').value = location.hostname;
-  document.getElementById('hUa').value = navigator.userAgent;
-
-  var endpoint = CONFIG.gas.endpoint;
-  var btn = document.getElementById('btnSubmit');
-  btn.disabled = true; btn.textContent = '送信中…';
-
-  if (!endpoint || endpoint.indexOf('__')===0){
-    // 未設定：概算・入力は失わせない。設定前の暫定挙動。
-    console.warn('[okane-carte] GAS endpoint 未設定のため送信をスキップしました。config.json の gas.endpoint を設定してください。');
-    showThanks(); return;
-  }
-
-  var fd = new FormData(f);
-  fetch(endpoint, { method:'POST', body:fd, mode:'no-cors' })
-    .then(function(){ showThanks(); })
-    .catch(function(){ showThanks(); }); // no-cors はレスポンスを読めないため成功扱い（サーバー側で検証・記録）
-}
-
-function showThanks(){
-  document.getElementById('leadForm').style.display='none';
-  document.getElementById('formTitle').style.display='none';
-  document.getElementById('formBody').style.display='none';
-  document.getElementById('thanks').style.display='block';
-  document.getElementById('thanks').scrollIntoView({behavior:'smooth', block:'center'});
-}
-
-/* ---------- 起動 ---------- */
-function bindWizard(){
-  ['inDividend','inProfit','inNetAsset','inCapital','inShares','inEmployees','inTotalAsset'].forEach(function(id){
-    var el = document.getElementById(id);
-    if (el) el.addEventListener('input', validateStep);
-  });
-  document.getElementById('btnNext').addEventListener('click', function(){
-    if (!validateStep()) return;
-    if (STEP === MAX_STEP){ renderResult(); return; }
-    showStep(STEP+1);
-  });
-  document.getElementById('btnBack').addEventListener('click', function(){ if(STEP>0) showStep(STEP-1); });
-  document.getElementById('btnRedo').addEventListener('click', function(){ location.reload(); });
-  document.getElementById('leadForm').addEventListener('submit', submitLead);
-}
-
-(function init(){
-  fetch('config.json?t=' + Date.now())
-    .then(function(r){ if(!r.ok) throw new Error('config'); return r.json(); })
-    .then(function(cfg){
-      CONFIG = cfg;
-      hydrateStatic();
-      bindWizard();
-      loadTurnstile();
-      showStep(0);
-    })
-    .catch(function(err){
-      document.getElementById('wizard').innerHTML =
-        '<p style="color:#b4472e">設定ファイル(config.json)の読み込みに失敗しました。時間をおいて再度お試しください。</p>';
-      console.error(err);
-    });
-})();
-
-/* frame-busting（クリックジャッキング対策・metaでは frame-ancestors が効かない静的ホスティング補完＝baseline J） */
-try{ if (window.top !== window.self){ window.top.location = window.self.location; } }catch(e){ document.documentElement.style.display='none'; }
-</script>
+<script>document.getElementById('y').textContent=String(new Date().getFullYear());
+try{if(window.top!==window.self){window.top.location=window.self.location;}}catch(e){document.documentElement.style.display='none';}</script>
 </body>
 </html>

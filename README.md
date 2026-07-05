@@ -3,18 +3,24 @@
 非上場株式（自社株）の相続税評価額を、国税庁の**類似業種比準方式（簡易版）**で概算するブラウザ内シミュレーターです。
 無料診断を入口に、事業承継を控えた非上場企業オーナー（＝M&Aの売り手見込み客）から「概算評価額を算出済みの濃いリード」を獲得します。
 
-- 本番：https://okane-carte.jp （GitHub Pages 配信・CNAME は触らない）
+- 本番：**https://okane-carte.jp/jikabuka/** （GitHub Pages 配信・CNAME は触らない）
 - 計算はすべてブラウザ内で完結。外部API・生成AIを一切呼ばない（**継続課金ゼロ**）。
 - リード受信のみ Google Apps Script（無料枠）を使用。
 
-## ファイル構成
+## ディレクトリ構成（サブディレクトリ方式）
 
-| ファイル | 役割 |
+`okane-carte.jp` では複数の診断サイトを作るため、各診断は**サブディレクトリ**に置きます。ルートは診断ポータル、この自社株評価診断は `/jikabuka/` です（診断を増やすときは `/xxx/` フォルダを足すだけ・相対パスなので移設耐性あり）。
+
+| パス | 役割 |
 |---|---|
-| `index.html` | 診断本体（診断フロー→計算→結果→相談フォーム）。GEO/AEO・セキュリティ全込みの単一HTML。 |
-| `config.json` | 業種標準値・免責文・会社規模ルール・相談先・GAS/exec URL・Turnstile sitekey。**非エンジニアが書き換える設定ファイル。** |
-| `gas/receiver.gs` | リード受信バックエンド（Turnstile検証・スクリプトプロパティ・シート蓄積・メール通知・honeypot）。 |
+| `index.html`（ルート） | 診断ポータル（各診断への入口）。現状は準備中＋自社株診断へのリンク。noindex。 |
+| `jikabuka/index.html` | 自社株評価 診断本体（診断フロー→計算→結果→相談フォーム）。GEO/AEO・セキュリティ・華やか意匠（インラインSVGの印章エンブレム／脈波→株価ライン／台帳罫）全込みの単一HTML。 |
+| `jikabuka/config.json` | 業種標準値・免責文・会社規模ルール・相談先・GAS/exec URL・Turnstile sitekey。**非エンジニアが書き換える設定ファイル。** |
+| `gas/receiver.gs` | リード受信バックエンド（Turnstile検証・スクリプトプロパティ・シート蓄積・メール通知・honeypot）。GAS側に貼る。 |
+| `robots.txt` / `sitemap.xml` | ドメイン直下（SEO標準）。sitemap は `/jikabuka/` を指す。 |
 | `CNAME` | 独自ドメイン設定（`okane-carte.jp`）。**絶対に触らない。** |
+
+> 透かし意匠は全てインラインSVG（外部画像ホットリンクなし＝セキュリティ標準準拠）。写真OGPを使う場合のみ `jikabuka/assets/ogp.png` をローカル同梱。
 
 ---
 
@@ -62,7 +68,7 @@
 
 ## 2. 標準値（A/B/C/D）の年度更新方法
 
-`config.json` の `industries` 配列を書き換えるだけです（コード変更不要・再デプロイ不要、`?t=` で即反映）。
+`jikabuka/config.json` の `industries` 配列を書き換えるだけです（コード変更不要・再デプロイ不要、`?t=` で即反映）。
 
 ```json
 { "key": "manufacturing", "label": "製造業", "sizeGroup": "other",
@@ -73,7 +79,7 @@
 - 最新値は国税庁「業種目別株価等」（毎年6月頃に前年分が公表）から、該当業種目の数値を転記する。
 - `sizeGroup` は会社規模判定のグループ：`wholesale`（卸売業）／`retail_service`（小売・サービス業）／`other`（それ以外）。
 
-> 標準値はサンプルのため、断定表示はせず「正確な評価には最新年度の公表値と税理士確認が必要」と免責に明記しています（`config.json > disclaimer`）。
+> 標準値はサンプルのため、断定表示はせず「正確な評価には最新年度の公表値と税理士確認が必要」と免責に明記しています（`jikabuka/config.json > disclaimer`）。
 
 ---
 
@@ -106,7 +112,7 @@
 4. 発行された **ウェブアプリURL（`https://script.google.com/macros/s/.../exec`）** を控える。
 
 ### 3-5. フロントに接続
-`config.json` の `gas.endpoint` に 3-4 の `/exec` URL を設定する。
+`jikabuka/config.json` の `gas.endpoint` に 3-4 の `/exec` URL を設定する。
 
 ```json
 "gas": { "endpoint": "https://script.google.com/macros/s/XXXX/exec", "turnstileSitekey": "0x4AAA..." }
@@ -120,7 +126,7 @@
 ## 4. Cloudflare Turnstile
 
 1. Cloudflare ダッシュボード → Turnstile → サイトを追加（ドメイン `okane-carte.jp`）。
-2. **サイトキー** を `config.json > gas.turnstileSitekey` に設定（公開情報でOK）。
+2. **サイトキー** を `jikabuka/config.json > gas.turnstileSitekey` に設定（公開情報でOK）。
 3. **シークレットキー** を GAS のスクリプトプロパティ `TURNSTILE_SECRET` に設定（**HTMLに書かない**）。
 4. sitekey 未設定（`__TURNSTILE_SITEKEY__` のまま）の場合、フロントはTurnstileを読み込まず、GASも検証をスキップします（段階導入可）。
 
@@ -137,7 +143,7 @@
 
 ## 6. 公開（go-live）手順
 
-1. `index.html` の `<meta name="robots" content="noindex, nofollow">` を **`index, follow`** に切替（＝公開ボタン）。あわせて `config.json > meta.indexable` を `true` に。
+1. `jikabuka/index.html` の `<meta name="robots" content="noindex, nofollow">` を **`index, follow`** に切替（＝公開ボタン）。あわせて `jikabuka/config.json > meta.indexable` を `true` に。ルート `index.html`（ポータル）も公開する場合は同様に切替。
 2. Google Search Console でドメイン所有権を確認し、`sitemap.xml`（必要なら追加）を送信、トップURLをインデックス登録リクエスト。
 3. メール送信を伴うため、必要に応じて **SPF / DKIM / DMARC** を設定。
 4. GitHub アカウントの **2FA** を確認（乗っ取り対策）。
@@ -146,7 +152,7 @@
 
 ## 7. BOSSが埋める実データ（プレースホルダ一覧）
 
-`config.json` 内の `__...__` を実データに置き換えてください。
+`jikabuka/config.json` 内の `__...__` を実データに置き換えてください。
 
 1. **`gas.endpoint`** … GASデプロイ後の `/exec` URL。
 2. **`gas.turnstileSitekey`** … Cloudflare Turnstile のサイトキー。
