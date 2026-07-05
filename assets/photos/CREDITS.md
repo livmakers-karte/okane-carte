@@ -23,6 +23,16 @@
 | gold-lines.jpg | 縦ラインの金メタリック | Unsplash License | images.unsplash.com/photo-1517196084897 |
 | gold-abstract.jpg | 抽象的ゴールド背景 | Unsplash License | images.unsplash.com/photo-1760784213096 |
 | interior-marble.jpg | 大理石の上質空間 | Pexels License | pexels.com/photo/33599113 |
+| retire-beach.jpg | 夕景の浜辺を歩く夫婦のシルエット（顔なし） | Unsplash License | images.unsplash.com/photo-1603894309519 |
+| retire-street.jpg | 高齢夫婦の後ろ姿（顔なし） | Pexels License | pexels.com/photo/12266904 |
+| retire-couple.jpg | 寄り添って歩く高齢夫婦の後ろ姿 | Pexels License | pexels.com/photo/19906052 |
+| calm-lake.jpg | 朝もやの静かな湖面（金色の朝日） | Unsplash License | images.unsplash.com/photo-1740997601152 |
+| wellness-stretch.jpg | 夕景でストレッチする女性のシルエット（顔なし） | Pexels License | pexels.com/photo/30411893 |
+| washitsu.jpg | 庭を望む伝統的な和室（人物なし） | Unsplash License | images.unsplash.com/photo-1764445274424 |
+| morning-room.jpg | 朝の光が差し込む室内（人物なし） | Unsplash License | images.unsplash.com/photo-1757693223749 |
+| forest-light.jpg | 森の木漏れ日（人物なし） | Unsplash License | images.unsplash.com/photo-1752257297778 |
+| forest-autumn.jpg | 霧の秋の森の木漏れ日（人物なし） | Unsplash License | images.unsplash.com/photo-1762755126280 |
+| garden-pond.jpg | 池のある日本庭園（人物なし） | Unsplash License | images.unsplash.com/photo-1772311288990 |
 
 - Unsplash License: 商用・非商用 とも無料、帰属表示不要（推奨）、再配布素材化は不可。
 - Pexels License: 商用・非商用 とも無料、帰属表示不要。
