@@ -1,3 +1,4 @@
+# 各ページの index/noindex は head の meta robots で制御。公開時は meta 切替のみで良い。
 User-agent: *
 Allow: /
 
