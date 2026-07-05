@@ -46,25 +46,36 @@
 
 <style>
   :root{
-    --navy:#122239;        /* 濃紺（信頼） */
-    --navy-2:#1d3557;
-    --indigo:#22406e;
-    --ink:#2a2318;         /* 本文（クリームに映える温かい墨） */
-    --muted:#6b6150;       /* 補足 */
-    --line:#e7ddc9;        /* 罫線（温かみ） */
-    --bg:#f5eddc;          /* 和紙クリーム（AIっぽい無地感を脱する） */
-    --bg-2:#faf4e7;        /* 明るいクリーム */
-    --paper:#fffdf7;       /* 温かい紙 */
-    --gold:#a9843f;        /* 金アクセント（格） */
-    --gold-2:#c39a4a;
-    --gold-hi:#e6c983;     /* 金の照り */
-    --gold-soft:#f4e9cf;
+    /* ===== 案B：パール×ロイヤルブルー×アンティークゴールド（明るい富裕層／design-director確定） ===== */
+    --navy:#1B2A4A;        /* ロイヤルブルー（主役構造色・格式） */
+    --navy-2:#4C5A78;      /* ダスティスレート */
+    --indigo:#2B3F63;      /* 中間紺（グラデ用） */
+    --ink:#2A2D33;         /* 本文 インクグレー（冷たい＝Aの茶と対比） */
+    --muted:#767C87;       /* 注記 ミストグレー */
+    --line:#D8DBE0;        /* 1px罫線 ヘアラインスレート */
+    --bg:#F7F6F5;          /* ページ地色 パールホワイト */
+    --bg-2:#EDEAE5;        /* セクション背景・カード地 マーブルグレージュ */
+    --paper:#FFFFFF;       /* 紙面（入力欄・カード内 純白） */
+    --gold:#B08D45;        /* アンティークゴールド（くすんだ真鍮） */
+    --gold-2:#9A7A38;      /* 金の陰 */
+    --gold-hi:#D6BE84;     /* サテンゴールド ホバー・細光沢 */
+    --gold-soft:#F1ECDF;   /* 金のごく淡い地 */
     --danger:#b4472e;
     --ok:#2f6b4f;
-    --radius:12px;
-    --serif:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro","HGS明朝E",serif;
+    --radius:10px;         /* Aより角を締める＝格式 */
+    --serif:"Zen Old Mincho","ZenOldMincho","Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+    --serif-en:"Cormorant Garamond","Zen Old Mincho",var(--serif);
+    --num:"Playfair Display","Cormorant Garamond",Georgia,serif;
+    --cinzel:"Cinzel","Cormorant Garamond",serif;
     --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
   }
+  /* セルフホスト・フォント（OFL・/assets/fonts・外部CDNなし） */
+  @font-face{font-family:"Zen Old Mincho";src:url("/assets/fonts/ZenOldMincho-Bold.subset.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Cormorant Garamond";src:url("/assets/fonts/CormorantGaramond-500.woff2") format("woff2");font-weight:500;font-display:swap}
+  @font-face{font-family:"Cormorant Garamond";src:url("/assets/fonts/CormorantGaramond-600.woff2") format("woff2");font-weight:600;font-display:swap}
+  @font-face{font-family:"Playfair Display";src:url("/assets/fonts/PlayfairDisplay-600.woff2") format("woff2");font-weight:600;font-display:swap}
+  @font-face{font-family:"Playfair Display";src:url("/assets/fonts/PlayfairDisplay-700.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Cinzel";src:url("/assets/fonts/Cinzel-600.woff2") format("woff2");font-weight:600;font-display:swap}
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
   body{
@@ -305,6 +316,103 @@
   .formula{position:relative;overflow:hidden;background:radial-gradient(120% 140% at 85% -20%,#173156,#0f1d33 62%);border:1px solid rgba(217,180,95,.25)}
   .formula-wm{position:absolute;right:8px;bottom:-18px;width:150px;height:150px;opacity:.12;z-index:0;pointer-events:none}
   .formula>span,.formula>br{position:relative;z-index:1}
+
+  /* ===================================================================
+     富裕層リフォーム（design-director確定・案B：パール×ロイヤルブルー×アンティーク金）
+     ・明るい地色を主役に反転／金は小さな差し色／写真は低不透明度の透かし
+     ・DOM/id/class/JSは不可侵＝セレクタ名維持・宣言だけ差し替え＋装飾スロット追加
+     =================================================================== */
+  /* 写真スロット（ローカル同梱・CSS変数で後差替可能） */
+  :root{
+    --ph-hero:url("/assets/photos/arch-lobby.jpg");
+    --ph-method:url("/assets/photos/marble-white.jpg");
+    --ph-kpi:url("/assets/photos/arch-paris.jpg");
+    --ph-formula:url("/assets/photos/marble-black.jpg");
+    --ph-footer:url("/assets/photos/arch-dome.jpg");
+  }
+  /* フォント：見出し＝Zen Old Mincho（var--serif）／数字＝Playfair（var--num） */
+  .hero h1,.kpi .big,.stat .v,.step h3,.consult h3{font-family:var(--serif)}
+  #totalVal,.kpi .persh,.breakdown td,.breakdown th{font-family:var(--num);font-variant-numeric:lining-nums}
+
+  /* ページ地色：パール＋冷たいヘアライン台帳罫＋淡い金の陽光 */
+  body{
+    background:
+      radial-gradient(1100px 520px at 84% -6%, rgba(176,141,69,.12), transparent 58%),
+      radial-gradient(820px 460px at 2% 6%, rgba(27,42,74,.05), transparent 55%),
+      linear-gradient(to bottom, transparent 27px, rgba(27,42,74,.045) 27px, rgba(27,42,74,.045) 28px),
+      var(--bg);
+    background-size:auto,auto,100% 28px,auto;color:var(--ink);
+  }
+  /* ヘッダー：濃紺帯を廃しパール地＋下罫 */
+  header.site{background:var(--bg);color:var(--navy);border-bottom:1px solid var(--line)}
+  header.site .brand,header.site .brand .mark{color:var(--navy)}
+  header.site .brand .sub{color:var(--muted)}
+  header.site .navlink{color:var(--navy-2)}
+
+  /* ヒーロー：明るいパール／マーブル微グラデ＋建築写真の透かし（右から） */
+  .hero{background:linear-gradient(155deg,#FBFAF9 0%,#EFECE7 58%,#E5E1DA 100%);color:var(--ink)}
+  .hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:var(--ph-hero) right center/cover no-repeat;opacity:.10;filter:grayscale(.35) saturate(.8);
+    -webkit-mask:linear-gradient(90deg,transparent 34%,#000 105%);mask:linear-gradient(90deg,transparent 34%,#000 105%);mix-blend-mode:multiply}
+  .hero .wrap{position:relative;z-index:1}
+  .hero h1{color:var(--navy)}
+  .hero .eyebrow{color:var(--gold-2)}
+  .hero p.lead{color:var(--ink)}
+  .hero p.lead strong{color:var(--navy)}
+  .hero .metaline{color:var(--muted)}
+  .hero .cta{background:linear-gradient(120deg,#D6BE84,#B08D45 52%,#9A7A38);color:#241f10;box-shadow:0 10px 26px rgba(27,42,74,.2)}
+  .hero-illust{filter:drop-shadow(0 16px 26px rgba(27,42,74,.18))}
+
+  /* 見出しの金ヘアライン・金箔枠をアンティーク金へ */
+  section h2::before{background:linear-gradient(180deg,#D6BE84,#B08D45)}
+  .answer{background:linear-gradient(180deg,#ffffff,#fbfbfa);border-color:#e6dcc4}
+  .answer::before{background:linear-gradient(120deg,rgba(176,141,69,.55),rgba(154,122,56,.14),rgba(214,190,132,.5))}
+  .answer .k{color:var(--gold-2)}
+  .answer p{color:var(--ink)}
+
+  /* method：マーブルグレージュ地＋白大理石の透かし */
+  #method{background:linear-gradient(180deg,#F1EFEC,#E8E4DE);border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+  #method::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:var(--ph-method) center/cover no-repeat;opacity:.06;filter:grayscale(1) contrast(.92);mix-blend-mode:multiply}
+  #method .wrap{position:relative;z-index:1}
+
+  /* 診断カード・入力：白紙＋スレート罫＋柔影 */
+  .card{background:var(--paper);border-color:var(--line);box-shadow:0 8px 24px rgba(27,42,74,.08)}
+  #wizard::before{background:linear-gradient(90deg,#D6BE84,#B08D45 50%,#D6BE84)}
+  .opt{background:var(--paper);border-color:var(--line)}
+  .opt:hover{border-color:var(--gold-hi);background:#FAF8F3}
+  .opt.sel{border-color:var(--gold);background:#F7F1E3;box-shadow:inset 0 0 0 1px rgba(176,141,69,.35)}
+  .opt input{accent-color:var(--gold)}
+  .money input,input[type=text],input[type=email],input[type=tel],textarea,select{background:var(--paper);border-color:var(--line)}
+  .stat{background:var(--paper);border-color:var(--line)}
+  .notice{background:var(--gold-soft);border-color:#e6dcc4;color:#5c4d2c}
+
+  /* KPI：明基調の中の"重心"＝紺を許容。アンティーク金枠＋金シャンデリア写真の透かし */
+  .kpi{background:radial-gradient(120% 140% at 80% -10%, #274073, #1B2A4A 62%);border-color:rgba(214,190,132,.45)}
+  .kpi::after{border-color:rgba(214,190,132,.3)}
+  .kpi::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:12px;
+    background:var(--ph-kpi) center/cover no-repeat;opacity:.13;filter:saturate(.75);mix-blend-mode:screen}
+  .kpi-wm{display:none}
+  .kpi .cap{color:#E7D8B4}
+  .kpi .big{color:#fff}
+  .kpi .big .yen{color:var(--gold-hi)}
+  .kpi .persh{color:#d4dcea}
+
+  /* formula：濃紺のまま（黒大理石の透かし）＝数式は濃地に金が最も読める */
+  .formula{background:radial-gradient(120% 140% at 85% -20%,#22345a,#141f38 62%);border-color:rgba(214,190,132,.28)}
+  .formula-wm{display:none}
+  .formula::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:10px;
+    background:var(--ph-formula) center/cover no-repeat;opacity:.16;mix-blend-mode:overlay}
+  .formula .hl{color:var(--gold-hi)}
+
+  /* consult：濃度を下げた紺＋アンティーク金 */
+  .consult{background:linear-gradient(180deg,#274073,#1B2A4A);border-color:rgba(214,190,132,.32)}
+
+  /* footer：締めの重心として紺を残す（var--navyで自動更新）＋ドーム写真の余韻 */
+  footer.site{position:relative;overflow:hidden}
+  footer.site::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:var(--ph-footer) center/cover no-repeat;opacity:.06;filter:grayscale(1);mix-blend-mode:screen}
+  footer.site .wrap{position:relative;z-index:1}
 </style>
 </head>
 <body>
@@ -314,9 +422,9 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#e6c983"/>
-      <stop offset=".5" stop-color="#b7935a"/>
-      <stop offset="1" stop-color="#8a6a2f"/>
+      <stop offset="0" stop-color="#D6BE84"/>
+      <stop offset=".5" stop-color="#B08D45"/>
+      <stop offset="1" stop-color="#9A7A38"/>
     </linearGradient>
     <!-- エンブレム：印章の二重円＋脈波が右肩上がりの株価線へ＝「お金のカルテ」 -->
     <symbol id="emblem" viewBox="0 0 100 100">

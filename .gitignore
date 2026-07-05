@@ -1,0 +1,3 @@
+# 巨大な元TTFは配信しない（subset woff2 のみコミット）
+assets/fonts/*.ttf
+assets/fonts/_chars.txt
