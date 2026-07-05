@@ -699,6 +699,8 @@
           <label class="consent"><input type="checkbox" id="fConsent" required><span id="consentLabel"></span></label>
 
           <!-- 診断結果（hidden・送信時に営業へ渡る濃いリード情報） -->
+          <input type="hidden" name="formName" value="自社株評価シミュレーター">
+          <input type="hidden" name="summary" id="hSummary">
           <input type="hidden" name="estTotal" id="hTotal">
           <input type="hidden" name="estPerShare" id="hPerShare">
           <input type="hidden" name="companySize" id="hSize">
@@ -1002,6 +1004,11 @@ function renderResult(){
   document.getElementById('hDiv').value = (STATE.dividend||0)+'万円';
   document.getElementById('hProfit').value = (STATE.profit||0)+'万円';
   document.getElementById('hNet').value = (STATE.netAsset||0)+'万円';
+  // 共通シート用の読みやすいサマリー（1行で診断結果が分かる）
+  document.getElementById('hSummary').value =
+    '概算評価額 ' + jpMoney(r.total) + '（1株約' + yen(r.perShare) + '円）／' +
+    CONFIG.method.sizeLabel[r.size] + '（斟酌率' + r.rate.toFixed(1) + '）／' + r.industryLabel +
+    '／利益' + (STATE.profit||0) + '万・純資産' + (STATE.netAsset||0) + '万';
 
   rw.scrollIntoView({behavior:'smooth', block:'start'});
 }

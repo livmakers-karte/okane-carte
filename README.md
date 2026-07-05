@@ -83,36 +83,36 @@
 
 ---
 
-## 3. GAS（リード受信）のセットアップ
+## 3. GAS（リード受信）のセットアップ ★方法B・共通の受け皿（設定は一度きり）
 
-### 3-1. スプレッドシートを用意
-1. Google スプレッドシートを新規作成（例：「お金のカルテ_リード」）。
-2. URL の `/d/` と `/edit` の間の文字列が **SHEET_ID**。控えておく。
+`gas/receiver.gs` は **全診断の共通レシーバ**。1回作れば、今後増える診断（家計・相続・住まい…）も同じ `/exec` を使い回せる。
+問い合わせは1枚のシートに「**診断**」「**診断サマリー**」列付きで溜まるので混ざらない。**方法B（スプレッドシートの中から作る）＝ SHEET_ID 不要。**
 
-### 3-2. Apps Script を作成
-1. https://script.google.com → 新しいプロジェクト。
-2. `gas/receiver.gs` の内容を丸ごと貼り付け（既定の `Code.gs` を置き換え）。
+### 3-1. スプレッドシート＋Apps Script（SHEET_ID 不要）
+1. Google スプレッドシートを新規作成（名前は「お金のカルテ_リード」など）。
+2. そのシートの上メニュー **「拡張機能」→「Apps Script」** を開く。
+3. 開いた編集画面に `gas/receiver.gs` の中身を丸ごと貼り付けて保存。
+   - ※これで「このシート自身」に書き込む構成になり、**SHEET_ID の控えは不要**。
 
-### 3-3. スクリプトプロパティ（秘密情報）を登録
-プロジェクトの設定（歯車）→ **スクリプト プロパティ** に以下4つを追加：
+### 3-2. スクリプトプロパティ（秘密情報）を登録
+プロジェクトの設定（歯車）→ **スクリプト プロパティ**：
 
-| プロパティ名 | 値 | 備考 |
+| プロパティ名 | 値 | 必須 |
 |---|---|---|
-| `NOTIFY_TO` | 通知先メール | **グループ共有アドレス**（例 `info@example.co.jp`）。個人アドレス不可。 |
-| `SHEET_ID` | スプレッドシートID | 3-1で控えた値。 |
-| `TURNSTILE_SECRET` | Turnstile シークレットキー | Cloudflare で発行（下記4章）。未設定ならTurnstile検証はスキップ。 |
-| `ALLOWED_HOSTS` | `okane-carte.jp,www.okane-carte.jp` | 送信を許可するホスト（カンマ区切り）。 |
+| `NOTIFY_TO` | 通知先メール（例 `info@livmakers.co.jp`）。個人でなく共有アドレス。 | **必須** |
+| `ALLOWED_HOSTS` | `okane-carte.jp,www.okane-carte.jp` | 推奨 |
+| `TURNSTILE_SECRET` | Turnstile シークレットキー（下記4章。後日でも可） | 任意 |
+| `SHEET_ID` | 別のシートに書きたいときだけ設定（方法Bでは**不要**） | 不要 |
 
-> **HTMLには宛先メールを一切書きません。**すべてスクリプトプロパティに隔離しています（`web-security-baseline` A/C 準拠）。
+> **HTML・リポジトリには宛先メールを一切書きません。**すべてスクリプトプロパティに隔離（`web-security-baseline` A/C 準拠）。
 
-### 3-4. ウェブアプリとしてデプロイ
+### 3-3. ウェブアプリとしてデプロイ
 1. 右上「デプロイ」→ **新しいデプロイ** → 種類「ウェブアプリ」。
-2. **実行するユーザー：自分** ／ **アクセスできるユーザー：全員**。
-3. 初回は権限承認（自分のGoogleアカウントで許可）。
-4. 発行された **ウェブアプリURL（`https://script.google.com/macros/s/.../exec`）** を控える。
+2. **実行するユーザー：自分** ／ **アクセスできるユーザー：全員**。初回は権限承認。
+3. 発行された **`/exec` URL** を控える。
 
-### 3-5. フロントに接続
-`jikabuka/config.json` の `gas.endpoint` に 3-4 の `/exec` URL を設定する。
+### 3-4. フロントに接続（新しい診断もこの1行だけ）
+`jikabuka/config.json`（以後の診断も各 `config.json`）の `gas.endpoint` に `/exec` URL を設定する。
 
 ```json
 "gas": { "endpoint": "https://script.google.com/macros/s/XXXX/exec", "turnstileSitekey": "0x4AAA..." }
