@@ -5,47 +5,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; frame-ancestors 'none';">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<!-- 公開前は noindex（ポータルは準備中）。 -->
+<!-- 公開前は noindex（ポータルは準備中）。公開時に index,follow へ切替。 -->
 <meta name="robots" content="noindex, nofollow">
-<title>お金のカルテ｜非上場企業オーナーのための経営・資産の診断ポータル</title>
-<meta name="description" content="非上場企業オーナー・後継者のための、自社株評価をはじめとした経営・資産の無料診断ポータル。">
+<title>お金のカルテ｜くらしと経済の「お金」を、数字で診る無料診断ポータル</title>
+<meta name="description" content="家計・税金・相続・住まい・年金・資産運用・事業まで。くらしと経済のあらゆるお金の疑問に「概算の目安」で答える無料診断シリーズ「お金のカルテ」。">
 <link rel="canonical" href="https://okane-carte.jp/">
 <style>
-  :root{--navy:#12233d;--navy2:#1c3357;--gold:#a9843f;--ink:#1a2230;--muted:#5b6473;--line:#e4e2d8;
+  :root{--navy:#101f38;--navy2:#1b3058;--indigo:#22406e;--gold:#a9843f;--gold-hi:#e6c983;
     --serif:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
     --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;}
   *{box-sizing:border-box}
-  body{margin:0;font-family:var(--sans);color:#eef2f8;line-height:1.8;
+  body{margin:0;font-family:var(--sans);color:#eef2f8;line-height:1.8;letter-spacing:.01em;
     background:
-      radial-gradient(1000px 480px at 80% -10%, rgba(169,132,63,.20), transparent 60%),
-      linear-gradient(to bottom, transparent 27px, rgba(255,255,255,.03) 27px, rgba(255,255,255,.03) 28px),
-      radial-gradient(120% 130% at 50% 0%, #1b3059, #0e1c31 62%);
-    background-size:auto,100% 28px,auto;min-height:100vh;display:flex;flex-direction:column}
-  .wrap{max-width:760px;margin:0 auto;padding:0 22px;width:100%}
+      radial-gradient(1100px 520px at 82% -8%, rgba(201,162,79,.24), transparent 58%),
+      radial-gradient(760px 420px at -5% 4%, rgba(201,162,79,.10), transparent 55%),
+      linear-gradient(to bottom, transparent 27px, rgba(255,255,255,.028) 27px, rgba(255,255,255,.028) 28px),
+      radial-gradient(130% 120% at 50% 0%, #1a2f56, #0c1a30 64%);
+    background-size:auto,auto,100% 28px,auto;min-height:100vh;display:flex;flex-direction:column}
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px;width:100%}
   header{padding:22px 0}
-  .brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
-  .emblem{width:40px;height:40px}
-  .brand .mark{font-family:var(--serif);font-size:21px;letter-spacing:.08em}
-  .brand .sub{font-size:11.5px;color:#c8d2e0;letter-spacing:.12em}
-  main{flex:1;display:flex;align-items:center;padding:26px 0 60px}
-  .eyebrow{color:#e6c983;font-size:12.5px;letter-spacing:.2em;font-weight:700;margin:0 0 16px;display:inline-flex;align-items:center;gap:10px}
-  .eyebrow::before{content:"";width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
-  h1{font-family:var(--serif);font-size:clamp(26px,5.6vw,40px);line-height:1.45;margin:0 0 18px;color:#fff;letter-spacing:.02em}
-  h1 .g{background:linear-gradient(100deg,#e6c983,#b7935a 55%,#e6c983);-webkit-background-clip:text;background-clip:text;color:transparent}
-  p.lead{color:#d6deec;font-size:16px;max-width:40em;margin:0 0 30px}
-  .card{display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff;
-    background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
-    border:1px solid rgba(217,180,95,.34);border-radius:12px;padding:20px 22px;transition:border-color .15s,transform .12s}
-  .card:hover{border-color:rgba(217,180,95,.7);transform:translateY(-1px)}
-  .card .ic{width:46px;height:46px;flex:0 0 auto}
-  .card .t{font-family:var(--serif);font-size:18px;margin:0 0 3px}
-  .card .d{font-size:13px;color:#c3cede;margin:0}
-  .card .arw{margin-left:auto;color:#e6c983;font-size:20px}
-  .soon{margin:16px 0 0;font-size:12.5px;color:#93a1b8}
-  .orn{display:flex;align-items:center;justify-content:center;gap:14px;margin:30px 0 22px;color:var(--gold)}
-  .orn .ln{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
-  .orn .ln.r{background:linear-gradient(90deg,var(--gold),transparent)}
-  .orn svg{width:18px;height:18px}
+  .brand{display:flex;align-items:center;gap:13px;color:#fff;text-decoration:none}
+  .emblem{width:42px;height:42px;flex:0 0 auto}
+  .brand .mark{font-family:var(--serif);font-size:22px;letter-spacing:.08em;line-height:1.1}
+  .brand .sub{font-size:11px;color:#c8d2e0;letter-spacing:.14em}
+  main{flex:1;padding:20px 0 56px}
+  .eyebrow{color:var(--gold-hi);font-size:12px;letter-spacing:.22em;font-weight:700;margin:14px 0 16px;display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:30px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+  h1{font-family:var(--serif);font-size:clamp(27px,6.2vw,44px);line-height:1.45;margin:0 0 18px;color:#fff;letter-spacing:.03em}
+  h1 .g{background:linear-gradient(100deg,#e6c983,#c39a4a 55%,#e6c983);-webkit-background-clip:text;background-clip:text;color:transparent}
+  h1 .nb{white-space:nowrap}
+  p.lead{color:#d6deec;font-size:clamp(15px,2.3vw,16.5px);max-width:40em;margin:0 0 30px}
+
+  .orn{display:flex;align-items:center;gap:14px;color:var(--gold);margin:8px 0 20px}
+  .orn .ln{flex:1;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+  .orn .lbl{font-size:11px;letter-spacing:.2em;color:#b7935a;white-space:nowrap}
+
+  /* 注目診断（公開中） */
+  .feature{display:flex;align-items:center;gap:20px;text-decoration:none;color:#fff;position:relative;overflow:hidden;
+    background:linear-gradient(115deg,rgba(217,180,95,.14),rgba(255,255,255,.03));
+    border:1px solid rgba(217,180,95,.5);border-radius:16px;padding:22px 24px;transition:transform .12s,border-color .15s}
+  .feature:hover{transform:translateY(-2px);border-color:rgba(217,180,95,.85)}
+  .feature .ic{width:56px;height:56px;flex:0 0 auto}
+  .feature .badge{position:absolute;top:0;right:0;background:linear-gradient(120deg,#e6c983,#b7935a);color:#241a0a;
+    font-size:10.5px;font-weight:700;letter-spacing:.08em;padding:5px 12px;border-bottom-left-radius:10px}
+  .feature .t{font-family:var(--serif);font-size:clamp(18px,3.3vw,21px);margin:2px 0 4px}
+  .feature .d{font-size:13px;color:#cfd9e8;margin:0}
+  .feature .arw{margin-left:auto;color:#e6c983;font-size:22px;flex:0 0 auto}
+
+  /* 領域グリッド（今後の広がり） */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:2px 0 0}
+  @media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:420px){.grid{grid-template-columns:1fr}}
+  .tile{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:16px 16px 15px}
+  .tile .ic{width:30px;height:30px;margin-bottom:9px;display:block}
+  .tile .t{font-family:var(--serif);font-size:15px;color:#f2f5fa;margin:0 0 2px}
+  .tile .d{font-size:11.5px;color:#9fadc2;margin:0}
+  .tile .st{display:inline-block;margin-top:9px;font-size:10.5px;letter-spacing:.06em;color:#b7935a;border:1px solid rgba(183,147,90,.4);border-radius:20px;padding:2px 9px}
+  .note{margin:22px 0 0;font-size:12.5px;color:#93a1b8}
   footer{padding:22px 0;font-size:12px;color:#8b99b0;border-top:1px solid rgba(255,255,255,.08)}
 </style>
 </head>
@@ -62,10 +78,13 @@
       <polyline points="23,58 35,58 40,46 46,70 51,52 58,52 64,44 71,30" fill="none" stroke="url(#g)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M66,30 71,30 71,35" fill="none" stroke="url(#g)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
-    <symbol id="orn" viewBox="0 0 24 24">
-      <rect x="7" y="7" width="10" height="10" transform="rotate(45 12 12)" fill="none" stroke="url(#g)" stroke-width="1.4"/>
-      <circle cx="12" cy="12" r="1.6" fill="url(#g)"/>
-    </symbol>
+    <!-- 領域アイコン（線画・金） -->
+    <symbol id="ic-chart" viewBox="0 0 24 24"><g fill="none" stroke="url(#g)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4"/><path d="M4 20h16"/><rect x="7" y="12" width="3" height="5"/><rect x="12" y="9" width="3" height="8"/><rect x="17" y="6" width="3" height="11"/></g></symbol>
+    <symbol id="ic-doc" viewBox="0 0 24 24"><g fill="none" stroke="url(#g)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 12h6M9.5 15.5h6"/></g></symbol>
+    <symbol id="ic-house" viewBox="0 0 24 24"><g fill="none" stroke="url(#g)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10.5 19v-5h3v5"/></g></symbol>
+    <symbol id="ic-coin" viewBox="0 0 24 24"><g fill="none" stroke="url(#g)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="7" rx="7" ry="3"/><path d="M5 7v5c0 1.7 3.1 3 7 3s7-1.3 7-3V7"/><path d="M5 12v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></g></symbol>
+    <symbol id="ic-clock" viewBox="0 0 24 24"><g fill="none" stroke="url(#g)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></g></symbol>
+    <symbol id="ic-shield" viewBox="0 0 24 24"><g fill="none" stroke="url(#g)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></g></symbol>
   </defs>
 </svg>
 
@@ -73,33 +92,46 @@
   <div class="wrap">
     <a class="brand" href="/">
       <svg class="emblem" aria-hidden="true"><use href="#emblem"/></svg>
-      <span><span class="mark">お金のカルテ</span><br><span class="sub">経営・資産 診断ポータル</span></span>
+      <span><span class="mark">お金のカルテ</span><br><span class="sub">くらしと経済の お金の診断</span></span>
     </a>
   </div>
 </header>
 
 <main>
   <div class="wrap">
-    <p class="eyebrow">非上場企業オーナー・後継者のために</p>
-    <h1>会社の<span class="g">お金の健康</span>を、<br>数字で診る。</h1>
-    <p class="lead">自社株の価値、事業承継、資産の組み替え——。オーナーだけが直面する問いに、まず「概算の目安」で答える無料診断シリーズです。</p>
+    <p class="eyebrow">くらしと経済の、お金の健康診断</p>
+    <h1>あなたの<span class="g">お金</span>を、<br><span class="nb">数字で診る。</span></h1>
+    <p class="lead">家計・税金・相続・住まい・年金・資産運用、そして事業まで——。専門家に相談する前に、まず「概算の目安」で今の位置を知る。くらしと経済のあらゆるお金の問いに答える、無料の診断シリーズです。※すべて概算であり、正式な判断は専門家にご確認ください。</p>
 
-    <a class="card" href="/jikabuka/">
+    <div class="orn"><span class="lbl">いま使える診断</span><span class="ln"></span></div>
+
+    <a class="feature" href="/jikabuka/">
+      <span class="badge">公開中</span>
       <svg class="ic" aria-hidden="true"><use href="#emblem"/></svg>
       <span>
         <p class="t">自社株評価シミュレーター</p>
-        <p class="d">非上場株式の相続税評価額を、類似業種比準方式（簡易版）で概算する</p>
+        <p class="d">非上場株式（自社株）の相続税評価額を、国税庁の類似業種比準方式（簡易版）で概算。事業承継・株価対策の出発点に。</p>
       </span>
       <span class="arw">→</span>
     </a>
-    <p class="soon">※ 他の診断も順次公開予定です。</p>
 
-    <div class="orn"><span class="ln"></span><svg aria-hidden="true"><use href="#orn"/></svg><span class="ln r"></span></div>
+    <div class="orn"><span class="lbl">これから広げていく領域</span><span class="ln"></span></div>
+
+    <div class="grid">
+      <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-doc"/></svg><p class="t">相続税の概算</p><p class="d">財産の全体像から相続税のおおよそを試算</p><span class="st">準備中</span></div>
+      <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-coin"/></svg><p class="t">家計・貯蓄の健康度</p><p class="d">収支と貯蓄バランスをスコアで可視化</p><span class="st">準備中</span></div>
+      <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-house"/></svg><p class="t">住まい・住宅ローン</p><p class="d">借入余力と返済負担の目安を診断</p><span class="st">準備中</span></div>
+      <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-clock"/></svg><p class="t">年金・老後資金</p><p class="d">老後に向けた資金ギャップを概算</p><span class="st">準備中</span></div>
+      <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-chart"/></svg><p class="t">資産運用・ポートフォリオ</p><p class="d">資産配分の偏りとリスクをチェック</p><span class="st">準備中</span></div>
+      <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-shield"/></svg><p class="t">保険の過不足</p><p class="d">必要保障額と今の保険のギャップを診断</p><span class="st">準備中</span></div>
+    </div>
+
+    <p class="note">※ 診断は順次公開していきます。テーマのご要望も歓迎です。</p>
   </div>
 </main>
 
 <footer>
-  <div class="wrap">© <span id="y"></span> お金のカルテ ／ 本サイトは概算の情報提供であり、税務・法務・投資助言ではありません。</div>
+  <div class="wrap">© <span id="y"></span> お金のカルテ ／ 本サイトは概算の情報提供であり、税務・法務・投資助言ではありません。正式な判断は専門家にご確認ください。</div>
 </footer>
 <script>document.getElementById('y').textContent=String(new Date().getFullYear());
 try{if(window.top!==window.self){window.top.location=window.self.location;}}catch(e){document.documentElement.style.display='none';}</script>

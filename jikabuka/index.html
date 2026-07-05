@@ -46,18 +46,22 @@
 
 <style>
   :root{
-    --navy:#12233d;        /* 濃紺（信頼） */
-    --navy-2:#1c3357;
-    --ink:#1a2230;         /* 本文 */
-    --muted:#5b6473;       /* 補足 */
-    --line:#dfe3ea;        /* 罫線 */
-    --bg:#f6f7f9;          /* 背景 */
-    --paper:#ffffff;
+    --navy:#122239;        /* 濃紺（信頼） */
+    --navy-2:#1d3557;
+    --indigo:#22406e;
+    --ink:#2a2318;         /* 本文（クリームに映える温かい墨） */
+    --muted:#6b6150;       /* 補足 */
+    --line:#e7ddc9;        /* 罫線（温かみ） */
+    --bg:#f5eddc;          /* 和紙クリーム（AIっぽい無地感を脱する） */
+    --bg-2:#faf4e7;        /* 明るいクリーム */
+    --paper:#fffdf7;       /* 温かい紙 */
     --gold:#a9843f;        /* 金アクセント（格） */
-    --gold-soft:#f3ead9;
+    --gold-2:#c39a4a;
+    --gold-hi:#e6c983;     /* 金の照り */
+    --gold-soft:#f4e9cf;
     --danger:#b4472e;
     --ok:#2f6b4f;
-    --radius:10px;
+    --radius:12px;
     --serif:"Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro","HGS明朝E",serif;
     --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
   }
@@ -82,14 +86,20 @@
   header.site .navlink{color:#d7deea;text-decoration:none;font-size:13px}
 
   /* hero */
-  .hero{background:linear-gradient(180deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;padding:52px 0 44px}
-  .hero .eyebrow{color:var(--gold);font-size:13px;letter-spacing:.18em;font-weight:700;margin:0 0 14px}
-  .hero h1{color:#fff;font-size:clamp(25px,5.4vw,40px);margin:0 0 18px}
-  .hero p.lead{color:#e7ecf4;font-size:clamp(15px,2.4vw,17px);margin:0 0 26px;max-width:44em}
+  .hero{background:linear-gradient(155deg,#0e1c31 0%,#183056 52%,#22406e 100%);color:#fff;padding:56px 0 52px;position:relative;overflow:hidden}
+  .hero .wrap{display:grid;grid-template-columns:1.24fr .76fr;gap:30px;align-items:center}
+  @media(max-width:760px){.hero{padding:44px 0 40px}.hero .wrap{grid-template-columns:1fr;gap:18px}}
+  .hero .eyebrow{color:var(--gold-hi);font-size:12.5px;letter-spacing:.2em;font-weight:700;margin:0 0 16px}
+  .hero h1{color:#fff;font-size:clamp(26px,5.1vw,40px);margin:0 0 20px;line-height:1.44;letter-spacing:.02em}
+  .hero h1 .nb{white-space:nowrap}
+  .hero p.lead{color:#e7ecf4;font-size:clamp(15px,2.4vw,17px);margin:0 0 26px;max-width:40em}
   .hero .cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:#241a0a;
-    font-weight:700;text-decoration:none;padding:15px 28px;border-radius:8px;font-size:16px;min-height:52px;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+    font-weight:700;text-decoration:none;padding:16px 30px;border-radius:9px;font-size:16px;min-height:54px;box-shadow:0 10px 26px rgba(0,0,0,.28)}
   .hero .cta:active{transform:translateY(1px)}
-  .hero .metaline{color:#b9c4d6;font-size:12.5px;margin-top:14px}
+  .hero .metaline{color:#b9c4d6;font-size:12.5px;margin-top:15px}
+  .hero-art{justify-self:center;width:100%;max-width:430px}
+  @media(max-width:760px){.hero-art{max-width:330px;order:2}}
+  .hero-illust{width:100%;height:auto;display:block;filter:drop-shadow(0 18px 30px rgba(0,0,0,.3))}
 
   /* GEO direct-answer block */
   .answer{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gold);
@@ -206,15 +216,33 @@
   footer .foot-discl{font-size:12px;color:#93a1b8;line-height:1.7;margin:12px 0 0}
   .skip{position:absolute;left:-9999px}
 
-  /* ===== 華やか意匠：和×金の透かし（すべてインラインSVG＝外部依存なし） ===== */
-  /* 台帳/カルテ風の罫線テクスチャ＋淡い金の陽光（AIっぽい無地感を脱する） */
+  /* ===== 華やか意匠：和紙クリーム×金（すべてインラインSVG＝外部依存なし） ===== */
+  /* 台帳/カルテ風の罫線テクスチャ＋金の陽光。冷たい無地感を廃し、温かい上質感へ。 */
   body{
     background:
-      radial-gradient(1200px 520px at 78% -8%, rgba(169,132,63,.10), transparent 60%),
-      linear-gradient(to bottom, transparent 27px, rgba(18,35,61,.045) 27px, rgba(18,35,61,.045) 28px),
+      radial-gradient(1100px 520px at 84% -6%, rgba(195,154,74,.16), transparent 58%),
+      radial-gradient(900px 480px at 0% 8%, rgba(195,154,74,.08), transparent 55%),
+      linear-gradient(to bottom, transparent 27px, rgba(120,92,40,.055) 27px, rgba(120,92,40,.055) 28px),
       var(--bg);
-    background-size:auto, 100% 28px, auto;
+    background-size:auto, auto, 100% 28px, auto;
   }
+
+  /* 波の区切り（ヒーロー直下の和の意匠） */
+  .wave-divider{display:block;width:100%;height:26px;margin:-1px 0 0;color:var(--gold)}
+
+  /* セクションに濃淡のリズム（フラットな白一色を脱する） */
+  #method{background:linear-gradient(180deg,#faf3e5,#f3ead6);border-top:1px solid #ecdfbf;border-bottom:1px solid #ecdfbf}
+  section h2{font-size:clamp(21px,3.8vw,27px)}
+  .sec-sub{color:var(--muted)}
+
+  /* カードを温かく（クリーム地に紙が浮く） */
+  .card{box-shadow:0 8px 24px rgba(120,92,40,.08);border-color:#ece2cd}
+  .opt{background:var(--paper);border-color:#e7ddc9}
+  .opt:hover{border-color:var(--gold-2);background:#fdf9ef}
+  .opt.sel{border-color:var(--gold);background:#fbf3e2;box-shadow:inset 0 0 0 1px rgba(169,132,63,.35)}
+  .opt input{accent-color:var(--gold)}
+  .stat{background:var(--paper);border-color:#ece2cd}
+  .money input,input[type=text],input[type=email],input[type=tel],textarea{background:var(--paper);border-color:#e2d7bf}
   /* 金の共通グラデ（テキスト/線用） */
   .goldtext{background:linear-gradient(100deg,#d9b45f,#a9843f 55%,#c9a24f);-webkit-background-clip:text;background-clip:text;color:transparent}
 
@@ -322,19 +350,69 @@
 
 <!-- ===== HERO ===== -->
 <div class="hero">
-  <svg class="hero-wm" aria-hidden="true"><use href="#emblem"/></svg>
-  <svg class="hero-pulse" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
-    <polyline points="0,88 175,88 205,88 228,52 248,106 268,80 300,80 430,80 470,72 520,78 640,64 700,70 820,56 900,60 1010,44 1085,50 1200,32"
-      fill="none" stroke="url(#goldGrad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
   <div class="wrap">
-    <p class="eyebrow">非上場企業オーナー・後継者のための</p>
-    <h1>自社株（非上場株式）は、<br>いくらと評価されるのか。</h1>
-    <p class="lead">上場していない会社の株式にも、相続税・贈与税の世界では評価額がつきます。国税庁の<strong>類似業種比準方式（簡易版）</strong>で、あなたの会社の数字から1株あたり・会社全体の概算評価額を無料で試算します。売上の細かい内訳や機密情報は不要です。</p>
-    <a class="cta" href="#shindan">自社株の概算評価を試算する（約1分）</a>
-    <p class="metaline">全ブラウザ内で計算／財務入力値は送信ボタンを押すまで外部に送られません。※概算の目安です。</p>
+    <div class="hero-copy">
+      <p class="eyebrow">非上場企業オーナー・後継者のための</p>
+      <h1><span class="nb">自社株</span><span class="nb">（非上場株式）</span>は、<br>いくらと<span class="nb">評価されるのか。</span></h1>
+      <p class="lead">上場していない会社の株式にも、相続税・贈与税の世界では評価額がつきます。国税庁の<strong>類似業種比準方式（簡易版）</strong>で、あなたの会社の数字から1株あたり・会社全体の概算評価額を無料で試算します。売上の細かい内訳や機密情報は不要です。</p>
+      <a class="cta" href="#shindan">自社株の概算評価を試算する（約1分）</a>
+      <p class="metaline">全ブラウザ内で計算／財務入力値は送信ボタンを押すまで外部に送られません。※概算の目安です。</p>
+    </div>
+    <div class="hero-art">
+      <!-- ヒーロー図版：会社の価値を診る「評価カルテ」（インラインSVG・外部画像なし） -->
+      <svg class="hero-illust" viewBox="0 0 400 350" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="24" y="46" width="352" height="266" rx="20" fill="rgba(255,255,255,.045)" stroke="rgba(217,180,95,.34)"/>
+        <!-- 評価カルテ シート（わずかに傾く） -->
+        <g transform="rotate(-4 200 176)">
+          <rect x="66" y="74" width="238" height="188" rx="12" fill="#fbf6ec" stroke="url(#goldGrad)" stroke-width="1.6"/>
+          <path d="M66 86 a12 12 0 0 1 12-12 h214 a12 12 0 0 1 12 12 v20 H66 Z" fill="#12233d"/>
+          <circle cx="84" cy="90" r="3.4" fill="url(#goldGrad)"/>
+          <text x="96" y="94.5" font-family="'Yu Mincho',serif" font-size="12.5" fill="#e6c983" letter-spacing="1">評価カルテ</text>
+          <text x="286" y="94.5" text-anchor="end" font-family="'Yu Mincho',serif" font-size="9" fill="#a9b6cf">CORPORATE VALUE</text>
+          <!-- 目盛 -->
+          <g stroke="#e9e0cf" stroke-width="1">
+            <line x1="86" y1="226" x2="286" y2="226"/><line x1="86" y1="200" x2="286" y2="200"/>
+            <line x1="86" y1="174" x2="286" y2="174"/><line x1="86" y1="148" x2="286" y2="148"/>
+          </g>
+          <!-- 上昇するバー -->
+          <g fill="url(#goldGrad)">
+            <rect x="104" y="186" width="26" height="40" rx="3"/>
+            <rect x="146" y="164" width="26" height="62" rx="3"/>
+            <rect x="188" y="140" width="26" height="86" rx="3"/>
+            <rect x="230" y="112" width="26" height="114" rx="3"/>
+          </g>
+          <!-- 折れ線（脈波→右肩上がり） -->
+          <polyline points="90,196 117,182 138,196 159,158 201,132 243,104 274,116"
+            fill="none" stroke="#12233d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <g fill="#12233d"><circle cx="159" cy="158" r="3.4"/><circle cx="201" cy="132" r="3.4"/><circle cx="243" cy="104" r="3.4"/></g>
+          <path d="M262 100 274 116 258 120" fill="none" stroke="url(#goldGrad)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <!-- 硬貨の山（¥） -->
+        <g transform="translate(40 262)">
+          <ellipse cx="36" cy="44" rx="35" ry="11" fill="#0b1526" opacity=".28"/>
+          <g stroke="url(#goldGrad)" stroke-width="1.5" fill="#f7ecd2">
+            <ellipse cx="36" cy="34" rx="27" ry="10"/><ellipse cx="36" cy="25" rx="27" ry="10"/><ellipse cx="36" cy="16" rx="27" ry="10"/>
+          </g>
+          <text x="36" y="20.5" text-anchor="middle" font-size="13" font-weight="700" fill="#a9843f" font-family="var(--sans)">¥</text>
+        </g>
+        <!-- 印章（会社の“評価が確定した”証） -->
+        <g transform="translate(320 78)">
+          <circle r="36" fill="rgba(169,132,63,.16)" stroke="url(#goldGrad)" stroke-width="1.8"/>
+          <circle r="28.5" fill="none" stroke="url(#goldGrad)" stroke-width=".7"/>
+          <use href="#emblem" x="-21" y="-21" width="42" height="42"/>
+        </g>
+        <g fill="url(#goldGrad)"><circle cx="360" cy="188" r="2.6"/><circle cx="20" cy="150" r="2"/><circle cx="352" cy="256" r="1.8"/></g>
+      </svg>
+    </div>
   </div>
 </div>
+<!-- 波の区切り（流水紋・和のあしらい） -->
+<svg class="wave-divider" viewBox="0 0 1200 26" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 20 Q 40 6 80 14 T 160 14 T 240 14 T 320 14 T 400 14 T 480 14 T 560 14 T 640 14 T 720 14 T 800 14 T 880 14 T 960 14 T 1040 14 T 1120 14 T 1200 14"
+    fill="none" stroke="currentColor" stroke-width="2" opacity=".55"/>
+  <path d="M0 24 Q 40 12 80 20 T 160 20 T 240 20 T 320 20 T 400 20 T 480 20 T 560 20 T 640 20 T 720 20 T 800 20 T 880 20 T 960 20 T 1040 20 T 1120 20 T 1200 20"
+    fill="none" stroke="currentColor" stroke-width="1.4" opacity=".3"/>
+</svg>
 
 <div class="wrap">
   <!-- GEO 直接回答ブロック -->
