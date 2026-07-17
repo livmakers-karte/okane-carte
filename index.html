@@ -269,7 +269,14 @@
 </main>
 
 <footer>
-  <div class="wrap">© <span id="y"></span> リブメーカーズ株式会社（LIVmakers Co., Ltd.）／ お金のカルテ ／ 本サイトは概算の情報提供であり、税務・法務・投資助言ではありません。正式な判断は専門家にご確認ください。</div>
+  <div class="wrap">
+    <nav aria-label="姉妹サイト・運営会社" style="display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:12px;font-size:12.5px">
+      <a href="https://kurashi-carte.jp/" style="color:var(--green)">暮らしのカルテ ↗</a>
+      <a href="https://karada-carte.jp/" style="color:var(--green)">からだのカルテ ↗</a>
+      <a href="https://livmakers.co.jp/" style="color:var(--green)">リブメーカーズ株式会社 ↗</a>
+    </nav>
+    © <span id="y"></span> リブメーカーズ株式会社（LIVmakers Co., Ltd.）／ お金のカルテ ／ 本サイトは概算の情報提供であり、税務・法務・投資助言ではありません。正式な判断は専門家にご確認ください。
+  </div>
 </footer>
 <script>document.getElementById('y').textContent=String(new Date().getFullYear());
 try{if(window.top!==window.self){window.top.location=window.self.location;}}catch(e){document.documentElement.style.display='none';}</script>
