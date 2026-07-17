@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com; form-action 'self' https://script.google.com; frame-ancestors 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- 公開前は noindex。go-live 時に index, follow へ切替（config.meta.indexable も true に）。 -->
+<meta name="robots" content="index, follow">
+<title>相続税かんたん診断｜家族に残るお金を、5分で概算｜お金のカルテ</title>
+<meta name="description" content="配偶者・子の数と財産のおおよそから、相続税の概算額と『相続準備指数』を無料でブラウザ内試算。基礎控除・生命保険非課税枠・配偶者の税額軽減を反映。登録不要・匿名。※正確な計算は税理士へ。">
+<link rel="canonical" href="https://okane-carte.jp/sozoku/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="お金のカルテ">
+<meta property="og:title" content="相続税かんたん診断｜家族に残るお金を、5分で概算">
+<meta property="og:description" content="配偶者・子の数と財産のおおよそから、相続税の概算額と独自の『相続準備指数』を無料でブラウザ内試算。登録不要・匿名。">
+<meta property="og:url" content="https://okane-carte.jp/sozoku/">
+<meta property="og:image" content="https://okane-carte.jp/sozoku/assets/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="相続税かんたん診断｜お金のカルテ">
+<meta name="twitter:description" content="財産のおおよそから相続税の概算額と『相続準備指数』を無料で試算。登録不要・匿名。">
+
+<!-- 静的 JSON-LD（WebApplication / BreadcrumbList）。FAQ・HowTo は本文と一致する内容を JS で注入。 -->
+<script type="application/ld+json" id="ld-webapp">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "相続税かんたん診断（お金のカルテ）",
+  "url": "https://okane-carte.jp/sozoku/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "description": "配偶者・子の数と財産のおおよそから相続税の概算額と『相続準備指数』をブラウザ内で無料試算する診断ツール。基礎控除・生命保険非課税枠・配偶者の税額軽減を反映。"
+}
+</script>
+<script type="application/ld+json" id="ld-faq"></script>
+<script type="application/ld+json" id="ld-howto"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "お金のカルテ", "item": "https://okane-carte.jp/" },
+    { "@type": "ListItem", "position": 2, "name": "相続税かんたん診断", "item": "https://okane-carte.jp/sozoku/" }
+  ]
+}
+</script>
+<style>
+  /* ===== セルフホスト・フォント（OFL・/assets/fonts・外部CDNなし） ===== */
+  @font-face{font-family:"Shippori Mincho";src:url("/assets/fonts/ShipporiMincho-Bold.subset.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Marcellus";src:url("/assets/fonts/Marcellus-400.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-500.woff2") format("woff2");font-weight:500;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-600.woff2") format("woff2");font-weight:600;font-display:swap}
+
+  :root{
+    /* 相続=「家族に残すもの」：生成り×常磐の森緑×古代朱の落款×シャンパン金 */
+    --bg:#FAF6EE; --bg-2:#F1E8D9; --paper:#FFFDF8;
+    --green:#22463C; --green-2:#5E7E6E;      /* 森緑（受け継ぐ・永続） */
+    --shu:#A24B3C; --shu-2:#8B3E30;          /* 古代朱（封蝋・落款＝家族の印。面積<2%） */
+    --gold:#C7A24E; --gold-2:#8B6B28; --gold-hi:#E6D2A0; --gold-soft:#F4ECD7;
+    --ink:#2C2A22; --muted:#6A6353; --line:#DDD2BE;
+    --radius:14px; --radius-sm:9px;
+    --shadow-card:0 10px 30px rgba(34,70,60,.08);
+    --serif-jp:"Shippori Mincho","Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+    --serif-en:"Marcellus",var(--serif-jp);
+    --num:"Cormorant","Marcellus",Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+    /* 写真スロット（ローカル同梱・後差替。テーマ=家族/世代/暮らし/庭） */
+    --ph-hero:url("/assets/photos/couple-happy.jpg");    /* 微笑む70代夫婦＝ゆとり・幸せに残す */
+    --ph-band:url("/assets/photos/washitsu.jpg");        /* 和室＝受け継ぐ家 */
+    --ph-footer:url("/assets/photos/garden-path.jpg");   /* 庭の小径＝受け継ぐ道 */
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.8;letter-spacing:.01em;
+    background:
+      radial-gradient(1100px 520px at 86% -8%, rgba(199,162,78,.13), transparent 58%),
+      radial-gradient(820px 460px at 0% 3%, rgba(34,70,60,.06), transparent 55%),
+      var(--bg);
+    min-height:100vh;display:flex;flex-direction:column}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px;width:100%}
+  h1,h2,h3{font-family:var(--serif-jp);color:var(--green);letter-spacing:.02em;line-height:1.5;font-weight:700}
+  a{color:var(--green)}
+  ::selection{background:var(--gold-soft)}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:4px}
+
+  /* ---- ヘッダー ---- */
+  header{padding:20px 0;border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .brand{display:flex;align-items:center;gap:13px;color:var(--green);text-decoration:none}
+  .emblem{width:42px;height:42px;flex:0 0 auto}
+  .brand .mark{font-family:var(--serif-jp);font-size:21px;letter-spacing:.08em;line-height:1.1;color:var(--green)}
+  .brand .sub{font-size:11px;color:var(--muted);letter-spacing:.13em}
+  .navlink{font-family:var(--serif-en);color:var(--green);text-decoration:none;font-size:12.5px;letter-spacing:.05em;white-space:nowrap}
+  .navlink:hover{color:var(--gold-2)}
+
+  main{flex:1}
+
+  /* ---- ヒーロー ---- */
+  .hero{position:relative;overflow:hidden;padding:46px 0 26px}
+  .hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:var(--ph-hero) 78% center/cover no-repeat;opacity:.2;filter:sepia(.22) saturate(1.05);
+    -webkit-mask:linear-gradient(90deg,transparent 30%,#000 90%);mask:linear-gradient(90deg,transparent 30%,#000 90%)}
+  .hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}
+  .eyebrow{color:var(--gold-2);font-size:12px;letter-spacing:.2em;font-weight:700;margin:0 0 16px;display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+  h1{font-size:clamp(27px,5.6vw,44px);margin:0 0 16px}
+  h1 .u{background:linear-gradient(transparent 74%, var(--gold-hi) 74%, var(--gold-hi) 91%, transparent 91%)}
+  h1 .nb{white-space:nowrap}
+  p.lead{color:var(--ink);font-size:clamp(14.5px,2.2vw,16px);max-width:34em;margin:0 0 14px}
+  .lead .sub-note{color:var(--muted);font-size:12.5px}
+  /* ヒーローの主役写真（大きく見せる・角丸フレーム＋金の細枠＋落款） */
+  .herofig{position:relative;justify-self:center;width:100%;max-width:330px}
+  .photo-frame{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--gold-hi);
+    box-shadow:0 18px 44px rgba(34,70,60,.18);aspect-ratio:3/3.6}
+  .photo-frame img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.03)}
+  .photo-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(34,70,60,.28));pointer-events:none}
+  .photo-frame .cap{position:absolute;left:14px;bottom:12px;z-index:1;color:#fff;font-family:var(--serif-jp);font-size:13px;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+  .photo-frame .seal-badge{position:absolute;right:-14px;top:-14px;width:74px;height:74px;z-index:2;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}
+  .photo-frame .seal-badge circle:first-child{fill:#FBF6EC}
+
+  /* 直接回答ブロック（GEO） */
+  .answer{position:relative;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gold);
+    border-radius:var(--radius-sm);padding:16px 18px;margin:8px 0 4px;box-shadow:var(--shadow-soft)}
+  .answer .k{font-family:var(--serif-en);font-size:11px;letter-spacing:.14em;color:var(--gold-2);display:block;margin-bottom:5px}
+  .answer p{margin:0;font-size:13.5px;color:var(--ink);line-height:1.75}
+
+  /* ---- 飾り罫 ---- */
+  .orn{display:flex;align-items:center;gap:14px;color:var(--gold);margin:34px 0 18px}
+  .orn .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  .orn .lbl{font-family:var(--serif-en);font-size:12px;letter-spacing:.15em;color:var(--gold-2);white-space:nowrap}
+  .orn svg{width:16px;height:16px;color:var(--gold)}
+
+  section{padding:8px 0}
+  .sec-sub{color:var(--muted);font-size:13px;margin:2px 0 18px}
+
+  /* ---- カード / ウィザード ---- */
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-card)}
+  .card-pad{padding:26px 26px 22px}
+  #wizard{position:relative;overflow:hidden}
+  #wizard::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold-hi),var(--gold),var(--gold-2))}
+  .stepbar{display:flex;gap:6px;margin:2px 0 20px}
+  .stepbar .seg{height:4px;flex:1;border-radius:3px;background:var(--line);transition:background .2s}
+  .stepbar .seg.on{background:var(--gold)}
+  .stepbar .seg.done{background:var(--green-2)}
+  .steplabel{font-family:var(--serif-en);font-size:11px;letter-spacing:.12em;color:var(--gold-2);margin:0 0 4px}
+  .step h3{font-size:clamp(18px,3vw,21px);margin:0 0 4px}
+  .step .hint{color:var(--muted);font-size:13px;margin:0 0 18px}
+
+  .opts{display:grid;gap:10px}
+  .opts.two{grid-template-columns:1fr 1fr}
+  @media(max-width:520px){.opts.two{grid-template-columns:1fr}}
+  .opt{display:flex;align-items:center;gap:11px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:13px 15px;cursor:pointer;transition:border-color .15s,background .15s}
+  .opt:hover{border-color:var(--green-2)}
+  .opt.sel{border-color:var(--gold);background:#FBF3E1}
+  .opt input{accent-color:var(--gold);width:17px;height:17px;flex:0 0 auto}
+  .opt .t{font-size:14.5px;color:var(--ink)}
+
+  .field{margin:0 0 16px}
+  .field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:13.5px;color:var(--green);font-weight:700;margin:0 0 6px}
+  .field .fh{font-size:12px;color:var(--muted);margin:-2px 0 7px}
+  .money{display:flex;align-items:center;gap:8px}
+  .money input,.field input[type=text],.field input[type=email],.field input[type=tel],.field textarea{
+    width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);background:var(--paper);
+    border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 13px;transition:border-color .15s}
+  .money input:focus,.field input:focus,.field textarea:focus{outline:none;border-color:var(--green)}
+  .money .unit{font-size:13px;color:var(--muted);white-space:nowrap}
+  .field textarea{min-height:88px;resize:vertical;line-height:1.7}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:520px){.grid2{grid-template-columns:1fr}}
+  .checkline{display:flex;align-items:flex-start;gap:10px;background:var(--gold-soft);border:1px solid var(--line);
+    border-radius:var(--radius-sm);padding:12px 14px;margin-top:6px;cursor:pointer}
+  .checkline input{accent-color:var(--shu);width:18px;height:18px;margin-top:2px;flex:0 0 auto}
+  .checkline .t{font-size:13px;color:var(--ink)}
+  .checkline .t b{color:var(--shu-2)}
+
+  .notice{background:var(--gold-soft);border:1px solid var(--line);border-radius:var(--radius-sm);padding:13px 15px;font-size:13px;color:var(--ink);line-height:1.75}
+  .err{color:var(--shu-2);font-size:13px;margin-top:10px;min-height:1em}
+  .err.center{text-align:center}
+
+  .nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+  .btn{font-family:var(--sans);font-size:15px;font-weight:700;border:none;border-radius:var(--radius-sm);padding:13px 24px;cursor:pointer;transition:transform .12s,box-shadow .15s,background .15s,border-color .15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.primary{background:var(--green);color:#fff}
+  .btn.primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(34,70,60,.22)}
+  .btn.primary:disabled{opacity:.4;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--green);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--green)}
+  .btn.gold{background:linear-gradient(120deg,var(--gold-hi),var(--gold),var(--gold-2));color:#3a2e0f}
+  .btn.gold:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(199,162,78,.35)}
+
+  /* ---- 結果：家族へのカルテ ---- */
+  .resultwrap{display:none}
+  .karte{position:relative;overflow:hidden;background:linear-gradient(180deg,#FFFEFA,#FBF6EC);
+    border:1px solid var(--gold-hi);border-radius:var(--radius);box-shadow:var(--shadow-card);padding:30px 28px 26px;margin-bottom:16px}
+  .karte::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg,transparent 0 27px,rgba(34,70,60,.045) 27px 28px);
+    opacity:.7;-webkit-mask:linear-gradient(180deg,#000,transparent 82%);mask:linear-gradient(180deg,#000,transparent 82%)}
+  .karte>*{position:relative;z-index:1}
+  .karte-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border-bottom:1px solid var(--gold-hi);padding-bottom:14px;margin-bottom:18px}
+  .karte-title{font-family:var(--serif-jp);font-size:clamp(19px,3.4vw,23px);color:var(--green);margin:0}
+  .karte-meta{font-size:11px;color:var(--muted);font-family:var(--serif-en);letter-spacing:.08em;text-align:right;line-height:1.6;white-space:nowrap}
+  /* 落款（朱の封蝋） */
+  .seal{width:66px;height:66px;flex:0 0 auto}
+  .seal .ink{transform-origin:33px 33px;animation:stamp .6s cubic-bezier(.34,1.3,.5,1) .25s both}
+  @keyframes stamp{0%{opacity:0;transform:scale(1.7) rotate(-9deg)}60%{opacity:1}100%{opacity:1;transform:scale(1) rotate(-6deg)}}
+
+  .karte-amt{text-align:center;padding:6px 0 4px}
+  .karte-amt .cap{font-size:12.5px;color:var(--muted);letter-spacing:.06em;margin:0 0 4px}
+  .karte-amt .big{font-family:var(--num);font-weight:600;font-size:clamp(38px,10vw,64px);color:var(--green);line-height:1.05;letter-spacing:.01em}
+  .karte-amt .sub{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+  .karte-amt .before{font-size:12.5px;color:var(--muted);margin:2px 0 0}
+
+  /* 相続準備指数ゲージ（座標） */
+  .indexcard{margin-top:20px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:20px 20px 18px}
+  .indexcard .ih{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .indexcard .iname{font-family:var(--serif-jp);font-size:15px;color:var(--green);margin:0}
+  .indexcard .iname small{font-family:var(--serif-en);color:var(--muted);letter-spacing:.1em;font-size:10px;margin-left:6px}
+  .indexcard .ival{font-family:var(--num);font-weight:600;font-size:34px;color:var(--gold-2);line-height:1}
+  .indexcard .ival em{font-style:normal;font-size:15px;color:var(--muted)}
+  .gauge{position:relative;height:12px;border-radius:8px;margin:8px 0 6px;
+    background:linear-gradient(90deg,#E3C9C2,#EAD9AE,#C6D8C4)}
+  .gauge .mk{position:absolute;top:-4px;width:3px;height:20px;border-radius:2px;background:var(--green);
+    box-shadow:0 0 0 3px rgba(255,253,248,.9);transition:left 1s cubic-bezier(.2,.7,.2,1)}
+  .gauge-zones{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+  .zone-badge{display:inline-block;font-size:12px;font-weight:700;color:var(--green);background:var(--gold-soft);border:1px solid var(--gold-hi);border-radius:20px;padding:2px 12px;margin-top:2px}
+  .zone-note{font-size:12.5px;color:var(--muted);margin:10px 0 0;line-height:1.7}
+  .factors{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+  @media(max-width:520px){.factors{grid-template-columns:1fr}}
+  .factor{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 12px}
+  .factor .fl{font-size:11.5px;color:var(--muted);margin:0 0 6px;line-height:1.5}
+  .factor .bar{height:6px;border-radius:4px;background:#e6ddca;overflow:hidden}
+  .factor .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green-2),var(--green));border-radius:4px;width:0;transition:width 1s ease .2s}
+  .factor .fv{font-family:var(--num);font-size:15px;color:var(--green);margin-top:4px}
+  .idxlink{display:inline-block;margin-top:12px;font-size:12px;color:var(--gold-2);text-decoration:underline;text-underline-offset:2px}
+
+  .grid2.stats{margin-top:16px}
+  .stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:13px 15px}
+  .stat .l{font-size:11.5px;color:var(--muted);margin-bottom:3px}
+  .stat .v{font-family:var(--serif-jp);font-size:16px;color:var(--green)}
+
+  details.calc{margin-top:16px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper)}
+  details.calc summary{cursor:pointer;padding:13px 16px;font-size:13.5px;color:var(--green);font-weight:700;list-style:none}
+  details.calc summary::-webkit-details-marker{display:none}
+  details.calc summary::before{content:"＋ ";color:var(--gold-2)}
+  details.calc[open] summary::before{content:"− "}
+  details.calc .inner{padding:0 16px 16px}
+  table.breakdown{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+  table.breakdown th,table.breakdown td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:right}
+  table.breakdown th:first-child,table.breakdown td:first-child{text-align:left;color:var(--muted)}
+  table.breakdown tr:first-child th{color:var(--green);border-bottom:1px solid var(--gold-hi)}
+  .bd-note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7}
+
+  .disclaimer-box{margin-top:16px;background:var(--gold-soft);border:1px solid var(--gold-hi);border-radius:var(--radius-sm);padding:14px 16px;font-size:12.5px;color:var(--ink);line-height:1.75}
+  .disclaimer-box strong{color:var(--shu-2)}
+
+  /* ---- 出口（3方向リード） ---- */
+  .exits{display:grid;gap:12px;margin-top:20px}
+  .exit{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;transition:border-color .15s,transform .12s}
+  .exit:hover{transform:translateY(-2px)}
+  .exit.re{border-left:4px solid var(--green)}
+  .exit.jikabu{border-left:4px solid var(--gold)}
+  .exit.general{border-left:4px solid var(--shu)}
+  .exit h3{font-size:16px;margin:0 0 5px}
+  .exit p{font-size:13px;color:var(--muted);margin:0 0 12px;line-height:1.7}
+  .exit .ex-cta{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:var(--green);text-decoration:none}
+  .exit.jikabu .ex-cta{color:var(--gold-2)}
+  .exit .ex-cta:hover{gap:11px}
+
+  /* ---- 相談フォーム ---- */
+  .formcard{margin-top:18px;background:linear-gradient(180deg,#2b5245,var(--green));border-radius:var(--radius);padding:26px 24px;color:#eef3ef;box-shadow:var(--shadow-card)}
+  .formcard h3{color:#fff;font-size:18px;margin:0 0 6px}
+  .formcard .small{font-size:12.5px;color:#cddbd3}
+  .formcard .field label{color:#dfeae4}
+  .formcard input,.formcard textarea{background:rgba(255,255,255,.97);border-color:transparent}
+  .formcard input:focus,.formcard textarea:focus{border-color:var(--gold)}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  .consent{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:#dfeae4;margin:6px 0 14px;cursor:pointer}
+  .consent input{accent-color:var(--gold);width:17px;height:17px;margin-top:2px;flex:0 0 auto}
+  #turnstile-holder{margin:6px 0 12px}
+  .formcard .thanks{display:none;text-align:center;padding:14px 0}
+  .formcard .thanks .chk{width:52px;height:52px;border-radius:50%;background:var(--gold-soft);color:var(--gold-2);
+    font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+  .formcard .thanks h3{color:#fff}
+
+  .center{text-align:center}
+  .redo{margin-top:18px}
+
+  /* ---- 方式解説 ---- */
+  #method{background:linear-gradient(180deg,var(--bg-2),var(--bg));border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:36px;padding:34px 0}
+  .formula{position:relative;background:var(--green);color:#eaf1ec;border-radius:var(--radius);padding:22px 24px;font-family:var(--num);font-size:16px;line-height:2;letter-spacing:.02em;margin:16px 0}
+  .formula .hl{color:var(--gold-hi);font-weight:600}
+  .formula .dim{color:#9fb6a9;font-size:13px}
+  .steps-ol{counter-reset:st;list-style:none;padding:0;margin:16px 0 0}
+  .steps-ol li{position:relative;padding:0 0 14px 44px;font-size:14px;line-height:1.75;color:var(--ink)}
+  .steps-ol li::before{counter-increment:st;content:counter(st);position:absolute;left:0;top:0;width:30px;height:30px;
+    border-radius:50%;background:var(--green);color:#fff;font-family:var(--serif-jp);font-size:14px;display:flex;align-items:center;justify-content:center}
+
+  /* ---- FAQ ---- */
+  #faq{padding:34px 0}
+  .faq details{border-bottom:1px solid var(--line)}
+  .faq summary{cursor:pointer;padding:16px 30px 16px 4px;font-family:var(--serif-jp);font-size:15px;color:var(--green);position:relative;list-style:none}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"＋";position:absolute;right:6px;top:15px;color:var(--gold-2);font-size:16px;transition:transform .2s}
+  .faq details[open] summary::after{content:"−"}
+  .faq .a{padding:0 4px 18px;font-size:13.5px;color:var(--ink);line-height:1.85}
+
+  /* ---- フッター ---- */
+  footer.site{position:relative;overflow:hidden;background:var(--green);color:#c9d6ce;padding:30px 0 26px;margin-top:36px;font-size:12px;line-height:1.85}
+  footer.site::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(rgba(34,70,60,.74),rgba(34,70,60,.86)), var(--ph-footer) center/cover no-repeat;opacity:1}
+  footer.site .wrap{position:relative;z-index:1}
+  footer.site a{color:#e6d2a0;text-decoration:none}
+  footer.site a:hover{text-decoration:underline}
+  .footlinks{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 12px;font-size:12.5px}
+  .foot-discl{color:#9fb6a9;margin:6px 0 0}
+
+  /* 全幅の写真帯（可視・大判） */
+  .photo-band{position:relative;height:clamp(190px,34vw,270px);margin:36px 0;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .photo-band img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.04)}
+  .photo-band::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(34,70,60,.72),rgba(34,70,60,.14) 62%,transparent)}
+  .photo-band .band-cap{position:absolute;left:0;top:0;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 26px;max-width:600px;z-index:1;color:#fff}
+  .photo-band .band-cap .e{font-family:var(--serif-en);font-size:11px;letter-spacing:.2em;color:var(--gold-hi);margin:0 0 7px}
+  .photo-band .band-cap .t{font-family:var(--serif-jp);font-size:clamp(18px,3.6vw,25px);margin:0;line-height:1.5;text-shadow:0 1px 10px rgba(0,0,0,.4)}
+  .photo-band .band-cap .d{font-size:12.5px;color:#dfeae4;margin:8px 0 0;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+  /* カード内サムネイル写真 */
+  .card-photo{width:100%;height:150px;object-fit:cover;display:block;border-radius:var(--radius-sm);margin-bottom:12px;filter:saturate(1.04)}
+
+  @media(max-width:760px){
+    .hero .wrap{grid-template-columns:1fr;gap:22px}
+    .herofig{max-width:320px;order:-1}
+    .photo-band .band-cap{max-width:none;background:linear-gradient(90deg,rgba(34,70,60,.6),rgba(34,70,60,.3))}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+    .seal .ink{animation:none;opacity:1;transform:scale(1) rotate(-6deg)}
+    .gauge .mk,.factor .bar i{transition:none}
+  }
+</style>
+</head>
+<body>
+<!-- ===== インラインSVG定義（外部画像なし＝セキュリティ標準） ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E6D2A0"/><stop offset=".5" stop-color="#C7A24E"/><stop offset="1" stop-color="#B0893A"/>
+    </linearGradient>
+    <!-- エンブレム：印章の二重円＋家族の脈（三世代を結ぶ線）＝お金のカルテ -->
+    <symbol id="emblem" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="47" fill="none" stroke="url(#g)" stroke-width="1.6"/>
+      <circle cx="50" cy="50" r="41" fill="none" stroke="url(#g)" stroke-width="0.7"/>
+      <circle cx="50" cy="7.6" r="2.4" fill="url(#g)"/>
+      <path d="M24,60 Q34,44 42,54 T58,50 T76,40" fill="none" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="24" cy="60" r="2.6" fill="url(#g)"/><circle cx="50" cy="51" r="2.6" fill="url(#g)"/><circle cx="76" cy="40" r="2.6" fill="url(#g)"/>
+    </symbol>
+    <!-- 落款（朱の封蝋・結果カルテの印） -->
+    <symbol id="seal" viewBox="0 0 66 66">
+      <g class="ink">
+        <circle cx="33" cy="33" r="30" fill="none" stroke="#A24B3C" stroke-width="2.4"/>
+        <circle cx="33" cy="33" r="25" fill="#A24B3C" opacity="0.09"/>
+        <text x="33" y="27" text-anchor="middle" font-family="'Yu Mincho',serif" font-size="15" fill="#A24B3C" font-weight="bold">相続</text>
+        <text x="33" y="45" text-anchor="middle" font-family="'Yu Mincho',serif" font-size="15" fill="#A24B3C" font-weight="bold">診断</text>
+      </g>
+    </symbol>
+    <symbol id="ic-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10.5 19v-5h3v5"/></g></symbol>
+    <symbol id="ic-gift" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 13h16M12 9v11"/><path d="M12 9S10.5 4 8 5s0 4 4 4M12 9s1.5-5 4-4 0 4-4 4"/></g></symbol>
+    <symbol id="ic-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4M4 20h16"/><path d="M7 16l4-5 3 3 5-7"/></g></symbol>
+    <symbol id="ornMark" viewBox="0 0 24 24"><path d="M12 3l2.2 6.6H21l-5.4 4 2.1 6.4L12 16.2 6.3 20l2.1-6.4L3 9.6h6.8z" fill="none" stroke="currentColor" stroke-width="1.2"/></symbol>
+  </defs>
+</svg>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="/">
+      <svg class="emblem" aria-hidden="true"><use href="#emblem"/></svg>
+      <span><span class="mark" id="brandMark">お金のカルテ</span><br><span class="sub" id="brandSub">相続税かんたん診断</span></span>
+    </a>
+    <a class="navlink" href="/jikabuka/">自社株評価診断 →</a>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">くらしと経済の、お金の健康診断</p>
+        <h1><span class="u">家族に残るお金</span>を、<br><span class="nb">数字で見てから。</span></h1>
+        <p class="lead">配偶者・子の数と、財産のおおよそを入れるだけ。相続税の概算と、あなたの家庭の備えを測る<strong>「相続準備指数」</strong>を、5分・匿名・登録不要でお出しします。</p>
+        <p class="lead"><span class="sub-note">※ 財産の入力値はブラウザ内だけで計算し、外部に送信しません。すべて概算であり、正式な判断は税理士へ。</span></p>
+        <div class="answer">
+          <span class="k">DIRECT ANSWER</span>
+          <p id="directAnswer">—</p>
+        </div>
+      </div>
+      <div class="herofig">
+        <!-- ヒーロー主役写真：残したいのは、お金だけじゃない（顔なし・ローカル同梱） -->
+        <div class="photo-frame">
+          <img src="/assets/photos/couple-happy.jpg" alt="手を取り合い微笑む70代のご夫婦" width="330" height="396">
+          <span class="cap">残したいのは、お金だけじゃない。</span>
+          <svg class="seal-badge" viewBox="0 0 66 66" aria-hidden="true"><use href="#seal"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全幅の写真帯（受け継ぐ家） -->
+  <div class="photo-band">
+    <img src="/assets/photos/washitsu.jpg" alt="" aria-hidden="true">
+    <div class="band-cap">
+      <p class="e">FOR YOUR FAMILY</p>
+      <p class="t">受け継ぐ家に、争いを残さない。</p>
+      <p class="d">まず全体像を「概算の目安」で。5分・匿名・登録不要でお出しします。</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <!-- ===== 診断ウィザード ===== -->
+      <div class="card card-pad" id="wizard">
+        <div class="stepbar" id="stepbar"></div>
+
+        <!-- STEP 0：法定相続人 -->
+        <div class="step" data-step="0">
+          <p class="steplabel">STEP 1 / 4 ・ 相続人</p>
+          <h3>だれが相続しますか</h3>
+          <p class="hint">基礎控除（3,000万円＋600万円×人数）は、相続人の人数で決まります。</p>
+          <div class="field">
+            <label>配偶者（夫または妻）は</label>
+            <div class="opts two" id="spouseOpts">
+              <label class="opt"><input type="radio" name="spouse" value="yes"><span class="t">いる</span></label>
+              <label class="opt"><input type="radio" name="spouse" value="no"><span class="t">いない</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label for="inKids">子どもの人数（実子・養子・代襲相続の孫を含む）</label>
+            <div class="fh">すでに亡くなったお子さまがいる場合はお孫さん（代襲）を含めます。いない場合は 0。</div>
+            <div class="money"><input id="inKids" inputmode="numeric" placeholder="例：2"><span class="unit">人</span></div>
+          </div>
+          <div class="field" id="otherHeirWrap" hidden>
+            <label>お子さまがいない場合、次に相続する方は</label>
+            <div class="opts" id="otherOpts">
+              <label class="opt"><input type="radio" name="other" value="parents1"><span class="t">親（ご存命 1人）</span></label>
+              <label class="opt"><input type="radio" name="other" value="parents2"><span class="t">親（ご存命 2人）</span></label>
+              <label class="opt"><input type="radio" name="other" value="siblings"><span class="t">兄弟姉妹</span></label>
+              <label class="opt"><input type="radio" name="other" value="none"><span class="t">配偶者のみ（他にいない）</span></label>
+            </div>
+            <div class="field" id="sibWrap" hidden style="margin-top:12px">
+              <label for="inSib">兄弟姉妹の人数</label>
+              <div class="money"><input id="inSib" inputmode="numeric" placeholder="例：2"><span class="unit">人</span></div>
+            </div>
+          </div>
+          <div class="err" id="err0"></div>
+        </div>
+
+        <!-- STEP 1：財産の概算 -->
+        <div class="step" data-step="1" hidden>
+          <p class="steplabel">STEP 2 / 4 ・ 財産</p>
+          <h3>財産のおおよそ</h3>
+          <p class="hint">正確でなくて大丈夫です。おおよその金額を万円で。分からない欄は空欄（0）で構いません。</p>
+          <div class="grid2">
+            <div class="field"><label for="inRe">不動産（自宅・土地・建物）</label><div class="fh">おおよその時価・評価額。</div><div class="money"><input id="inRe" inputmode="numeric" placeholder="例：4000"><span class="unit">万円</span></div></div>
+            <div class="field"><label for="inCash">現預金</label><div class="money"><input id="inCash" inputmode="numeric" placeholder="例：2000"><span class="unit">万円</span></div></div>
+            <div class="field"><label for="inSec">有価証券（上場株・投信・債券）</label><div class="money"><input id="inSec" inputmode="numeric" placeholder="例：1000"><span class="unit">万円</span></div></div>
+            <div class="field"><label for="inIns">生命保険（死亡保険金）</label><div class="fh">500万円×相続人の数まで非課税。</div><div class="money"><input id="inIns" inputmode="numeric" placeholder="例：1500"><span class="unit">万円</span></div></div>
+            <div class="field"><label for="inOther">その他（車・貴金属・貸付金など）</label><div class="money"><input id="inOther" inputmode="numeric" placeholder="例：300"><span class="unit">万円</span></div></div>
+          </div>
+          <label class="checkline">
+            <input type="checkbox" id="inStock">
+            <span class="t"><b>非上場株式（自社株）を持っている</b>　※金額は本診断に含めません。評価方法が特殊なため、結果ページで専用診断をご案内します。</span>
+          </label>
+          <div class="err" id="err1"></div>
+        </div>
+
+        <!-- STEP 2：生前対策の着手 -->
+        <div class="step" data-step="2" hidden>
+          <p class="steplabel">STEP 3 / 4 ・ 備え</p>
+          <h3>いまの備えの状況</h3>
+          <p class="hint">「相続準備指数」を出すための質問です。正直な現状で。</p>
+          <div class="field">
+            <label>遺言書は</label>
+            <div class="opts" id="willOpts">
+              <label class="opt"><input type="radio" name="will" value="yes"><span class="t">ある（作成済み）</span></label>
+              <label class="opt"><input type="radio" name="will" value="plan"><span class="t">検討中・準備している</span></label>
+              <label class="opt"><input type="radio" name="will" value="no"><span class="t">ない</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>家族での話し合い（相続の希望の共有）は</label>
+            <div class="opts two" id="talkOpts">
+              <label class="opt"><input type="radio" name="talk" value="yes"><span class="t">している</span></label>
+              <label class="opt"><input type="radio" name="talk" value="no"><span class="t">これから</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>生前贈与は</label>
+            <div class="opts two" id="giftOpts">
+              <label class="opt"><input type="radio" name="gift" value="yes"><span class="t">実施している</span></label>
+              <label class="opt"><input type="radio" name="gift" value="no"><span class="t">していない</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label>納税資金（相続税を払う現金）の準備は</label>
+            <div class="opts" id="fundOpts">
+              <label class="opt"><input type="radio" name="fund" value="ready"><span class="t">できている</span></label>
+              <label class="opt"><input type="radio" name="fund" value="part"><span class="t">一部できている</span></label>
+              <label class="opt"><input type="radio" name="fund" value="no"><span class="t">まだこれから</span></label>
+            </div>
+          </div>
+          <div class="err" id="err2"></div>
+        </div>
+
+        <!-- STEP 3：確認 -->
+        <div class="step" data-step="3" hidden>
+          <p class="steplabel">STEP 4 / 4 ・ 確認</p>
+          <h3>この内容で概算します</h3>
+          <p class="hint">下記の前提で相続税の概算と相続準備指数を算出します。</p>
+          <div class="notice" id="confirmNote"></div>
+          <div class="err" id="err3"></div>
+        </div>
+
+        <div class="nav">
+          <button class="btn ghost" id="btnBack" type="button" style="visibility:hidden">戻る</button>
+          <button class="btn primary" id="btnNext" type="button" disabled>次へ</button>
+        </div>
+      </div>
+
+      <!-- ===== 結果：家族へのカルテ ===== -->
+      <div class="resultwrap" id="resultwrap">
+        <div class="karte">
+          <div class="karte-head">
+            <div>
+              <p class="karte-title">家族へのカルテ</p>
+              <p style="font-size:12px;color:var(--muted);margin:2px 0 0">相続税・概算の診断書</p>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <div class="karte-meta">お金のカルテ<br><span id="issueDate">—</span></div>
+              <svg class="seal" aria-label="診断印"><use href="#seal"/></svg>
+            </div>
+          </div>
+
+          <div class="karte-amt">
+            <p class="cap">相続税の概算（家族全体・配偶者の税額軽減後）</p>
+            <div class="big" id="totalVal">—</div>
+            <p class="before" id="beforeVal"></p>
+            <p class="sub" id="taxableNote"></p>
+          </div>
+
+          <!-- 相続準備指数 -->
+          <div class="indexcard">
+            <div class="ih">
+              <p class="iname">相続準備指数 <small>PREPAREDNESS INDEX</small></p>
+              <p class="ival"><span id="idxVal">—</span><em> / 100</em></p>
+            </div>
+            <div class="gauge"><div class="mk" id="gaugeMk" style="left:0"></div></div>
+            <div class="gauge-zones"><span>0 これから</span><span>40 途上</span><span>70 整いつつある</span><span>100</span></div>
+            <div style="margin-top:10px"><span class="zone-badge" id="zoneBadge">—</span></div>
+            <p class="zone-note" id="zoneNote"></p>
+            <div class="factors">
+              <div class="factor"><p class="fl">納税資金カバー率<br>金融資産÷概算税額</p><div class="bar"><i id="barR1"></i></div><div class="fv" id="fvR1">—</div></div>
+              <div class="factor"><p class="fl">分割準備度<br>遺言・家族の話し合い</p><div class="bar"><i id="barR2"></i></div><div class="fv" id="fvR2">—</div></div>
+              <div class="factor"><p class="fl">生前対策着手度<br>贈与・納税資金準備</p><div class="bar"><i id="barR3"></i></div><div class="fv" id="fvR3">—</div></div>
+            </div>
+            <a class="idxlink" href="/sozoku/index-definition/">相続準備指数の算出式（完全公開）を見る →</a>
+          </div>
+
+          <div class="grid2 stats">
+            <div class="stat"><div class="l">法定相続人の数</div><div class="v" id="heirVal">—</div></div>
+            <div class="stat"><div class="l">基礎控除</div><div class="v" id="kisoVal">—</div></div>
+          </div>
+
+          <div class="notice" id="smallLandNote" style="margin-top:14px;display:none"></div>
+
+          <details class="calc">
+            <summary>計算の内訳（速算表・簡易版）を見る</summary>
+            <div class="inner">
+              <table class="breakdown" id="bdTable"></table>
+              <p class="bd-note" id="bdFormula"></p>
+            </div>
+          </details>
+
+          <div class="disclaimer-box" id="resultDisclaimer"></div>
+        </div>
+
+        <!-- 3方向リード出口 -->
+        <div class="exits" id="exits"></div>
+
+        <!-- 相談フォーム -->
+        <div class="formcard" id="formCard">
+          <h3 id="formTitle">概算結果を添えて、無料で相談する</h3>
+          <p class="small" id="formBody" style="margin:0 0 16px"></p>
+          <form id="leadForm" autocomplete="on" novalidate>
+            <div class="hp" aria-hidden="true"><label>この欄は空のまま<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+            <div class="field"><label for="fName" id="lName">お名前</label><input type="text" id="fName" name="name" maxlength="60" required></div>
+            <div class="grid2">
+              <div class="field"><label for="fEmail" id="lEmail">メールアドレス</label><input type="email" id="fEmail" name="email" maxlength="120" required></div>
+              <div class="field"><label for="fTel" id="lTel">電話番号（任意）</label><input type="tel" id="fTel" name="tel" maxlength="30"></div>
+            </div>
+            <div class="field"><label for="fMsg" id="lMsg">ご相談内容（任意）</label><textarea id="fMsg" name="message" maxlength="1000"></textarea></div>
+            <div id="turnstile-holder"></div>
+            <label class="consent"><input type="checkbox" id="fConsent" required><span id="consentLabel"></span></label>
+            <input type="hidden" name="company" id="hCompany">
+            <input type="hidden" name="formName" id="hFormName" value="相続診断｜生前贈与・全般相談">
+            <input type="hidden" name="summary" id="hSummary">
+            <input type="hidden" name="estTax" id="hTax">
+            <input type="hidden" name="estBefore" id="hBefore">
+            <input type="hidden" name="prepIndex" id="hIndex">
+            <input type="hidden" name="heirs" id="hHeirs">
+            <input type="hidden" name="totalAssets" id="hAssets">
+            <input type="hidden" name="realestateShare" id="hReShare">
+            <input type="hidden" name="hasPrivateStock" id="hStock">
+            <input type="hidden" name="pageHost" id="hHost">
+            <input type="hidden" name="ua" id="hUa">
+            <button class="btn gold" type="submit" id="btnSubmit" style="width:100%">送信する</button>
+            <div class="err center" id="formErr" style="color:#ffd7cd"></div>
+          </form>
+          <div class="thanks" id="thanks">
+            <div class="chk">✓</div>
+            <h3 id="thanksTitle"></h3>
+            <p class="small" id="thanksBody"></p>
+          </div>
+        </div>
+
+        <p class="center redo">
+          <button class="btn ghost" id="btnRedo" type="button">もう一度、別の数字で試算する</button>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="orn"><span class="ln"></span><svg aria-hidden="true"><use href="#ornMark"/></svg><span class="ln"></span></div></div>
+
+  <!-- ===== 姉妹診断への導線 ===== -->
+  <section>
+    <div class="wrap">
+      <div class="exits">
+        <a class="exit" href="/zoyo/" style="text-decoration:none;color:inherit;border-left:4px solid var(--green-2)">
+          <img class="card-photo" src="/assets/photos/calm-lake.jpg" alt="" aria-hidden="true">
+          <h3>生前贈与診断 →</h3>
+          <p id="crossZoyo">渡す前に、相続全体を測る。暦年贈与と相続時精算課税をどう使い分けるか。</p>
+        </a>
+        <a class="exit" href="/fukuri/" style="text-decoration:none;color:inherit;border-left:4px solid var(--gold)">
+          <img class="card-photo" src="/assets/photos/forest-light.jpg" alt="" aria-hidden="true">
+          <h3>複利体験シミュレーター →</h3>
+          <p id="crossFukuri">孫・子のために。毎年の贈与が複利でどこまで育つかを体験する。</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 全幅の写真帯（庭の小径＝受け継ぐ道） -->
+  <div class="photo-band">
+    <img src="/assets/photos/garden-path.jpg" alt="" aria-hidden="true">
+    <div class="band-cap">
+      <p class="e">HOW IT WORKS</p>
+      <p class="t">数字のしくみを、やさしく。</p>
+    </div>
+  </div>
+
+  <!-- ===== 相続税のしくみ（GEO本文・HowTo と一致） ===== -->
+  <section id="method">
+    <div class="wrap">
+      <h2>相続税のしくみ（このツールの計算）</h2>
+      <p class="sec-sub">国税庁の基礎控除・速算表・配偶者の税額軽減にもとづく概算</p>
+      <p style="font-size:14.5px">相続税は、財産の合計から<strong>基礎控除</strong>を引いた「課税遺産総額」を、いったん法定相続分で分けたものとして<strong>速算表</strong>の累進税率をかけ、全員分を合計して求めます。配偶者には大きな軽減があります。</p>
+      <div class="formula">
+        <svg style="position:absolute;top:14px;right:16px;width:52px;height:52px;opacity:.16" aria-hidden="true"><use href="#emblem"/></svg>
+        基礎控除 ＝ <span class="hl">3,000万円</span> ＋ <span class="hl">600万円</span> × 法定相続人の数<br>
+        課税遺産総額 ＝ 財産合計 − 基礎控除 −（生命保険 <span class="hl">500万円×人数</span> 非課税）<br>
+        相続税の総額 ＝ Σ〔 各人の法定相続分の金額 × <span class="hl">税率</span> − 控除額 〕<br>
+        <span class="dim">税率は10〜55％の8段階（速算表）。配偶者は 1億6,000万円 か法定相続分まで非課税。</span>
+      </div>
+      <h3 style="font-size:16px;margin:22px 0 4px" id="howToTitle">相続税の概算を出す手順</h3>
+      <ol class="steps-ol" id="howToList"></ol>
+      <div class="notice" style="margin-top:20px" id="methodDisclaimer"></div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="orn"><span class="ln"></span><svg aria-hidden="true"><use href="#ornMark"/></svg><span class="ln"></span></div></div>
+
+  <!-- ===== FAQ（可視・FAQPage schema と一致） ===== -->
+  <section id="faq">
+    <div class="wrap">
+      <h2>よくある質問</h2>
+      <p class="sec-sub">相続税・相続対策の基本</p>
+      <div class="faq" id="faqList"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="footlinks">
+      <a href="/">お金のカルテ トップ</a>
+      <a href="/sozoku/">相続税かんたん診断</a>
+      <a href="/sozoku/index-definition/">相続準備指数の定義</a>
+      <a href="/zoyo/">生前贈与診断</a>
+      <a href="/fukuri/">複利シミュレーター</a>
+      <a href="/jikabuka/">自社株評価診断</a>
+    </div>
+    <p id="footConsult" style="margin:0 0 8px"></p>
+    <p class="foot-discl" id="footDisclaimer"></p>
+    <p class="foot-discl" id="footTaxlaw"></p>
+    <p class="foot-discl">© <span id="year"></span> リブメーカーズ株式会社（LIVmakers Co., Ltd.）／ お金のカルテ ／ 本サイトは相続の一般的な情報提供および概算シミュレーションであり、税務・法務・投資に関する助言・代理を行うものではありません。</p>
+  </div>
+</footer>
+
+<script>
+/* =========================================================================
+   お金のカルテ — 相続税かんたん診断（母艦）
+   - 計算は全てブラウザ内で完結（外部API・生成AIを呼ばない＝継続課金ゼロ）
+   - 税率・控除額の出典と確認日は design/tax-sources.md / config.json / 本コメント
+   ---------------------------------------------------------------------------
+   【出典】国税庁 No.4152(基礎控除・計算)/No.4155(速算表・令和7年4月1日現在法令等)/
+           No.4114(生命保険非課税)/No.4158(配偶者の税額軽減)/No.4124(小規模宅地)。2026-07-07確認。
+   【計算（簡易版）】
+     基礎控除 = 3,000万 + 600万 × 法定相続人の数
+     生命保険非課税 = 500万 × 法定相続人の数
+     課税価格 = 不動産 + 現預金 + 有価証券 + max(0, 保険 - 非課税枠) + その他 （非上場株は含めない）
+     課税遺産総額 = max(0, 課税価格 - 基礎控除)
+     相続税の総額 = Σ 各法定相続人の[ 課税遺産総額×法定相続分 に速算表適用 ]
+     配偶者軽減後 = 相続税の総額 × (1 - 配偶者の法定相続分)  ※配偶者は法定相続分取得と仮定（1.6億/法定相続分まで全額軽減）
+   【簡略化＝概算の理由（免責）】土地建物の個別評価・小規模宅地等・二次相続・各種税額控除は未反映。
+   ========================================================================= */
+
+var CONFIG = null;
+var STATE = { spouse:null, kids:null, other:null, sib:null,
+  re:0, cash:0, sec:0, ins:0, other_a:0, stock:false,
+  will:null, talk:null, gift:null, fund:null };
+var STEP = 0, MAX_STEP = 3, lastResult = null;
+
+var yen = function(n){ return Math.round(n).toLocaleString('ja-JP'); };
+var manToYen = function(m){ return m * 10000; };
+
+/* 万円→「〇億〇万円」表記 */
+function jpMoney(y){
+  y = Math.round(y);
+  if (y <= 0) return '0円';
+  var oku = Math.floor(y/100000000), man = Math.floor((y%100000000)/10000), rest = y%10000, s='';
+  if (oku) s += oku + '億';
+  if (man) s += yen(man) + '万';
+  if (!oku && !man) s += yen(rest);
+  else if (rest) s += rest;
+  return s + '円';
+}
+function num(v){
+  if (v==null) return null;
+  var s = String(v).replace(/[，,\s]/g,'').replace(/[０-９．－]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);});
+  if (s==='' || s==='-') return null;
+  var n = Number(s); return isFinite(n) ? n : null;
+}
+function m(id){ return num(document.getElementById(id).value) || 0; }
+
+/* ---------- 法定相続人と法定相続分 ---------- */
+function heirsInfo(){
+  var spouse = STATE.spouse === 'yes';
+  var kids = STATE.kids || 0;
+  var shares = []; // {who, share}
+  var n = 0;
+  if (kids > 0){
+    if (spouse){ shares.push({who:'配偶者', share:0.5, spouse:true}); for(var i=0;i<kids;i++) shares.push({who:'子', share:0.5/kids}); n = 1+kids; }
+    else { for(var j=0;j<kids;j++) shares.push({who:'子', share:1/kids}); n = kids; }
+  } else {
+    var o = STATE.other;
+    if (o === 'parents1' || o === 'parents2'){
+      var p = (o==='parents2')?2:1;
+      if (spouse){ shares.push({who:'配偶者',share:2/3,spouse:true}); for(var k=0;k<p;k++) shares.push({who:'親',share:(1/3)/p}); n=1+p; }
+      else { for(var k2=0;k2<p;k2++) shares.push({who:'親',share:1/p}); n=p; }
+    } else if (o === 'siblings'){
+      var s = STATE.sib || 1;
+      if (spouse){ shares.push({who:'配偶者',share:3/4,spouse:true}); for(var q=0;q<s;q++) shares.push({who:'兄弟姉妹',share:(1/4)/s}); n=1+s; }
+      else { for(var q2=0;q2<s;q2++) shares.push({who:'兄弟姉妹',share:1/s}); n=s; }
+    } else { // 配偶者のみ
+      if (spouse){ shares.push({who:'配偶者',share:1,spouse:true}); n=1; }
+    }
+  }
+  return { n:n, shares:shares, spouse:spouse, count:shares.length };
+}
+
+/* ---------- 速算表 ---------- */
+function taxOn(yenAmt){
+  if (yenAmt <= 0) return 0;
+  var t = CONFIG.constants.taxTable;
+  for (var i=0;i<t.length;i++){
+    if (t[i].upTo === null || yenAmt <= t[i].upTo){ return yenAmt * t[i].rate - t[i].deduct; }
+  }
+  return 0;
+}
+
+/* ---------- 本計算 ---------- */
+function calc(){
+  var h = heirsInfo();
+  var c = CONFIG.constants;
+  var kiso = c.kisoBase + c.kisoPerHeir * h.n;
+  var insExempt = c.lifeInsPerHeir * h.n;
+
+  var reY = manToYen(STATE.re), cashY = manToYen(STATE.cash), secY = manToYen(STATE.sec),
+      insY = manToYen(STATE.ins), otherY = manToYen(STATE.other_a);
+  var insTaxable = Math.max(0, insY - insExempt);
+  var taxable = reY + cashY + secY + insTaxable + otherY;     // 課税価格（非上場株は不算入）
+  var netEstate = Math.max(0, taxable - kiso);                // 課税遺産総額
+
+  // 相続税の総額（法定相続分で按分）
+  var total = 0;
+  h.shares.forEach(function(s){ total += taxOn(netEstate * s.share); });
+  total = Math.max(0, total);
+
+  // 配偶者軽減（配偶者は法定相続分取得＝全額軽減と仮定）
+  var spouseShare = 0; h.shares.forEach(function(s){ if(s.spouse) spouseShare += s.share; });
+  var afterSpouse = total * (1 - spouseShare);
+  if (afterSpouse < 0) afterSpouse = 0;
+
+  // 金融資産（納税原資）
+  var liquid = cashY + secY + insY;
+
+  // 相続準備指数
+  var R1 = afterSpouse > 0 ? Math.min(1, liquid / afterSpouse) : 1;
+  var willScore = {yes:1.0, plan:0.55, no:0.25}[STATE.will];
+  var talkScore = {yes:1.0, no:0.4}[STATE.talk];
+  var R2 = (h.count <= 1) ? 1 : (0.6*willScore + 0.4*talkScore);
+  var giftScore = {yes:1.0, no:0.4}[STATE.gift];
+  var fundScore = {ready:1.0, part:0.6, no:0.3}[STATE.fund];
+  var R3 = 0.5*giftScore + 0.5*fundScore;
+  // 重み付き幾何平均（掛け算＝どれか一つでも欠けると全体が下がる）
+  var idx = Math.round(100 * Math.pow(Math.max(R1,0.001),0.45) * Math.pow(R2,0.30) * Math.pow(R3,0.25));
+  idx = Math.max(0, Math.min(100, idx));
+
+  var reShare = taxable > 0 ? reY / (reY+cashY+secY+insY+otherY || 1) : 0;
+
+  return { h:h, kiso:kiso, insExempt:insExempt, taxable:taxable, netEstate:netEstate,
+    total:total, afterSpouse:afterSpouse, spouseShare:spouseShare, liquid:liquid,
+    R1:R1, R2:R2, R3:R3, idx:idx, reShare:reShare };
+}
+
+/* ---------- ステップ描画 ---------- */
+function renderStepbar(){
+  var bar = document.getElementById('stepbar'); bar.innerHTML='';
+  for (var i=0;i<=MAX_STEP;i++){ var seg=document.createElement('div'); seg.className='seg'+(i<STEP?' done':'')+(i===STEP?' on':''); bar.appendChild(seg); }
+}
+function showStep(n, noScroll){
+  STEP=n; renderStepbar();
+  var steps = document.querySelectorAll('.step');
+  for (var i=0;i<steps.length;i++){ steps[i].hidden = (Number(steps[i].getAttribute('data-step'))!==n); }
+  document.getElementById('btnBack').style.visibility = n===0 ? 'hidden' : 'visible';
+  var next = document.getElementById('btnNext');
+  next.textContent = (n===MAX_STEP) ? '概算する →' : '次へ';
+  if (n===MAX_STEP) renderConfirm();
+  validateStep();
+  if (!noScroll) document.getElementById('wizard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function renderConfirm(){
+  var h = heirsInfo();
+  var assets = STATE.re+STATE.cash+STATE.sec+STATE.ins+STATE.other_a;
+  var t = CONFIG.disclaimer.beforeStart +
+    '<br><br><strong>法定相続人：</strong>'+ h.n +'人'+ (STATE.spouse==='yes'?'（配偶者あり）':'（配偶者なし）') +
+    '　<strong>財産合計：</strong>約'+ yen(assets) +'万円'+ (STATE.stock?'　<strong style="color:var(--shu-2)">非上場株あり</strong>':'');
+  document.getElementById('confirmNote').innerHTML = t;
+}
+
+/* ---------- バリデーション ---------- */
+function validateStep(){
+  var ok=true, msg='';
+  if (STEP===0){
+    STATE.kids = num(document.getElementById('inKids').value);
+    STATE.sib  = num(document.getElementById('inSib').value);
+    var kids = STATE.kids;
+    document.getElementById('otherHeirWrap').hidden = !(kids !== null && kids <= 0);
+    if (!STATE.spouse){ ok=false; msg='配偶者の有無を選んでください。'; }
+    else if (kids===null || kids<0){ ok=false; msg='子どもの人数を入力してください（いなければ 0）。'; }
+    else if (kids===0){
+      if (!STATE.other){ ok=false; msg='お子さまがいない場合の相続人を選んでください。'; }
+      else if (STATE.other==='siblings' && (!STATE.sib || STATE.sib<1)){ ok=false; msg='兄弟姉妹の人数を入力してください。'; }
+      else if (STATE.other==='none' && STATE.spouse==='no'){ ok=false; msg='相続人がいない構成です。相続人の情報をご確認ください。'; }
+    }
+  } else if (STEP===1){
+    STATE.re=m('inRe'); STATE.cash=m('inCash'); STATE.sec=m('inSec'); STATE.ins=m('inIns'); STATE.other_a=m('inOther');
+    STATE.stock = document.getElementById('inStock').checked;
+    if ((STATE.re+STATE.cash+STATE.sec+STATE.ins+STATE.other_a) <= 0){ ok=false; msg='財産のいずれかに、おおよその金額を入力してください。'; }
+  } else if (STEP===2){
+    if (!STATE.will){ ok=false; msg='遺言書の状況を選んでください。'; }
+    else if (!STATE.talk){ ok=false; msg='家族での話し合いの状況を選んでください。'; }
+    else if (!STATE.gift){ ok=false; msg='生前贈与の状況を選んでください。'; }
+    else if (!STATE.fund){ ok=false; msg='納税資金の準備状況を選んでください。'; }
+  }
+  var errEl = document.getElementById('err'+STEP);
+  if (errEl) errEl.textContent = ok ? '' : msg;
+  document.getElementById('btnNext').disabled = !ok;
+  return ok;
+}
+
+/* ---------- 結果描画（家族へのカルテ） ---------- */
+function renderResult(){
+  var r = calc(); lastResult = r; var c = CONFIG;
+  document.getElementById('wizard').style.display='none';
+  var rw = document.getElementById('resultwrap'); rw.style.display='block';
+
+  var d = new Date();
+  document.getElementById('issueDate').textContent = d.getFullYear()+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+('0'+d.getDate()).slice(-2);
+
+  document.getElementById('totalVal').textContent = jpMoney(r.afterSpouse);
+  if (r.spouseShare > 0 && r.total > 0){
+    document.getElementById('beforeVal').textContent = '（配偶者の税額軽減 前の相続税の総額：約 '+jpMoney(r.total)+'）';
+  } else { document.getElementById('beforeVal').textContent=''; }
+  if (r.afterSpouse <= 0){
+    document.getElementById('taxableNote').textContent = r.netEstate<=0 ? '財産が基礎控除以下のため、相続税はかからない見込みです。' : '配偶者の税額軽減により、今回の相続税はかからない見込みです（二次相続に注意）。';
+  } else {
+    document.getElementById('taxableNote').textContent = '課税遺産総額 約'+jpMoney(r.netEstate)+' に対する概算です。';
+  }
+
+  // 指数
+  document.getElementById('idxVal').textContent = r.idx;
+  var zone = c.index.zones.filter(function(z){ return r.idx>=z.min && r.idx<=z.max; })[0] || c.index.zones[0];
+  document.getElementById('zoneBadge').textContent = zone.label;
+  document.getElementById('zoneNote').textContent = zone.note;
+  setTimeout(function(){
+    document.getElementById('gaugeMk').style.left = r.idx+'%';
+    document.getElementById('barR1').style.width = Math.round(r.R1*100)+'%';
+    document.getElementById('barR2').style.width = Math.round(r.R2*100)+'%';
+    document.getElementById('barR3').style.width = Math.round(r.R3*100)+'%';
+  }, 60);
+  document.getElementById('fvR1').textContent = Math.round(r.R1*100)+'%';
+  document.getElementById('fvR2').textContent = Math.round(r.R2*100)+'%';
+  document.getElementById('fvR3').textContent = Math.round(r.R3*100)+'%';
+
+  document.getElementById('heirVal').textContent = r.h.n + '人';
+  document.getElementById('kisoVal').textContent = jpMoney(r.kiso);
+
+  // 小規模宅地フラグ
+  var sl = document.getElementById('smallLandNote');
+  if (STATE.re > 0){ sl.style.display='block'; sl.innerHTML = '<strong>参考：</strong>'+c.constants.smallLandHint; } else { sl.style.display='none'; }
+
+  // 内訳
+  var rows = [['相続人','法定相続分','取得金額(仮)','各人の税額']];
+  r.h.shares.forEach(function(s){
+    var amt = r.netEstate*s.share;
+    rows.push([ s.who+(s.spouse?'(軽減対象)':''), (s.share*100).toFixed(1)+'%', jpMoney(amt), jpMoney(taxOn(amt)) ]);
+  });
+  var html='';
+  for (var i=0;i<rows.length;i++){ var tag=i===0?'th':'td'; html+='<tr>'; for(var j=0;j<rows[i].length;j++){ html+='<'+tag+'>'+rows[i][j]+'</'+tag+'>'; } html+='</tr>'; }
+  document.getElementById('bdTable').innerHTML = html;
+  document.getElementById('bdFormula').innerHTML =
+    '財産合計 約'+yen(STATE.re+STATE.cash+STATE.sec+STATE.ins+STATE.other_a)+'万円'+
+    (r.insExempt>0?'（生命保険 '+jpMoney(r.insExempt)+'まで非課税）':'')+
+    ' − 基礎控除 '+jpMoney(r.kiso)+' ＝ 課税遺産総額 約'+jpMoney(r.netEstate)+'。'+
+    ' 法定相続分で按分し速算表を適用 → 相続税の総額 約'+jpMoney(r.total)+'。'+
+    (r.spouseShare>0?' 配偶者の税額軽減（法定相続分'+(r.spouseShare*100).toFixed(0)+'％取得と仮定）後 → 約'+jpMoney(r.afterSpouse)+'。':'');
+
+  document.getElementById('resultDisclaimer').innerHTML = '<strong>これは概算の目安です。</strong> ' + c.disclaimer.onResult + ' ' + c.disclaimer.method;
+
+  // 出口カード（文脈で出し分け）
+  renderExits(r);
+
+  // hidden（送信時にだけ営業へ渡る）
+  document.getElementById('hTax').value = jpMoney(r.afterSpouse);
+  document.getElementById('hBefore').value = jpMoney(r.total);
+  document.getElementById('hIndex').value = r.idx + '（' + zone.label + '）';
+  document.getElementById('hHeirs').value = r.h.n + '人' + (STATE.spouse==='yes'?'/配偶者あり':'/配偶者なし');
+  document.getElementById('hAssets').value = yen(STATE.re+STATE.cash+STATE.sec+STATE.ins+STATE.other_a) + '万円';
+  document.getElementById('hReShare').value = Math.round(r.reShare*100) + '%';
+  document.getElementById('hStock').value = STATE.stock ? 'あり' : 'なし';
+  document.getElementById('hSummary').value =
+    '概算相続税 '+jpMoney(r.afterSpouse)+'（軽減前'+jpMoney(r.total)+'）／相続準備指数 '+r.idx+'（'+zone.label+'）／相続人'+r.h.n+'人／財産約'+yen(STATE.re+STATE.cash+STATE.sec+STATE.ins+STATE.other_a)+'万・不動産比'+Math.round(r.reShare*100)+'%'+(STATE.stock?'／非上場株あり':'');
+
+  rw.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ---------- 3方向リード出口 ---------- */
+function renderExits(r){
+  var ex = CONFIG.exits, box = document.getElementById('exits'); box.innerHTML='';
+  // ① 不動産が過半
+  if (r.reShare > 0.5){
+    box.appendChild(exitCard('re', ex.realestate.title, ex.realestate.body, null, ex.realestate.ctaLabel, ex.realestate.formName));
+  }
+  // ② 非上場株あり → /jikabu/ 還流
+  if (STATE.stock){
+    box.appendChild(exitCard('jikabu', ex.jikabu.title, ex.jikabu.body, ex.jikabu.href, ex.jikabu.ctaLabel, null));
+  }
+  // ③ 全般（常時）
+  box.appendChild(exitCard('general', ex.general.title, ex.general.body, null, ex.general.ctaLabel, ex.general.formName));
+}
+function exitCard(kind, title, body, href, cta, formName){
+  var el = document.createElement(href ? 'a' : 'div');
+  el.className = 'exit ' + kind;
+  if (href){ el.href = href; el.style.textDecoration='none'; el.style.color='inherit'; }
+  el.innerHTML = '<h3>'+title+'</h3><p>'+body+'</p>' +
+    (href ? '<span class="ex-cta">'+cta+'</span>' : '<a class="ex-cta" href="#formCard" data-form="'+ (formName||'') +'">'+cta+' ↓</a>');
+  if (!href){
+    el.querySelector('.ex-cta').addEventListener('click', function(e){
+      e.preventDefault();
+      if (formName) document.getElementById('hFormName').value = formName;
+      document.getElementById('formTitle').textContent = CONFIG.form.title;
+      document.getElementById('formCard').scrollIntoView({behavior:'smooth', block:'center'});
+      document.getElementById('fName').focus({preventScroll:true});
+    });
+  }
+  return el;
+}
+
+/* ---------- 静的テキスト差し込み ---------- */
+function hydrateStatic(){
+  var c = CONFIG;
+  document.getElementById('brandMark').textContent = c.brand.siteName;
+  document.getElementById('brandSub').textContent = c.brand.siteNameSub;
+  document.getElementById('directAnswer').textContent = c.geo.directAnswer;
+  document.getElementById('crossZoyo').textContent = c.cross.zoyo.note;
+  document.getElementById('crossFukuri').textContent = c.cross.fukuri.note;
+
+  document.getElementById('lName').textContent = c.form.fields.name;
+  document.getElementById('lEmail').textContent = c.form.fields.email;
+  document.getElementById('lTel').textContent = c.form.fields.tel;
+  document.getElementById('lMsg').textContent = c.form.fields.message;
+  document.getElementById('consentLabel').textContent = c.form.consentLabel;
+  document.getElementById('formTitle').textContent = c.form.title;
+  document.getElementById('formBody').textContent = c.form.body;
+  document.getElementById('thanksTitle').textContent = c.thanks.title;
+  document.getElementById('thanksBody').textContent = c.thanks.body;
+
+  document.getElementById('howToTitle').textContent = c.geo.howToTitle;
+  var ol = document.getElementById('howToList'); ol.innerHTML='';
+  c.geo.howToSteps.forEach(function(s){ var li=document.createElement('li'); li.textContent=s; ol.appendChild(li); });
+  document.getElementById('methodDisclaimer').textContent = c.disclaimer.method + ' ' + c.constants.sourceNote;
+
+  var fl = document.getElementById('faqList'); fl.innerHTML='';
+  c.geo.faq.forEach(function(f){ var det=document.createElement('details'); det.innerHTML='<summary>'+f.q+'</summary><div class="a">'+f.a+'</div>'; fl.appendChild(det); });
+
+  document.getElementById('year').textContent = String(new Date().getFullYear());
+  document.getElementById('footConsult').innerHTML =
+    (c.consult.orgName ? '<strong style="color:#fff">'+c.consult.orgName+'</strong>　' : '') +
+    (c.consult.contactLine ? '<span>'+c.consult.contactLine+'</span>' : '');
+  document.getElementById('footDisclaimer').textContent = c.disclaimer.short + ' ' + c.consult.privacyNote;
+  document.getElementById('footTaxlaw').textContent = c.disclaimer.taxlawNote;
+
+  // JSON-LD（本文一致で注入）
+  var faqLd = { "@context":"https://schema.org","@type":"FAQPage","mainEntity":
+    c.geo.faq.map(function(f){ return {"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}}; }) };
+  document.getElementById('ld-faq').textContent = JSON.stringify(faqLd);
+  var howLd = { "@context":"https://schema.org","@type":"HowTo","name":c.geo.howToTitle,
+    "step": c.geo.howToSteps.map(function(s,i){ return {"@type":"HowToStep","position":i+1,"text":s}; }) };
+  document.getElementById('ld-howto').textContent = JSON.stringify(howLd);
+
+  document.title = c.meta.title;
+}
+
+/* ---------- Turnstile ---------- */
+function loadTurnstile(){
+  var sitekey = CONFIG.gas.turnstileSitekey;
+  if (!sitekey || sitekey.indexOf('__')===0) return;
+  var s = document.createElement('script');
+  s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js'; s.async=true; s.defer=true;
+  s.onload = function(){ try{ window.turnstile.render('#turnstile-holder', { sitekey:sitekey, theme:'light' }); }catch(e){} };
+  document.head.appendChild(s);
+}
+
+/* ---------- 送信（no-cors・fire-and-forget） ---------- */
+function submitLead(e){
+  e.preventDefault();
+  var errEl = document.getElementById('formErr'); errEl.textContent='';
+  var f = document.getElementById('leadForm');
+  if (f.website.value.trim() !== ''){ showThanks(); return; }
+  if (!f.name.value.trim() || !f.email.value.trim()){ errEl.textContent='お名前・メールアドレスをご入力ください。'; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.value.trim())){ errEl.textContent='メールアドレスの形式をご確認ください。'; return; }
+  if (!document.getElementById('fConsent').checked){ errEl.textContent='プライバシーの取り扱いへの同意にチェックしてください。'; return; }
+  var sitekey = CONFIG.gas.turnstileSitekey, needTs = sitekey && sitekey.indexOf('__')!==0;
+  if (needTs){ var tk=document.querySelector('#turnstile-holder [name="cf-turnstile-response"]'); if(!tk||!tk.value){ errEl.textContent='セキュリティ認証（Turnstile）を完了してください。'; return; } }
+
+  document.getElementById('hCompany').value = f.name.value.trim(); // GAS必須(company)へ氏名を充当（個人診断）
+  document.getElementById('hHost').value = location.hostname;
+  document.getElementById('hUa').value = navigator.userAgent;
+
+  var endpoint = CONFIG.gas.endpoint, btn = document.getElementById('btnSubmit');
+  btn.disabled=true; btn.textContent='送信中…';
+  if (!endpoint || endpoint.indexOf('__')===0){ console.warn('[okane-carte] GAS endpoint 未設定'); showThanks(); return; }
+  fetch(endpoint, { method:'POST', body:new FormData(f), mode:'no-cors' })
+    .then(function(){ showThanks(); }).catch(function(){ showThanks(); });
+}
+function showThanks(){
+  document.getElementById('leadForm').style.display='none';
+  document.getElementById('formTitle').style.display='none';
+  document.getElementById('formBody').style.display='none';
+  document.getElementById('thanks').style.display='block';
+  document.getElementById('thanks').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+/* ---------- ラジオ束ね ---------- */
+function bindRadios(name, key, after){
+  document.querySelectorAll('input[name="'+name+'"]').forEach(function(inp){
+    inp.addEventListener('change', function(){
+      STATE[key] = inp.value;
+      var group = inp.closest('.opts');
+      if (group) group.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('sel'); });
+      inp.closest('.opt').classList.add('sel');
+      if (name==='other'){ document.getElementById('sibWrap').hidden = (inp.value!=='siblings'); }
+      if (after) after();
+      validateStep();
+    });
+  });
+}
+
+function bindWizard(){
+  bindRadios('spouse','spouse');
+  bindRadios('other','other');
+  bindRadios('will','will'); bindRadios('talk','talk'); bindRadios('gift','gift'); bindRadios('fund','fund');
+  ['inKids','inSib','inRe','inCash','inSec','inIns','inOther'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.addEventListener('input', validateStep);
+  });
+  document.getElementById('inStock').addEventListener('change', validateStep);
+  document.getElementById('btnNext').addEventListener('click', function(){
+    if (!validateStep()) return;
+    if (STEP===MAX_STEP){ renderResult(); return; }
+    showStep(STEP+1);
+  });
+  document.getElementById('btnBack').addEventListener('click', function(){ if(STEP>0) showStep(STEP-1); });
+  document.getElementById('btnRedo').addEventListener('click', function(){ location.reload(); });
+  document.getElementById('leadForm').addEventListener('submit', submitLead);
+}
+
+(function init(){
+  fetch('config.json?t=' + Date.now())
+    .then(function(r){ if(!r.ok) throw new Error('config'); return r.json(); })
+    .then(function(cfg){ CONFIG=cfg; hydrateStatic(); bindWizard(); loadTurnstile(); showStep(0, true); })
+    .catch(function(err){
+      document.getElementById('wizard').innerHTML = '<p style="color:var(--shu-2)">設定ファイル(config.json)の読み込みに失敗しました。時間をおいて再度お試しください。</p>';
+      console.error(err);
+    });
+})();
+
+/* frame-busting（クリックジャッキング対策・baseline J） */
+try{ if (window.top !== window.self){ window.top.location = window.self.location; } }catch(e){ document.documentElement.style.display='none'; }
+</script>
+</body>
+</html>

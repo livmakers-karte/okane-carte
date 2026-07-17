@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com; form-action 'self' https://script.google.com; frame-ancestors 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- 公開前は noindex。go-live 時に index, follow へ切替（config.meta.indexable も true に）。 -->
+<meta name="robots" content="index, follow">
+<title>複利体験シミュレーター｜孫・子への贈与が何倍に育つかを試算｜お金のカルテ</title>
+<meta name="description" content="お孫さん・お子さんの年齢と毎年の贈与額を入れるだけ。3%・5%・7%の3本の成長カーブで将来価値をブラウザ内で無料試算。登録不要・匿名。※将来の運用成果を保証するものではありません。">
+<link rel="canonical" href="https://okane-carte.jp/fukuri/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="お金のカルテ">
+<meta property="og:title" content="複利体験シミュレーター｜孫・子への贈与が何倍に育つかを試算">
+<meta property="og:description" content="毎年の贈与額と年数から、3%・5%・7%の3本の成長カーブで将来価値を無料でブラウザ内試算。登録不要・匿名。">
+<meta property="og:url" content="https://okane-carte.jp/fukuri/">
+<meta property="og:image" content="https://okane-carte.jp/fukuri/assets/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="複利体験シミュレーター｜お金のカルテ">
+<meta name="twitter:description" content="毎年の贈与額から将来価値を3本の年率で無料試算。登録不要・匿名。">
+
+<!-- 静的 JSON-LD（WebApplication / BreadcrumbList）。FAQ・HowTo は本文と一致する内容を JS で注入。 -->
+<script type="application/ld+json" id="ld-webapp">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "複利体験シミュレーター（お金のカルテ）",
+  "url": "https://okane-carte.jp/fukuri/",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" },
+  "description": "お孫さん・お子さんの年齢と毎年の贈与額から、複利の将来価値を年率3%・5%・7%の3本でブラウザ内で無料試算する教育目的のシミュレーター。"
+}
+</script>
+<script type="application/ld+json" id="ld-faq"></script>
+<script type="application/ld+json" id="ld-howto"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "お金のカルテ", "item": "https://okane-carte.jp/" },
+    { "@type": "ListItem", "position": 2, "name": "複利体験シミュレーター", "item": "https://okane-carte.jp/fukuri/" }
+  ]
+}
+</script>
+<style>
+  /* ===== セルフホスト・フォント（OFL・/assets/fonts・外部CDNなし） ===== */
+  @font-face{font-family:"Shippori Mincho";src:url("/assets/fonts/ShipporiMincho-Bold.subset.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Marcellus";src:url("/assets/fonts/Marcellus-400.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-500.woff2") format("woff2");font-weight:500;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-600.woff2") format("woff2");font-weight:600;font-display:swap}
+
+  :root{
+    /* 複利=「育つ・芽吹く」：生成り地×新緑（年輪・成長）×シャンパン金 */
+    --bg:#FAF6EE; --bg-2:#F1E8D9; --paper:#FFFDF8;
+    --green:#3C7A4E; --green-2:#79A883;      /* 新緑（成長・芽・年輪） */
+    --green-deep:#2A5A3B;                    /* 見出し・本文用の濃色（可読性確保） */
+    --gold:#C7A24E; --gold-2:#8B6B28; --gold-hi:#E6D2A0; --gold-soft:#F4ECD7;
+    --ink:#2C2A22; --muted:#6A6353; --line:#DDD2BE;
+    --radius:14px; --radius-sm:9px;
+    --shadow-card:0 10px 30px rgba(60,122,78,.10);
+    --shadow-soft:0 6px 18px rgba(60,122,78,.07);
+    --serif-jp:"Shippori Mincho","Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+    --serif-en:"Marcellus",var(--serif-jp);
+    --num:"Cormorant","Marcellus",Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+    /* 写真スロット（ローカル同梱・後差替。テーマ=成長/年輪/未来） */
+    --ph-hero:url("/assets/photos/forest-light.jpg");     /* 木漏れ日＝未来・希望 */
+    --ph-band:url("/assets/photos/forest-autumn.jpg");    /* 年輪の色 */
+    --ph-footer:url("/assets/photos/garden-build.jpg");   /* 育てる・築く */
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.8;letter-spacing:.01em;
+    background:
+      radial-gradient(1100px 520px at 86% -8%, rgba(199,162,78,.13), transparent 58%),
+      radial-gradient(820px 460px at 0% 3%, rgba(60,122,78,.07), transparent 55%),
+      var(--bg);
+    min-height:100vh;display:flex;flex-direction:column}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px;width:100%}
+  h1,h2,h3{font-family:var(--serif-jp);color:var(--green-deep);letter-spacing:.02em;line-height:1.5;font-weight:700}
+  a{color:var(--green-deep)}
+  ::selection{background:var(--gold-soft)}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:4px}
+
+  /* ---- ヘッダー ---- */
+  header{padding:20px 0;border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .brand{display:flex;align-items:center;gap:13px;color:var(--green-deep);text-decoration:none}
+  .emblem{width:42px;height:42px;flex:0 0 auto}
+  .brand .mark{font-family:var(--serif-jp);font-size:21px;letter-spacing:.08em;line-height:1.1;color:var(--green-deep)}
+  .brand .sub{font-size:11px;color:var(--muted);letter-spacing:.13em}
+  .navlink{font-family:var(--serif-en);color:var(--green-deep);text-decoration:none;font-size:12.5px;letter-spacing:.05em;white-space:nowrap}
+  .navlink:hover{color:var(--gold-2)}
+
+  main{flex:1}
+
+  /* ---- ヒーロー ---- */
+  .hero{position:relative;overflow:hidden;padding:46px 0 26px}
+  .hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:var(--ph-hero) 78% center/cover no-repeat;opacity:.2;filter:saturate(1.06);
+    -webkit-mask:linear-gradient(90deg,transparent 30%,#000 90%);mask:linear-gradient(90deg,transparent 30%,#000 90%)}
+  .hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:center}
+  .eyebrow{color:var(--gold-2);font-size:12px;letter-spacing:.2em;font-weight:700;margin:0 0 16px;display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+  h1{font-size:clamp(27px,5.6vw,44px);margin:0 0 16px}
+  h1 .u{background:linear-gradient(transparent 74%, var(--gold-hi) 74%, var(--gold-hi) 91%, transparent 91%)}
+  h1 .nb{white-space:nowrap}
+  p.lead{color:var(--ink);font-size:clamp(14.5px,2.2vw,16px);max-width:34em;margin:0 0 14px}
+  .lead .sub-note{color:var(--muted);font-size:12.5px}
+  /* ヒーローの主役写真（大きく見せる・角丸フレーム＋金枠＋双葉の印） */
+  .herofig{position:relative;justify-self:center;width:100%;max-width:330px}
+  .photo-frame{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--gold-hi);
+    box-shadow:0 18px 44px rgba(60,122,78,.22);aspect-ratio:3/3.6}
+  .photo-frame img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05)}
+  .photo-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(42,90,59,.32));pointer-events:none}
+  .photo-frame .cap{position:absolute;left:14px;bottom:12px;z-index:1;color:#fff;font-family:var(--serif-jp);font-size:13px;letter-spacing:.04em;text-shadow:0 1px 6px rgba(0,0,0,.5)}
+  .photo-frame .seal-badge{position:absolute;right:-12px;top:-12px;width:70px;height:70px;z-index:2;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}
+
+  /* 直接回答ブロック（GEO） */
+  .answer{position:relative;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gold);
+    border-radius:var(--radius-sm);padding:16px 18px;margin:8px 0 4px;box-shadow:var(--shadow-soft)}
+  .answer .k{font-family:var(--serif-en);font-size:11px;letter-spacing:.14em;color:var(--gold-2);display:block;margin-bottom:5px}
+  .answer p{margin:0;font-size:13.5px;color:var(--ink);line-height:1.75}
+
+  /* ---- 飾り罫 ---- */
+  .orn{display:flex;align-items:center;gap:14px;color:var(--gold);margin:34px 0 18px}
+  .orn .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  .orn .lbl{font-family:var(--serif-en);font-size:12px;letter-spacing:.15em;color:var(--gold-2);white-space:nowrap}
+  .orn svg{width:16px;height:16px;color:var(--gold)}
+
+  section{padding:8px 0}
+  .sec-sub{color:var(--muted);font-size:13px;margin:2px 0 18px}
+
+  /* ---- カード / ウィザード ---- */
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-card)}
+  .card-pad{padding:26px 26px 22px}
+  #wizard{position:relative;overflow:hidden}
+  #wizard::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold-hi),var(--gold),var(--gold-2))}
+  .stepbar{display:flex;gap:6px;margin:2px 0 20px}
+  .stepbar .seg{height:4px;flex:1;border-radius:3px;background:var(--line);transition:background .2s}
+  .stepbar .seg.on{background:var(--gold)}
+  .stepbar .seg.done{background:var(--green-2)}
+  .steplabel{font-family:var(--serif-en);font-size:11px;letter-spacing:.12em;color:var(--gold-2);margin:0 0 4px}
+  .step h3{font-size:clamp(18px,3vw,21px);margin:0 0 4px}
+  .step .hint{color:var(--muted);font-size:13px;margin:0 0 18px}
+
+  .opts{display:grid;gap:10px}
+  .opts.two{grid-template-columns:1fr 1fr}
+  .opts.four{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:640px){.opts.four{grid-template-columns:1fr 1fr}}
+  @media(max-width:520px){.opts.two{grid-template-columns:1fr}}
+  .opt{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:13px 10px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center}
+  .opt:hover{border-color:var(--green-2)}
+  .opt.sel{border-color:var(--gold);background:#FBF3E1}
+  .opt input{accent-color:var(--gold);width:17px;height:17px;flex:0 0 auto}
+  .opt .t{font-size:14px;color:var(--ink)}
+
+  .field{margin:0 0 16px}
+  .field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:13.5px;color:var(--green-deep);font-weight:700;margin:0 0 6px}
+  .field .fh{font-size:12px;color:var(--muted);margin:-2px 0 7px}
+  .money{display:flex;align-items:center;gap:8px}
+  .money input,.field input[type=text],.field input[type=email],.field input[type=tel],.field textarea{
+    width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);background:var(--paper);
+    border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 13px;transition:border-color .15s}
+  .money input:focus,.field input:focus,.field textarea:focus{outline:none;border-color:var(--green)}
+  .money .unit{font-size:13px;color:var(--muted);white-space:nowrap}
+  .field textarea{min-height:88px;resize:vertical;line-height:1.7}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:520px){.grid2{grid-template-columns:1fr}}
+  .checkline{display:flex;align-items:flex-start;gap:10px;background:var(--gold-soft);border:1px solid var(--line);
+    border-radius:var(--radius-sm);padding:12px 14px;margin-top:6px;cursor:pointer}
+  .checkline input{accent-color:var(--green);width:18px;height:18px;margin-top:2px;flex:0 0 auto}
+  .checkline .t{font-size:13px;color:var(--ink)}
+
+  .notice{background:var(--gold-soft);border:1px solid var(--line);border-radius:var(--radius-sm);padding:13px 15px;font-size:13px;color:var(--ink);line-height:1.75}
+  .err{color:#9C4A2E;font-size:13px;margin-top:10px;min-height:1em}
+  .err.center{text-align:center}
+
+  .nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+  .btn{font-family:var(--sans);font-size:15px;font-weight:700;border:none;border-radius:var(--radius-sm);padding:13px 24px;cursor:pointer;transition:transform .12s,box-shadow .15s,background .15s,border-color .15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+  .btn.primary{background:var(--green);color:#fff}
+  .btn.primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(60,122,78,.25)}
+  .btn.primary:disabled{opacity:.4;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--green-deep);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--green)}
+  .btn.gold{background:linear-gradient(120deg,var(--gold-hi),var(--gold),var(--gold-2));color:#3a2e0f}
+  .btn.gold:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(199,162,78,.35)}
+
+  /* ---- 結果：複利の診断書（カルテ） ---- */
+  .resultwrap{display:none}
+  .karte{position:relative;overflow:hidden;background:linear-gradient(180deg,#FFFEFA,#F7FBF4);
+    border:1px solid var(--gold-hi);border-radius:var(--radius);box-shadow:var(--shadow-card);padding:30px 28px 26px;margin-bottom:16px}
+  .karte::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg,transparent 0 27px,rgba(60,122,78,.045) 27px 28px);
+    opacity:.7;-webkit-mask:linear-gradient(180deg,#000,transparent 82%);mask:linear-gradient(180deg,#000,transparent 82%)}
+  .karte>*{position:relative;z-index:1}
+  .karte-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border-bottom:1px solid var(--gold-hi);padding-bottom:14px;margin-bottom:18px}
+  .karte-title{font-family:var(--serif-jp);font-size:clamp(19px,3.4vw,23px);color:var(--green-deep);margin:0}
+  .karte-meta{font-size:11px;color:var(--muted);font-family:var(--serif-en);letter-spacing:.08em;text-align:right;line-height:1.6;white-space:nowrap}
+  /* 芽の印（金の芽・落款代替＝新緑ファミリーの意匠） */
+  .seal{width:60px;height:60px;flex:0 0 auto}
+  .seal .ink{transform-origin:30px 30px;animation:sprout .7s cubic-bezier(.34,1.3,.5,1) .25s both}
+  @keyframes sprout{0%{opacity:0;transform:scale(.6) translateY(6px)}60%{opacity:1}100%{opacity:1;transform:scale(1) translateY(0)}}
+
+  .karte-lede{font-size:14.5px;color:var(--ink);line-height:1.85;background:var(--gold-soft);border:1px solid var(--gold-hi);
+    border-radius:var(--radius-sm);padding:16px 18px;margin:0 0 20px}
+  .karte-lede strong{color:var(--green-deep)}
+
+  /* ---- 成長カーブ（シグネチャーアニメ） ---- */
+  .growthcard{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px 18px 14px;margin-bottom:18px}
+  .growthcard .gh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .growthcard .gname{font-family:var(--serif-jp);font-size:15px;color:var(--green-deep);margin:0}
+  .growthcard .gname small{font-family:var(--serif-en);color:var(--muted);letter-spacing:.1em;font-size:10px;margin-left:6px}
+  .chartwrap{position:relative;width:100%}
+  .chartwrap svg{width:100%;height:auto;display:block;overflow:visible}
+  .chart-axis{stroke:var(--line);stroke-width:1}
+  .chart-grid{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4;opacity:.7}
+  .chart-line{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+  .line-3{stroke:#9FBFA8}
+  .line-5{stroke:var(--green)}
+  .line-7{stroke:var(--gold-2)}
+  .chart-dot{transition:opacity .3s}
+  .chart-lbl{font-family:var(--num);font-size:12px;font-weight:600}
+  .lbl-3{fill:#6F9179}
+  .lbl-5{fill:var(--green-deep)}
+  .lbl-7{fill:var(--gold-2)}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12px;color:var(--muted)}
+  .legend .li{display:flex;align-items:center;gap:6px}
+  .legend .sw{width:16px;height:3px;border-radius:2px;display:inline-block}
+
+  .growth-rows{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+  @media(max-width:560px){.growth-rows{grid-template-columns:1fr}}
+  .growth-row{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px 13px}
+  .growth-row .rl{font-size:11.5px;color:var(--muted);margin:0 0 4px}
+  .growth-row .rv{font-family:var(--num);font-weight:600;font-size:20px;color:var(--green-deep)}
+  .growth-row.r7 .rv{color:var(--gold-2)}
+
+  .grid2.stats{margin-top:16px}
+  .stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:13px 15px}
+  .stat .l{font-size:11.5px;color:var(--muted);margin-bottom:3px}
+  .stat .v{font-family:var(--serif-jp);font-size:16px;color:var(--green-deep)}
+
+  details.calc{margin-top:16px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper)}
+  details.calc summary{cursor:pointer;padding:13px 16px;font-size:13.5px;color:var(--green-deep);font-weight:700;list-style:none}
+  details.calc summary::-webkit-details-marker{display:none}
+  details.calc summary::before{content:"＋ ";color:var(--gold-2)}
+  details.calc[open] summary::before{content:"− "}
+  details.calc .inner{padding:0 16px 16px}
+  table.breakdown{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+  table.breakdown th,table.breakdown td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:right}
+  table.breakdown th:first-child,table.breakdown td:first-child{text-align:left;color:var(--muted)}
+  table.breakdown tr:first-child th{color:var(--green-deep);border-bottom:1px solid var(--gold-hi)}
+  .bd-note{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7}
+
+  .disclaimer-box{margin-top:16px;background:var(--gold-soft);border:1px solid var(--gold-hi);border-radius:var(--radius-sm);padding:14px 16px;font-size:12.5px;color:var(--ink);line-height:1.75}
+  .disclaimer-box strong{color:#9C4A2E}
+
+  /* ---- 出口（2方向リード） ---- */
+  .exits{display:grid;gap:12px;margin-top:20px}
+  .exit{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;transition:border-color .15s,transform .12s}
+  .exit:hover{transform:translateY(-2px)}
+  .exit.zoyo{border-left:4px solid var(--gold)}
+  .exit.sozoku{border-left:4px solid var(--green)}
+  .exit.general{border-left:4px solid var(--green-2)}
+  .exit h3{font-size:16px;margin:0 0 5px}
+  .exit p{font-size:13px;color:var(--muted);margin:0 0 12px;line-height:1.7}
+  .exit .ex-cta{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:var(--green-deep);text-decoration:none}
+  .exit.zoyo .ex-cta{color:var(--gold-2)}
+  .exit .ex-cta:hover{gap:11px}
+
+  /* ---- 相談フォーム ---- */
+  .formcard{margin-top:18px;background:linear-gradient(180deg,#2E5E40,var(--green));border-radius:var(--radius);padding:26px 24px;color:#eef3ef;box-shadow:var(--shadow-card)}
+  .formcard h3{color:#fff;font-size:18px;margin:0 0 6px}
+  .formcard .small{font-size:12.5px;color:#cddbd3}
+  .formcard .field label{color:#dfeae4}
+  .formcard input,.formcard textarea{background:rgba(255,255,255,.97);border-color:transparent}
+  .formcard input:focus,.formcard textarea:focus{border-color:var(--gold)}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+  .consent{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:#dfeae4;margin:6px 0 14px;cursor:pointer}
+  .consent input{accent-color:var(--gold);width:17px;height:17px;margin-top:2px;flex:0 0 auto}
+  #turnstile-holder{margin:6px 0 12px}
+  .formcard .thanks{display:none;text-align:center;padding:14px 0}
+  .formcard .thanks .chk{width:52px;height:52px;border-radius:50%;background:var(--gold-soft);color:var(--gold-2);
+    font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+  .formcard .thanks h3{color:#fff}
+
+  .center{text-align:center}
+  .redo{margin-top:18px}
+
+  /* ---- 方式解説 ---- */
+  #method{background:linear-gradient(180deg,var(--bg-2),var(--bg));border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:36px;padding:34px 0}
+  .formula{position:relative;background:var(--green-deep);color:#eaf1ec;border-radius:var(--radius);padding:22px 24px;font-family:var(--num);font-size:16px;line-height:2;letter-spacing:.02em;margin:16px 0}
+  .formula .hl{color:var(--gold-hi);font-weight:600}
+  .formula .dim{color:#a9c2b1;font-size:13px}
+  .steps-ol{counter-reset:st;list-style:none;padding:0;margin:16px 0 0}
+  .steps-ol li{position:relative;padding:0 0 14px 44px;font-size:14px;line-height:1.75;color:var(--ink)}
+  .steps-ol li::before{counter-increment:st;content:counter(st);position:absolute;left:0;top:0;width:30px;height:30px;
+    border-radius:50%;background:var(--green);color:#fff;font-family:var(--serif-jp);font-size:14px;display:flex;align-items:center;justify-content:center}
+
+  /* ---- FAQ ---- */
+  #faq{padding:34px 0}
+  .faq details{border-bottom:1px solid var(--line)}
+  .faq summary{cursor:pointer;padding:16px 30px 16px 4px;font-family:var(--serif-jp);font-size:15px;color:var(--green-deep);position:relative;list-style:none}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"＋";position:absolute;right:6px;top:15px;color:var(--gold-2);font-size:16px;transition:transform .2s}
+  .faq details[open] summary::after{content:"−"}
+  .faq .a{padding:0 4px 18px;font-size:13.5px;color:var(--ink);line-height:1.85}
+
+  /* ---- フッター ---- */
+  footer.site{position:relative;overflow:hidden;background:var(--green-deep);color:#c9d6ce;padding:30px 0 26px;margin-top:36px;font-size:12px;line-height:1.85}
+  footer.site::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(rgba(42,90,59,.76),rgba(42,90,59,.88)), var(--ph-footer) center/cover no-repeat;opacity:1}
+  footer.site .wrap{position:relative;z-index:1}
+  footer.site a{color:#e6d2a0;text-decoration:none}
+  footer.site a:hover{text-decoration:underline}
+  .footlinks{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 12px;font-size:12.5px}
+  .foot-discl{color:#a9c2b1;margin:6px 0 0}
+
+  /* 全幅の写真帯（可視・大判） */
+  .photo-band{position:relative;height:clamp(190px,34vw,270px);margin:36px 0;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .photo-band img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.05)}
+  .photo-band::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(42,90,59,.72),rgba(42,90,59,.14) 62%,transparent)}
+  .photo-band .band-cap{position:absolute;left:0;top:0;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 26px;max-width:600px;z-index:1;color:#fff}
+  .photo-band .band-cap .e{font-family:var(--serif-en);font-size:11px;letter-spacing:.2em;color:var(--gold-hi);margin:0 0 7px}
+  .photo-band .band-cap .t{font-family:var(--serif-jp);font-size:clamp(18px,3.6vw,25px);margin:0;line-height:1.5;text-shadow:0 1px 10px rgba(0,0,0,.4)}
+  .photo-band .band-cap .d{font-size:12.5px;color:#e2ece4;margin:8px 0 0;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+  .card-photo{width:100%;height:150px;object-fit:cover;display:block;border-radius:var(--radius-sm);margin-bottom:12px;filter:saturate(1.05)}
+
+  @media(max-width:760px){
+    .hero .wrap{grid-template-columns:1fr;gap:22px}
+    .herofig{max-width:320px;order:-1}
+    .photo-band .band-cap{max-width:none;background:linear-gradient(90deg,rgba(42,90,59,.6),rgba(42,90,59,.3))}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important;transition-duration:.001ms !important}
+    .seal .ink{animation:none;opacity:1;transform:scale(1) translateY(0)}
+    .chart-line{transition:none !important;stroke-dashoffset:0 !important}
+    .chart-dot{transition:none !important;opacity:1 !important}
+  }
+</style>
+</head>
+<body>
+<!-- ===== インラインSVG定義（外部画像なし＝セキュリティ標準） ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E6D2A0"/><stop offset=".5" stop-color="#C7A24E"/><stop offset="1" stop-color="#B0893A"/>
+    </linearGradient>
+    <linearGradient id="gGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9FBFA8"/><stop offset=".5" stop-color="#3C7A4E"/><stop offset="1" stop-color="#2A5A3B"/>
+    </linearGradient>
+    <!-- エンブレム：印章の二重円＋家族の脈（三世代を結ぶ線）＝お金のカルテ -->
+    <symbol id="emblem" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="47" fill="none" stroke="url(#g)" stroke-width="1.6"/>
+      <circle cx="50" cy="50" r="41" fill="none" stroke="url(#g)" stroke-width="0.7"/>
+      <circle cx="50" cy="7.6" r="2.4" fill="url(#g)"/>
+      <path d="M24,60 Q34,44 42,54 T58,50 T76,40" fill="none" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="24" cy="60" r="2.6" fill="url(#g)"/><circle cx="50" cy="51" r="2.6" fill="url(#g)"/><circle cx="76" cy="40" r="2.6" fill="url(#g)"/>
+    </symbol>
+    <!-- 芽の印（金の双葉・結果カルテの印＝新緑ファミリー） -->
+    <symbol id="seal" viewBox="0 0 60 60">
+      <g class="ink">
+        <circle cx="30" cy="30" r="27" fill="none" stroke="#3C7A4E" stroke-width="2.2"/>
+        <circle cx="30" cy="30" r="22" fill="#3C7A4E" opacity="0.08"/>
+        <path d="M30 40 V22" stroke="#3C7A4E" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M30 24 C22 20 18 12 20 8 C27 10 31 16 30 24Z" fill="#C7A24E"/>
+        <path d="M30 27 C38 23 42 15 40 11 C33 13 29 19 30 27Z" fill="#3C7A4E"/>
+      </g>
+    </symbol>
+    <symbol id="ic-sprout" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V10"/><path d="M12 12c-2-3-6-4-9-3 0 4 3 7 9 6"/><path d="M12 10c1-4 5-6 9-5 0 4-3 7-9 6"/></g></symbol>
+    <symbol id="ic-gift" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 13h16M12 9v11"/><path d="M12 9S10.5 4 8 5s0 4 4 4M12 9s1.5-5 4-4 0 4-4 4"/></g></symbol>
+    <symbol id="ic-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V4M4 20h16"/><path d="M7 16l4-5 3 3 5-7"/></g></symbol>
+    <symbol id="ornMark" viewBox="0 0 24 24"><path d="M12 3l2.2 6.6H21l-5.4 4 2.1 6.4L12 16.2 6.3 20l2.1-6.4L3 9.6h6.8z" fill="none" stroke="currentColor" stroke-width="1.2"/></symbol>
+  </defs>
+</svg>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="/">
+      <svg class="emblem" aria-hidden="true"><use href="#emblem"/></svg>
+      <span><span class="mark" id="brandMark">お金のカルテ</span><br><span class="sub" id="brandSub">複利体験シミュレーター</span></span>
+    </a>
+    <a class="navlink" href="/sozoku/">相続税かんたん診断 →</a>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">くらしと経済の、お金の健康診断</p>
+        <h1><span class="u">毎年の想い</span>が、<br><span class="nb">何倍に育つかを見てから。</span></h1>
+        <p class="lead">お孫さん・お子さんの今の年齢と、毎年贈与する金額を入れるだけ。<strong>3%・5%・7%</strong>、3本の成長カーブで将来価値を、5分・匿名・登録不要でお見せします。</p>
+        <p class="lead"><span class="sub-note">※ 入力値はブラウザ内だけで計算し、外部に送信しません。将来の運用成果を保証するものではなく、複利の効果を体感していただく教育目的のシミュレーションです。</span></p>
+        <div class="answer">
+          <span class="k">DIRECT ANSWER</span>
+          <p id="directAnswer">—</p>
+        </div>
+      </div>
+      <div class="herofig">
+        <!-- ヒーロー主役写真：木漏れ日＝子・孫の未来（ローカル同梱） -->
+        <div class="photo-frame">
+          <img src="/assets/photos/forest-light.jpg" alt="木漏れ日の差す森" width="330" height="396">
+          <span class="cap">小さな想いが、大きく育つ。</span>
+          <svg class="seal-badge" viewBox="0 0 60 60" aria-hidden="true">
+            <circle cx="30" cy="30" r="27" fill="#FBF6EC"/>
+            <circle cx="30" cy="30" r="27" fill="none" stroke="#3C7A4E" stroke-width="2.2"/>
+            <g transform="translate(30 32)">
+              <path d="M0 12 V-9" stroke="#3C7A4E" stroke-width="2.4" stroke-linecap="round"/>
+              <path d="M0 -6 C-9 -11 -13 -20 -11 -24 C-3 -22 1 -15 0 -6Z" fill="#C7A24E"/>
+              <path d="M0 -3 C9 -8 13 -17 11 -21 C3 -19 -1 -12 0 -3Z" fill="#3C7A4E"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全幅の写真帯（年輪＝時間が育てる） -->
+  <div class="photo-band">
+    <img src="/assets/photos/forest-autumn.jpg" alt="" aria-hidden="true">
+    <div class="band-cap">
+      <p class="e">TIME GROWS IT</p>
+      <p class="t">時間が、いちばんの贈り物。</p>
+      <p class="d">毎年の想いを、3%・5%・7%の複利カーブで育てて見る。</p>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <!-- ===== 診断ウィザード ===== -->
+      <div class="card card-pad" id="wizard">
+        <div class="stepbar" id="stepbar"></div>
+
+        <!-- STEP 0：年齢 -->
+        <div class="step" data-step="0">
+          <p class="steplabel">STEP 1 / 3 ・ 対象</p>
+          <h3>お孫さん・お子さんの、今の年齢</h3>
+          <p class="hint">複利で育てたい相手の、現在の満年齢を入れてください。</p>
+          <div class="field">
+            <label for="inAge">現在の年齢</label>
+            <div class="money"><input id="inAge" inputmode="numeric" placeholder="例：3"><span class="unit">歳</span></div>
+          </div>
+          <div class="err" id="err0"></div>
+        </div>
+
+        <!-- STEP 1：毎年の贈与額と期間 -->
+        <div class="step" data-step="1" hidden>
+          <p class="steplabel">STEP 2 / 3 ・ 金額と期間</p>
+          <h3>毎年の贈与額と、いつまで続けるか</h3>
+          <p class="hint">正確でなくて大丈夫です。おおよその金額を万円で。</p>
+          <div class="field">
+            <label for="inAmt">毎年贈与する金額</label>
+            <div class="fh">暦年課税の基礎控除は受贈者1人あたり年110万円です（出典：国税庁 No.4402）。</div>
+            <div class="money"><input id="inAmt" inputmode="numeric" placeholder="例：110"><span class="unit">万円 / 年</span></div>
+          </div>
+          <div class="field">
+            <label>いつまで続けますか</label>
+            <div class="opts four" id="presetOpts"></div>
+          </div>
+          <div class="field">
+            <label for="inToAge">または、○歳になるまで（任意で上書き）</label>
+            <div class="money"><input id="inToAge" inputmode="numeric" placeholder="例：22"><span class="unit">歳</span></div>
+          </div>
+          <div class="err" id="err1"></div>
+        </div>
+
+        <!-- STEP 2：確認 -->
+        <div class="step" data-step="2" hidden>
+          <p class="steplabel">STEP 3 / 3 ・ 確認</p>
+          <h3>この内容で試算します</h3>
+          <p class="hint">下記の前提で、複利の将来価値を試算します。</p>
+          <div class="notice" id="confirmNote"></div>
+          <div class="err" id="err2"></div>
+        </div>
+
+        <div class="nav">
+          <button class="btn ghost" id="btnBack" type="button" style="visibility:hidden">戻る</button>
+          <button class="btn primary" id="btnNext" type="button" disabled>次へ</button>
+        </div>
+      </div>
+
+      <!-- ===== 結果：複利の診断書（カルテ） ===== -->
+      <div class="resultwrap" id="resultwrap">
+        <div class="karte">
+          <div class="karte-head">
+            <div>
+              <p class="karte-title">複利の診断書</p>
+              <p style="font-size:12px;color:var(--muted);margin:2px 0 0">将来価値・体験シミュレーション</p>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <div class="karte-meta">お金のカルテ<br><span id="issueDate">—</span></div>
+              <svg class="seal" aria-label="診断印"><use href="#seal"/></svg>
+            </div>
+          </div>
+
+          <div class="karte-lede" id="ledeText">—</div>
+
+          <!-- 成長カーブ（シグネチャーアニメ） -->
+          <div class="growthcard">
+            <div class="gh">
+              <p class="gname">成長カーブ <small>GROWTH SIMULATION</small></p>
+            </div>
+            <div class="chartwrap">
+              <svg id="chartSvg" viewBox="0 0 640 300" role="img" aria-label="複利の成長カーブ。年率3%・5%・7%の3本を比較">
+                <!-- 軸・グリッドはJSで描画 -->
+                <g id="chartGrid"></g>
+                <line class="chart-axis" id="axisX" x1="46" y1="254" x2="612" y2="254"></line>
+                <line class="chart-axis" id="axisY" x1="46" y1="20" x2="46" y2="254"></line>
+                <path class="chart-line line-3" id="path3" d=""></path>
+                <path class="chart-line line-5" id="path5" d=""></path>
+                <path class="chart-line line-7" id="path7" d=""></path>
+                <circle class="chart-dot" id="dot3" r="5" fill="#9FBFA8" opacity="0"></circle>
+                <circle class="chart-dot" id="dot5" r="5.5" fill="#3C7A4E" opacity="0"></circle>
+                <circle class="chart-dot" id="dot7" r="6" fill="#C7A24E" opacity="0"></circle>
+                <text class="chart-lbl lbl-3" id="lbl3" opacity="0"></text>
+                <text class="chart-lbl lbl-5" id="lbl5" opacity="0"></text>
+                <text class="chart-lbl lbl-7" id="lbl7" opacity="0"></text>
+              </svg>
+            </div>
+            <div class="legend">
+              <span class="li"><span class="sw" style="background:#9FBFA8"></span>年率 3%</span>
+              <span class="li"><span class="sw" style="background:#3C7A4E"></span>年率 5%</span>
+              <span class="li"><span class="sw" style="background:#C7A24E"></span>年率 7%</span>
+              <span class="li" style="margin-left:auto">元本合計：<strong id="legendPrincipal" style="color:var(--ink)">—</strong></span>
+            </div>
+            <div class="growth-rows">
+              <div class="growth-row r3"><p class="rl">年率 3% の将来価値</p><p class="rv" id="rv3">—</p></div>
+              <div class="growth-row r5"><p class="rl">年率 5% の将来価値</p><p class="rv" id="rv5">—</p></div>
+              <div class="growth-row r7"><p class="rl">年率 7% の将来価値</p><p class="rv" id="rv7">—</p></div>
+            </div>
+          </div>
+
+          <div class="grid2 stats">
+            <div class="stat"><div class="l">毎年の贈与額</div><div class="v" id="statAmt">—</div></div>
+            <div class="stat"><div class="l">続ける年数</div><div class="v" id="statYears">—</div></div>
+          </div>
+
+          <details class="calc">
+            <summary>年ごとの積み上がり（内訳）を見る</summary>
+            <div class="inner">
+              <table class="breakdown" id="bdTable"></table>
+              <p class="bd-note" id="bdFormula"></p>
+            </div>
+          </details>
+
+          <div class="disclaimer-box" id="resultDisclaimer"></div>
+        </div>
+
+        <!-- 2方向リード出口 -->
+        <div class="exits" id="exits"></div>
+
+        <!-- 相談フォーム -->
+        <div class="formcard" id="formCard">
+          <h3 id="formTitle">この結果をもとに無料で相談する</h3>
+          <p class="small" id="formBody" style="margin:0 0 16px"></p>
+          <form id="leadForm" autocomplete="on" novalidate>
+            <div class="hp" aria-hidden="true"><label>この欄は空のまま<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+            <div class="field"><label for="fName" id="lName">お名前</label><input type="text" id="fName" name="name" maxlength="60" required></div>
+            <div class="grid2">
+              <div class="field"><label for="fEmail" id="lEmail">メールアドレス</label><input type="email" id="fEmail" name="email" maxlength="120" required></div>
+              <div class="field"><label for="fTel" id="lTel">電話番号（任意）</label><input type="tel" id="fTel" name="tel" maxlength="30"></div>
+            </div>
+            <div class="field"><label for="fMsg" id="lMsg">ご相談内容（任意）</label><textarea id="fMsg" name="message" maxlength="1000"></textarea></div>
+            <div id="turnstile-holder"></div>
+            <label class="consent"><input type="checkbox" id="fConsent" required><span id="consentLabel"></span></label>
+            <input type="hidden" name="company" id="hCompany">
+            <input type="hidden" name="formName" id="hFormName" value="複利シミュレーター｜相談">
+            <input type="hidden" name="summary" id="hSummary">
+            <input type="hidden" name="childAge" id="hAge">
+            <input type="hidden" name="annualGift" id="hAmt">
+            <input type="hidden" name="years" id="hYears">
+            <input type="hidden" name="fv3" id="hFv3">
+            <input type="hidden" name="fv5" id="hFv5">
+            <input type="hidden" name="fv7" id="hFv7">
+            <input type="hidden" name="principal" id="hPrincipal">
+            <input type="hidden" name="pageHost" id="hHost">
+            <input type="hidden" name="ua" id="hUa">
+            <button class="btn gold" type="submit" id="btnSubmit" style="width:100%">送信する</button>
+            <div class="err center" id="formErr" style="color:#ffd7cd"></div>
+          </form>
+          <div class="thanks" id="thanks">
+            <div class="chk">✓</div>
+            <h3 id="thanksTitle"></h3>
+            <p class="small" id="thanksBody"></p>
+          </div>
+        </div>
+
+        <p class="center redo">
+          <button class="btn ghost" id="btnRedo" type="button">もう一度、別の数字で試算する</button>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="orn"><span class="ln"></span><svg aria-hidden="true"><use href="#ornMark"/></svg><span class="ln"></span></div></div>
+
+  <!-- ===== 姉妹診断への導線 ===== -->
+  <section>
+    <div class="wrap">
+      <div class="exits">
+        <a class="exit zoyo" href="/zoyo/" style="text-decoration:none;color:inherit">
+          <h3>生前贈与診断 →</h3>
+          <p id="crossZoyo">渡す前に、税制上有利な渡し方を測る。暦年贈与と相続時精算課税をどう使い分けるか。</p>
+        </a>
+        <a class="exit sozoku" href="/sozoku/" style="text-decoration:none;color:inherit">
+          <h3>相続税かんたん診断 →</h3>
+          <p id="crossSozoku">贈与は相続対策の一部。家族全体の相続税の概算と備えを測る。</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 複利のしくみ（GEO本文・HowTo と一致） ===== -->
+  <section id="method">
+    <div class="wrap">
+      <h2>複利のしくみ（このツールの計算）</h2>
+      <p class="sec-sub">期末積立の複利計算にもとづく、教育目的の試算</p>
+      <p style="font-size:14.5px">複利とは、それまでに生まれた利益を元本に組み入れてさらに増やしていく仕組みです。毎年末に一定額を積み立てる場合、<strong>各年の積立額</strong>は、それぞれ積み立てた時点から満期までの<strong>残り年数ぶん複利で成長</strong>します。これを全期間分合計したものが将来価値です。</p>
+      <div class="formula">
+        <svg style="position:absolute;top:14px;right:16px;width:52px;height:52px;opacity:.16" aria-hidden="true"><use href="#emblem"/></svg>
+        将来価値 ＝ <span class="hl">Σ</span>［ 各年の贈与額 ×（1＋<span class="hl">年率</span>）<span class="hl">^残り年数</span> ］<br>
+        元本合計 ＝ 毎年の贈与額 × 積み立てた回数<br>
+        <span class="dim">72の法則の目安：72 ÷ 年率（％）≒ 元本がおおよそ2倍になる年数。年率は3%・5%・7%の3本で並記（教育目的の仮定値）。</span>
+      </div>
+      <h3 style="font-size:16px;margin:22px 0 4px" id="howToTitle">複利の将来価値を試算する手順</h3>
+      <ol class="steps-ol" id="howToList"></ol>
+      <div class="notice" style="margin-top:20px" id="methodDisclaimer"></div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="orn"><span class="ln"></span><svg aria-hidden="true"><use href="#ornMark"/></svg><span class="ln"></span></div></div>
+
+  <!-- ===== FAQ（可視・FAQPage schema と一致） ===== -->
+  <section id="faq">
+    <div class="wrap">
+      <h2>よくある質問</h2>
+      <p class="sec-sub">複利・贈与の基本</p>
+      <div class="faq" id="faqList"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="footlinks">
+      <a href="/">お金のカルテ トップ</a>
+      <a href="/sozoku/">相続税かんたん診断</a>
+      <a href="/sozoku/index-definition/">相続準備指数の定義</a>
+      <a href="/zoyo/">生前贈与診断</a>
+      <a href="/fukuri/">複利シミュレーター</a>
+      <a href="/jikabuka/">自社株評価診断</a>
+    </div>
+    <p id="footConsult" style="margin:0 0 8px"></p>
+    <p class="foot-discl" id="footDisclaimer"></p>
+    <p class="foot-discl" id="footTaxlaw"></p>
+    <p class="foot-discl">© <span id="year"></span> リブメーカーズ株式会社（LIVmakers Co., Ltd.）／ お金のカルテ ／ 本サイトは複利・贈与に関する一般的な情報提供および教育目的のシミュレーションであり、税務・法務・投資に関する助言・代理を行うものではありません。</p>
+  </div>
+</footer>
+
+<script>
+/* =========================================================================
+   お金のカルテ — 複利体験シミュレーター（fukuri）
+   - 計算は全てブラウザ内で完結（外部API・生成AIを呼ばない＝継続課金ゼロ）
+   - 年率3/5/7%は教育目的の仮定値。税制部分の出典と確認日は design/tax-sources.md / config.json / 本コメント
+   ---------------------------------------------------------------------------
+   【出典】国税庁 No.4402（暦年課税の基礎控除）／No.4103（相続時精算課税）。2026-07-07確認。
+   【計算（期末積立の複利）】
+     将来価値 = Σ_{k=1..n} [ 毎年の贈与額 × (1+年率)^(n-k) ]　※k年目の積立はn-k年ぶん複利成長
+     元本合計 = 毎年の贈与額 × n（積み立てた回数）
+   年率3%・5%・7%は特定金融商品の実績値ではなく、複利効果を体感するための教育目的の仮定値。
+   ========================================================================= */
+
+var CONFIG = null;
+var STATE = { age:null, amt:null, toAge:null, years:null, presetLabel:null };
+var STEP = 0, MAX_STEP = 2, lastResult = null;
+
+var yen = function(n){ return Math.round(n).toLocaleString('ja-JP'); };
+var manToYen = function(m){ return m * 10000; };
+
+/* 万円→「〇億〇万円」表記 */
+function jpMoney(y){
+  y = Math.round(y);
+  if (y <= 0) return '0円';
+  var oku = Math.floor(y/100000000), man = Math.floor((y%100000000)/10000), rest = y%10000, s='';
+  if (oku) s += oku + '億';
+  if (man) s += yen(man) + '万';
+  if (!oku && !man) s += yen(rest);
+  else if (rest) s += rest;
+  return s + '円';
+}
+function jpMan(m){ return yen(Math.round(m)) + '万円'; }
+function num(v){
+  if (v==null) return null;
+  var s = String(v).replace(/[，,\s]/g,'').replace(/[０-９．－]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);});
+  if (s==='' || s==='-') return null;
+  var n = Number(s); return isFinite(n) ? n : null;
+}
+function m(id){ return num(document.getElementById(id).value); }
+
+/* ---------- 本計算：期末積立の複利 ---------- */
+function futureValueSeries(annual, n, rate){
+  // 各年末の累積将来価値の系列（グラフ描画用）。series[i] = i回積立後の時点での将来価値（その時点まで）
+  var series = [0];
+  var fv = 0;
+  for (var y=1;y<=n;y++){
+    // 既存の残高を1年分成長させ、その年の積立を追加
+    fv = fv * (1+rate) + annual;
+    series.push(fv);
+  }
+  return series; // length n+1
+}
+function calc(){
+  var n = STATE.years, annual = manToYen(STATE.amt);
+  var rates = CONFIG.constants.rates; // [0.03,0.05,0.07]
+  var series = rates.map(function(r){ return futureValueSeries(annual, n, r); });
+  var fv = series.map(function(s){ return s[s.length-1]; });
+  var principal = annual * n;
+  return { n:n, annual:annual, rates:rates, series:series, fv:fv, principal:principal };
+}
+
+/* ---------- ステップ描画 ---------- */
+function renderStepbar(){
+  var bar = document.getElementById('stepbar'); bar.innerHTML='';
+  for (var i=0;i<=MAX_STEP;i++){ var seg=document.createElement('div'); seg.className='seg'+(i<STEP?' done':'')+(i===STEP?' on':''); bar.appendChild(seg); }
+}
+function showStep(n, noScroll){
+  STEP=n; renderStepbar();
+  var steps = document.querySelectorAll('.step');
+  for (var i=0;i<steps.length;i++){ steps[i].hidden = (Number(steps[i].getAttribute('data-step'))!==n); }
+  document.getElementById('btnBack').style.visibility = n===0 ? 'hidden' : 'visible';
+  var next = document.getElementById('btnNext');
+  next.textContent = (n===MAX_STEP) ? '育ちを見る →' : '次へ';
+  if (n===MAX_STEP) renderConfirm();
+  validateStep();
+  if (!noScroll) document.getElementById('wizard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function renderConfirm(){
+  var years = computeYears();
+  var t = CONFIG.disclaimer.beforeStart +
+    '<br><br><strong>現在の年齢：</strong>'+ STATE.age +'歳　' +
+    '<strong>毎年の贈与額：</strong>'+ yen(STATE.amt) +'万円　' +
+    '<strong>続ける年数：</strong>'+ years +'年（'+(STATE.age+years)+'歳まで）';
+  document.getElementById('confirmNote').innerHTML = t;
+}
+function computeYears(){
+  var toAge = STATE.toAge != null ? STATE.toAge : null;
+  if (toAge == null) return null;
+  var y = toAge - STATE.age;
+  return y;
+}
+
+/* ---------- プリセット（○歳になるまで） ---------- */
+function renderPresets(){
+  var box = document.getElementById('presetOpts'); box.innerHTML='';
+  CONFIG.constants.presets.forEach(function(p, idx){
+    var lab = document.createElement('label'); lab.className='opt';
+    lab.innerHTML = '<input type="radio" name="preset" value="'+p.toAge+'"><span class="t">'+p.label+'</span>';
+    box.appendChild(lab);
+  });
+  document.querySelectorAll('input[name="preset"]').forEach(function(inp){
+    inp.addEventListener('change', function(){
+      document.querySelectorAll('#presetOpts .opt').forEach(function(o){ o.classList.remove('sel'); });
+      inp.closest('.opt').classList.add('sel');
+      document.getElementById('inToAge').value = inp.value;
+      STATE.toAge = Number(inp.value);
+      validateStep();
+    });
+  });
+}
+
+/* ---------- バリデーション ---------- */
+function validateStep(){
+  var ok=true, msg='';
+  if (STEP===0){
+    STATE.age = num(document.getElementById('inAge').value);
+    if (STATE.age===null || STATE.age<0 || STATE.age>25){ ok=false; msg='現在の年齢を0〜25の範囲で入力してください。'; }
+  } else if (STEP===1){
+    STATE.amt = num(document.getElementById('inAmt').value);
+    var toAgeInput = num(document.getElementById('inToAge').value);
+    if (toAgeInput != null) STATE.toAge = toAgeInput;
+    if (STATE.amt===null || STATE.amt<=0){ ok=false; msg='毎年贈与する金額を入力してください。'; }
+    else if (STATE.toAge==null){ ok=false; msg='いつまで続けるかを選ぶか、年齢を入力してください。'; }
+    else if (STATE.toAge <= STATE.age){ ok=false; msg='「いつまで」は現在の年齢より後にしてください。'; }
+    else {
+      var y = STATE.toAge - STATE.age;
+      if (y > CONFIG.constants.maxYears){ ok=false; msg='続ける年数は最大'+CONFIG.constants.maxYears+'年までで試算できます。'; }
+      else { STATE.years = y; }
+    }
+  }
+  var errEl = document.getElementById('err'+STEP);
+  if (errEl) errEl.textContent = ok ? '' : msg;
+  document.getElementById('btnNext').disabled = !ok;
+  return ok;
+}
+
+/* ---------- 成長カーブの描画（シグネチャーアニメ） ---------- */
+var REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function buildPath(series, maxVal, plotW, plotH, x0, y0){
+  var n = series.length - 1;
+  var pts = series.map(function(v, i){
+    var x = x0 + (plotW * i / n);
+    var y = y0 - (plotH * (v / maxVal));
+    return [x,y];
+  });
+  return { d: 'M' + pts.map(function(p){ return p[0].toFixed(1)+','+p[1].toFixed(1); }).join(' L'), last: pts[pts.length-1] };
+}
+
+function renderChart(r){
+  var svg = document.getElementById('chartSvg');
+  var x0=46, y0=254, plotW=560, plotH=222;
+  var maxVal = Math.max.apply(null, r.fv) * 1.08;
+
+  // グリッド（横4本）
+  var grid = document.getElementById('chartGrid'); grid.innerHTML='';
+  for (var g=1; g<=4; g++){
+    var gy = y0 - plotH*g/4;
+    var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('class','chart-grid');
+    line.setAttribute('x1', x0); line.setAttribute('x2', x0+plotW);
+    line.setAttribute('y1', gy); line.setAttribute('y2', gy);
+    grid.appendChild(line);
+    var txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x', x0-8); txt.setAttribute('y', gy+4);
+    txt.setAttribute('text-anchor','end'); txt.setAttribute('font-size','10'); txt.setAttribute('fill','#6A6353');
+    txt.textContent = jpMan(Math.round((maxVal*g/4)/10000));
+    grid.appendChild(txt);
+  }
+
+  var defs = [
+    { id:3, path:'path3', dot:'dot3', lbl:'lbl3', color:'#9FBFA8', idx:0 },
+    { id:5, path:'path5', dot:'dot5', lbl:'lbl5', color:'#3C7A4E', idx:1 },
+    { id:7, path:'path7', dot:'dot7', lbl:'lbl7', color:'#C7A24E', idx:2 }
+  ];
+
+  defs.forEach(function(def){
+    var series = r.series[def.idx];
+    var built = buildPath(series, maxVal, plotW, plotH, x0, y0);
+    var pathEl = document.getElementById(def.path);
+    pathEl.setAttribute('d', built.d);
+
+    // draw-on アニメ（stroke-dasharray/dashoffset）
+    var len = pathEl.getTotalLength ? pathEl.getTotalLength() : 800;
+    if (REDUCE_MOTION){
+      pathEl.style.strokeDasharray = 'none';
+      pathEl.style.strokeDashoffset = '0';
+    } else {
+      pathEl.style.transition = 'none';
+      pathEl.style.strokeDasharray = len;
+      pathEl.style.strokeDashoffset = len;
+      // reflow
+      pathEl.getBoundingClientRect();
+      pathEl.style.transition = 'stroke-dashoffset ' + (1.0 + def.idx*0.2) + 's cubic-bezier(.25,.8,.3,1) ' + (def.idx*0.15) + 's';
+      requestAnimationFrame(function(){ pathEl.style.strokeDashoffset = '0'; });
+    }
+
+    var dot = document.getElementById(def.dot);
+    dot.setAttribute('cx', built.last[0]); dot.setAttribute('cy', built.last[1]);
+    var lbl = document.getElementById(def.lbl);
+    lbl.setAttribute('x', built.last[0]-8); lbl.setAttribute('y', built.last[1]-12);
+    lbl.setAttribute('text-anchor','end');
+    lbl.textContent = def.id + '%：' + jpMoney(r.fv[def.idx]);
+
+    var delay = REDUCE_MOTION ? 0 : (1000 + def.idx*200);
+    if (REDUCE_MOTION){ dot.style.opacity=1; lbl.style.opacity=1; }
+    else {
+      dot.style.transition = 'opacity .4s ease';
+      lbl.style.transition = 'opacity .4s ease';
+      setTimeout(function(dot,lbl){ return function(){ dot.style.opacity=1; lbl.style.opacity=1; }; }(dot,lbl), delay);
+    }
+  });
+}
+
+/* ---------- 結果描画（複利の診断書） ---------- */
+function renderResult(){
+  var r = calc(); lastResult = r; var c = CONFIG;
+  document.getElementById('wizard').style.display='none';
+  var rw = document.getElementById('resultwrap'); rw.style.display='block';
+
+  var d = new Date();
+  document.getElementById('issueDate').textContent = d.getFullYear()+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+('0'+d.getDate()).slice(-2);
+
+  var finalAge = STATE.age + STATE.years;
+  document.getElementById('ledeText').innerHTML =
+    'お孫さん・お子さんが<strong>'+finalAge+'歳</strong>になるとき、毎年<strong>'+yen(STATE.amt)+'万円</strong>が、' +
+    '3%なら約<strong>'+jpMoney(r.fv[0])+'</strong>／5%なら約<strong>'+jpMoney(r.fv[1])+'</strong>／7%なら約<strong>'+jpMoney(r.fv[2])+'</strong>に育ちます' +
+    '（元本合計 '+jpMoney(r.principal)+'）。';
+
+  document.getElementById('legendPrincipal').textContent = jpMoney(r.principal);
+  document.getElementById('rv3').textContent = jpMoney(r.fv[0]);
+  document.getElementById('rv5').textContent = jpMoney(r.fv[1]);
+  document.getElementById('rv7').textContent = jpMoney(r.fv[2]);
+  document.getElementById('statAmt').textContent = yen(STATE.amt) + '万円 / 年';
+  document.getElementById('statYears').textContent = STATE.years + '年間（'+STATE.age+'歳→'+finalAge+'歳）';
+
+  renderChart(r);
+
+  // 内訳テーブル（年率5%を基準に、年ごとの積み上がり）
+  var rows = [['経過年','年齢','この時点の将来価値（5%）']];
+  var series5 = r.series[1];
+  var stepShow = r.n > 12 ? Math.ceil(r.n/12) : 1;
+  for (var y=1;y<=r.n;y++){
+    if (y!==r.n && (y % stepShow !== 0)) continue;
+    rows.push([ y+'年目', (STATE.age+y)+'歳', jpMoney(series5[y]) ]);
+  }
+  var html='';
+  for (var i=0;i<rows.length;i++){ var tag=i===0?'th':'td'; html+='<tr>'; for(var j=0;j<rows[i].length;j++){ html+='<'+tag+'>'+rows[i][j]+'</'+tag+'>'; } html+='</tr>'; }
+  document.getElementById('bdTable').innerHTML = html;
+  document.getElementById('bdFormula').innerHTML =
+    '将来価値 ＝ Σ［各年の贈与額 ×（1＋年率）^残り年数］。年率5%の場合、'+STATE.years+'年間・毎年'+yen(STATE.amt)+'万円の積立で、'+
+    finalAge+'歳の時点で約'+jpMoney(r.fv[1])+'（元本'+jpMoney(r.principal)+'）に育つ計算です。';
+
+  document.getElementById('resultDisclaimer').innerHTML = '<strong>将来の運用成果を保証するものではありません。</strong> ' + c.disclaimer.onResult;
+
+  // 出口カード
+  renderExits(r);
+
+  // hidden（送信時にだけ営業へ渡る）
+  document.getElementById('hAge').value = STATE.age + '歳';
+  document.getElementById('hAmt').value = yen(STATE.amt) + '万円/年';
+  document.getElementById('hYears').value = STATE.years + '年（'+finalAge+'歳まで）';
+  document.getElementById('hFv3').value = jpMoney(r.fv[0]);
+  document.getElementById('hFv5').value = jpMoney(r.fv[1]);
+  document.getElementById('hFv7').value = jpMoney(r.fv[2]);
+  document.getElementById('hPrincipal').value = jpMoney(r.principal);
+  document.getElementById('hSummary').value =
+    '現在'+STATE.age+'歳／毎年'+yen(STATE.amt)+'万円×'+STATE.years+'年／'+finalAge+'歳時点の将来価値：3% 約'+jpMoney(r.fv[0])+'・5% 約'+jpMoney(r.fv[1])+'・7% 約'+jpMoney(r.fv[2])+'（元本'+jpMoney(r.principal)+'）';
+
+  rw.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ---------- 2方向リード出口 ---------- */
+function renderExits(r){
+  var ex = CONFIG.exits, box = document.getElementById('exits'); box.innerHTML='';
+  box.appendChild(exitLinkCard('zoyo', ex.zoyo.title, ex.zoyo.body, ex.zoyo.href, ex.zoyo.ctaLabel));
+  box.appendChild(exitLinkCard('sozoku', ex.sozoku.title, ex.sozoku.body, ex.sozoku.href, ex.sozoku.ctaLabel));
+  box.appendChild(exitCard('general', ex.general.title, ex.general.body, ex.general.ctaLabel, ex.general.formName));
+}
+function exitLinkCard(kind, title, body, href, cta){
+  var el = document.createElement('a');
+  el.className = 'exit ' + kind; el.href = href; el.style.textDecoration='none'; el.style.color='inherit';
+  el.innerHTML = '<h3>'+title+'</h3><p>'+body+'</p><span class="ex-cta">'+cta+'</span>';
+  return el;
+}
+function exitCard(kind, title, body, cta, formName){
+  var el = document.createElement('div');
+  el.className = 'exit ' + kind;
+  el.innerHTML = '<h3>'+title+'</h3><p>'+body+'</p>' +
+    '<a class="ex-cta" href="#formCard" data-form="'+ (formName||'') +'">'+cta+' ↓</a>';
+  el.querySelector('.ex-cta').addEventListener('click', function(e){
+    e.preventDefault();
+    if (formName) document.getElementById('hFormName').value = formName;
+    document.getElementById('formTitle').textContent = CONFIG.form.title;
+    document.getElementById('formCard').scrollIntoView({behavior:'smooth', block:'center'});
+    document.getElementById('fName').focus({preventScroll:true});
+  });
+  return el;
+}
+
+/* ---------- 静的テキスト差し込み ---------- */
+function hydrateStatic(){
+  var c = CONFIG;
+  document.getElementById('brandMark').textContent = c.brand.siteName;
+  document.getElementById('brandSub').textContent = c.brand.siteNameSub;
+  document.getElementById('directAnswer').textContent = c.geo.directAnswer;
+  document.getElementById('crossZoyo').textContent = c.cross.zoyo.note;
+  document.getElementById('crossSozoku').textContent = c.cross.sozoku.note;
+
+  document.getElementById('lName').textContent = c.form.fields.name;
+  document.getElementById('lEmail').textContent = c.form.fields.email;
+  document.getElementById('lTel').textContent = c.form.fields.tel;
+  document.getElementById('lMsg').textContent = c.form.fields.message;
+  document.getElementById('consentLabel').textContent = c.form.consentLabel;
+  document.getElementById('formTitle').textContent = c.form.title;
+  document.getElementById('formBody').textContent = c.form.body;
+  document.getElementById('thanksTitle').textContent = c.thanks.title;
+  document.getElementById('thanksBody').textContent = c.thanks.body;
+
+  document.getElementById('howToTitle').textContent = c.geo.howToTitle;
+  var ol = document.getElementById('howToList'); ol.innerHTML='';
+  c.geo.howToSteps.forEach(function(s){ var li=document.createElement('li'); li.textContent=s; ol.appendChild(li); });
+  document.getElementById('methodDisclaimer').textContent = c.disclaimer.method + ' ' + c.constants.sourceNote;
+
+  var fl = document.getElementById('faqList'); fl.innerHTML='';
+  c.geo.faq.forEach(function(f){ var det=document.createElement('details'); det.innerHTML='<summary>'+f.q+'</summary><div class="a">'+f.a+'</div>'; fl.appendChild(det); });
+
+  document.getElementById('year').textContent = String(new Date().getFullYear());
+  document.getElementById('footConsult').innerHTML =
+    (c.consult.orgName ? '<strong style="color:#fff">'+c.consult.orgName+'</strong>　' : '') +
+    (c.consult.contactLine ? '<span>'+c.consult.contactLine+'</span>' : '');
+  document.getElementById('footDisclaimer').textContent = c.disclaimer.short + ' ' + c.consult.privacyNote;
+  document.getElementById('footTaxlaw').textContent = c.disclaimer.taxlawNote;
+
+  renderPresets();
+
+  // JSON-LD（本文一致で注入）
+  var faqLd = { "@context":"https://schema.org","@type":"FAQPage","mainEntity":
+    c.geo.faq.map(function(f){ return {"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}}; }) };
+  document.getElementById('ld-faq').textContent = JSON.stringify(faqLd);
+  var howLd = { "@context":"https://schema.org","@type":"HowTo","name":c.geo.howToTitle,
+    "step": c.geo.howToSteps.map(function(s,i){ return {"@type":"HowToStep","position":i+1,"text":s}; }) };
+  document.getElementById('ld-howto').textContent = JSON.stringify(howLd);
+
+  document.title = c.meta.title;
+}
+
+/* ---------- Turnstile ---------- */
+function loadTurnstile(){
+  var sitekey = CONFIG.gas.turnstileSitekey;
+  if (!sitekey || sitekey.indexOf('__')===0) return;
+  var s = document.createElement('script');
+  s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js'; s.async=true; s.defer=true;
+  s.onload = function(){ try{ window.turnstile.render('#turnstile-holder', { sitekey:sitekey, theme:'light' }); }catch(e){} };
+  document.head.appendChild(s);
+}
+
+/* ---------- 送信（no-cors・fire-and-forget） ---------- */
+function submitLead(e){
+  e.preventDefault();
+  var errEl = document.getElementById('formErr'); errEl.textContent='';
+  var f = document.getElementById('leadForm');
+  if (f.website.value.trim() !== ''){ showThanks(); return; }
+  if (!f.name.value.trim() || !f.email.value.trim()){ errEl.textContent='お名前・メールアドレスをご入力ください。'; return; }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.value.trim())){ errEl.textContent='メールアドレスの形式をご確認ください。'; return; }
+  if (!document.getElementById('fConsent').checked){ errEl.textContent='プライバシーの取り扱いへの同意にチェックしてください。'; return; }
+  var sitekey = CONFIG.gas.turnstileSitekey, needTs = sitekey && sitekey.indexOf('__')!==0;
+  if (needTs){ var tk=document.querySelector('#turnstile-holder [name="cf-turnstile-response"]'); if(!tk||!tk.value){ errEl.textContent='セキュリティ認証（Turnstile）を完了してください。'; return; } }
+
+  document.getElementById('hCompany').value = f.name.value.trim(); // GAS必須(company)へ氏名を充当（個人診断）
+  document.getElementById('hHost').value = location.hostname;
+  document.getElementById('hUa').value = navigator.userAgent;
+
+  var endpoint = CONFIG.gas.endpoint, btn = document.getElementById('btnSubmit');
+  btn.disabled=true; btn.textContent='送信中…';
+  if (!endpoint || endpoint.indexOf('__')===0){ console.warn('[okane-carte] GAS endpoint 未設定'); showThanks(); return; }
+  fetch(endpoint, { method:'POST', body:new FormData(f), mode:'no-cors' })
+    .then(function(){ showThanks(); }).catch(function(){ showThanks(); });
+}
+function showThanks(){
+  document.getElementById('leadForm').style.display='none';
+  document.getElementById('formTitle').style.display='none';
+  document.getElementById('formBody').style.display='none';
+  document.getElementById('thanks').style.display='block';
+  document.getElementById('thanks').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function bindWizard(){
+  ['inAge'].forEach(function(id){ document.getElementById(id).addEventListener('input', validateStep); });
+  ['inAmt','inToAge'].forEach(function(id){ document.getElementById(id).addEventListener('input', validateStep); });
+  document.getElementById('btnNext').addEventListener('click', function(){
+    if (!validateStep()) return;
+    if (STEP===MAX_STEP){ renderResult(); return; }
+    showStep(STEP+1);
+  });
+  document.getElementById('btnBack').addEventListener('click', function(){ if(STEP>0) showStep(STEP-1); });
+  document.getElementById('btnRedo').addEventListener('click', function(){ location.reload(); });
+  document.getElementById('leadForm').addEventListener('submit', submitLead);
+}
+
+(function init(){
+  fetch('config.json?t=' + Date.now())
+    .then(function(r){ if(!r.ok) throw new Error('config'); return r.json(); })
+    .then(function(cfg){ CONFIG=cfg; hydrateStatic(); bindWizard(); loadTurnstile(); showStep(0, true); })
+    .catch(function(err){
+      document.getElementById('wizard').innerHTML = '<p style="color:#9C4A2E">設定ファイル(config.json)の読み込みに失敗しました。時間をおいて再度お試しください。</p>';
+      console.error(err);
+    });
+})();
+
+/* frame-busting（クリックジャッキング対策・baseline J） */
+try{ if (window.top !== window.self){ window.top.location = window.self.location; } }catch(e){ document.documentElement.style.display='none'; }
+</script>
+</body>
+</html>

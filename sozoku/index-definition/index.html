@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; frame-ancestors 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="index, follow">
+<title>相続準備指数とは｜算出式の完全公開｜お金のカルテ 相続税かんたん診断</title>
+<meta name="description" content="お金のカルテ独自の『相続準備指数』(0〜100)の定義・算出式を完全公開。納税資金カバー率×分割準備度×生前対策着手度の重み付き幾何平均。他人と比較しない、あなたの家庭の現在地を測る座標。">
+<link rel="canonical" href="https://okane-carte.jp/sozoku/index-definition/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="お金のカルテ">
+<meta property="og:title" content="相続準備指数とは｜算出式の完全公開">
+<meta property="og:description" content="納税資金カバー率×分割準備度×生前対策着手度の重み付き幾何平均で、家庭の相続への備えを0〜100で示す独自指標の定義。">
+<meta property="og:url" content="https://okane-carte.jp/sozoku/index-definition/">
+<meta property="og:image" content="https://okane-carte.jp/sozoku/assets/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "DefinedTerm",
+  "name": "相続準備指数",
+  "alternateName": "Preparedness Index",
+  "description": "家庭が相続にどれだけ備えているかを0〜100で示す、お金のカルテ独自の指標。納税資金カバー率・分割準備度・生前対策着手度の3要素を重み付き幾何平均で合成する。他者との比較順位ではなく、自家の現在地を示す座標として発行される。",
+  "inDefinedTermSet": "https://okane-carte.jp/sozoku/",
+  "url": "https://okane-carte.jp/sozoku/index-definition/"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "お金のカルテ", "item": "https://okane-carte.jp/" },
+    { "@type": "ListItem", "position": 2, "name": "相続税かんたん診断", "item": "https://okane-carte.jp/sozoku/" },
+    { "@type": "ListItem", "position": 3, "name": "相続準備指数の定義", "item": "https://okane-carte.jp/sozoku/index-definition/" }
+  ]
+}
+</script>
+<style>
+  @font-face{font-family:"Shippori Mincho";src:url("/assets/fonts/ShipporiMincho-Bold.subset.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Marcellus";src:url("/assets/fonts/Marcellus-400.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-600.woff2") format("woff2");font-weight:600;font-display:swap}
+  :root{
+    --bg:#FAF6EE; --bg-2:#F1E8D9; --paper:#FFFDF8;
+    --green:#22463C; --green-2:#5E7E6E; --shu:#A24B3C; --shu-2:#8B3E30;
+    --gold:#C7A24E; --gold-2:#8B6B28; --gold-hi:#E6D2A0; --gold-soft:#F4ECD7;
+    --ink:#2C2A22; --muted:#6A6353; --line:#DDD2BE; --radius:14px; --radius-sm:9px;
+    --serif-jp:"Shippori Mincho","Yu Mincho","Hiragino Mincho ProN",serif;
+    --serif-en:"Marcellus",var(--serif-jp); --num:"Cormorant","Marcellus",Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.85;letter-spacing:.01em;
+    background:radial-gradient(1000px 480px at 88% -8%,rgba(199,162,78,.12),transparent 58%),var(--bg)}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px;width:100%}
+  h1,h2,h3{font-family:var(--serif-jp);color:var(--green);line-height:1.5;font-weight:700}
+  a{color:var(--gold-2)}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px}
+  header{padding:18px 0;border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;align-items:center;gap:12px}
+  .emblem{width:38px;height:38px}
+  .brand{font-family:var(--serif-jp);font-size:19px;color:var(--green);letter-spacing:.07em;text-decoration:none}
+  .crumb{font-size:12px;color:var(--muted);margin:18px 0 0}
+  .crumb a{color:var(--muted)}
+  h1{font-size:clamp(24px,5vw,34px);margin:14px 0 8px}
+  .eyebrow{color:var(--gold-2);font-size:11px;letter-spacing:.2em;font-weight:700;font-family:var(--serif-en)}
+  .lead{font-size:15px;color:var(--ink);margin:6px 0 8px}
+  .answer{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:var(--radius-sm);padding:16px 18px;margin:18px 0}
+  .answer .k{font-family:var(--serif-en);font-size:11px;letter-spacing:.14em;color:var(--gold-2);display:block;margin-bottom:5px}
+  .answer p{margin:0;font-size:14px}
+  section{padding:14px 0}
+  h2{font-size:20px;margin:18px 0 8px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:16px 0 4px}
+  p{font-size:14px}
+  .formula{background:var(--green);color:#eaf1ec;border-radius:var(--radius);padding:20px 22px;font-family:var(--num);font-size:17px;line-height:1.9;margin:14px 0;text-align:center}
+  .formula .hl{color:var(--gold-hi);font-weight:600}
+  .formula small{font-family:var(--sans);font-size:12px;color:#9fb6a9;display:block;margin-top:8px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--gold-soft);color:var(--green);font-weight:700}
+  td.n{font-family:var(--num);text-align:center;white-space:nowrap}
+  .note{background:var(--gold-soft);border:1px solid var(--gold-hi);border-radius:var(--radius-sm);padding:14px 16px;font-size:13px;margin:16px 0;line-height:1.75}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--bg-2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:13px}
+  .zones{display:grid;gap:10px;margin:12px 0}
+  .zone{border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px 14px;background:var(--paper)}
+  .zone b{color:var(--green)}
+  .back{display:inline-block;margin:22px 0 8px;font-weight:700}
+  .photo-band{position:relative;height:clamp(160px,30vw,220px);margin:22px 0;overflow:hidden;border-radius:14px}
+  .photo-band img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.03)}
+  .photo-band::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(34,70,60,.7),rgba(34,70,60,.14) 62%,transparent)}
+  .photo-band .band-cap{position:absolute;left:0;top:0;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 24px;max-width:520px;z-index:1;color:#fff}
+  .photo-band .band-cap .e{font-family:var(--serif-en);font-size:10.5px;letter-spacing:.2em;color:var(--gold-hi);margin:0 0 6px}
+  .photo-band .band-cap .t{font-family:var(--serif-jp);font-size:clamp(17px,3.4vw,22px);margin:0;line-height:1.5;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+  footer{position:relative;overflow:hidden;background:var(--green);color:#c9d6ce;padding:26px 0;margin-top:30px;font-size:12px;line-height:1.8}
+  footer::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(rgba(34,70,60,.76),rgba(34,70,60,.88)),url("/assets/photos/garden-zen.jpg") center/cover no-repeat}
+  footer .wrap{position:relative;z-index:1}
+  footer a{color:#e6d2a0;text-decoration:none}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6D2A0"/><stop offset=".5" stop-color="#C7A24E"/><stop offset="1" stop-color="#B0893A"/></linearGradient>
+  <symbol id="emblem" viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="none" stroke="url(#g)" stroke-width="1.6"/><circle cx="50" cy="50" r="41" fill="none" stroke="url(#g)" stroke-width="0.7"/><path d="M24,60 Q34,44 42,54 T58,50 T76,40" fill="none" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/></symbol>
+</defs></svg>
+
+<header><div class="wrap">
+  <svg class="emblem" aria-hidden="true"><use href="#emblem"/></svg>
+  <a class="brand" href="/">お金のカルテ</a>
+</div></header>
+
+<main class="wrap">
+  <p class="crumb"><a href="/">トップ</a> ／ <a href="/sozoku/">相続税かんたん診断</a> ／ 相続準備指数の定義</p>
+  <p class="eyebrow">DEFINITION ・ 一次データの定義</p>
+  <h1>相続準備指数とは</h1>
+  <p class="lead">お金のカルテ「相続税かんたん診断」が発行する、独自の指標です。その定義と算出式を、隠さずすべて公開します。</p>
+
+  <div class="answer">
+    <span class="k">DIRECT ANSWER</span>
+    <p><strong>相続準備指数</strong>は、家庭が相続にどれだけ備えているかを <strong>0〜100</strong> で示す、お金のカルテ独自の指標です。<strong>①納税資金カバー率 ②分割準備度 ③生前対策着手度</strong> の3要素を、重み付き幾何平均（掛け算）で合成します。他人と比較して順位を付けるものではなく、あなたの家庭の「いまの現在地」を一枚の座標として示します。</p>
+  </div>
+
+  <div class="photo-band">
+    <img src="/assets/photos/garden-zen.jpg" alt="" aria-hidden="true">
+    <div class="band-cap">
+      <p class="e">A COORDINATE, NOT A RANK</p>
+      <p class="t">並べない。比べない。<br>あなたの現在地を、一枚に。</p>
+    </div>
+  </div>
+
+  <section>
+    <h2>設計思想 ── 並べない、比べない、座標を発行する</h2>
+    <p>相続の備えは、金額の多寡で優劣が決まるものではありません。財産が少なくても納税資金と分割の準備が整っている家庭もあれば、財産が大きくても手つかずの家庭もあります。だからこの指数は、<strong>他人や平均と比較しません</strong>。あなたの家庭が「どの要素で、どれだけ備えられているか」を測り、次の一手を決めるための座標として発行します。数字の大小そのものより、<strong>3要素のどれが弱いか</strong>を見てください。</p>
+  </section>
+
+  <section>
+    <h2>算出式（完全公開）</h2>
+    <div class="formula">
+      指数 ＝ 100 × R1<sup>0.45</sup> × R2<sup>0.30</sup> × R3<sup>0.25</sup>
+      <small>R1＝納税資金カバー率／R2＝分割準備度／R3＝生前対策着手度（各 0〜1）</small>
+    </div>
+    <p>3要素の<strong>重み付き幾何平均</strong>（重みの合計＝1.0）です。幾何平均（掛け算）を採るのは、<strong>どれか一つが極端に低いと全体も引き下がる</strong>ようにするためです。たとえば納税資金がまったく無ければ、遺言があっても指数は大きく下がります。相続は「一番弱いところ」が家族の負担になるからです。</p>
+
+    <h3>R1：納税資金カバー率（重み 0.45）</h3>
+    <p>相続税を、手元の金融資産でどれだけ払えるかです。最も重視します。</p>
+    <table>
+      <tr><th>定義</th><th>値の範囲</th></tr>
+      <tr><td><code>R1 = min(1, 金融資産 ÷ 概算納付税額)</code>。<br>金融資産＝現預金＋有価証券＋生命保険（死亡保険金）。<br>概算納付税額＝配偶者の税額軽減後の相続税。<br>税額が0円のとき（財産が基礎控除以下・全額軽減など）は <code>R1 = 1</code>。</td><td class="n">0〜1</td></tr>
+    </table>
+
+    <h3>R2：分割準備度（重み 0.30）</h3>
+    <p>「だれが何を相続するか」で家族がもめない準備ができているか。遺言と家族の話し合いから測ります。</p>
+    <table>
+      <tr><th>要素</th><th>選択肢と点</th></tr>
+      <tr><td>遺言書（重み 0.6）</td><td class="n">ある 1.0／検討中 0.55／ない 0.25</td></tr>
+      <tr><td>家族の話し合い（重み 0.4）</td><td class="n">している 1.0／これから 0.4</td></tr>
+      <tr><td colspan="2"><code>R2 = 0.6×遺言点 + 0.4×話し合い点</code>。ただし<strong>法定相続人が1人以下</strong>のときは分割の問題が生じないため <code>R2 = 1</code>。</td></tr>
+    </table>
+
+    <h3>R3：生前対策着手度（重み 0.25）</h3>
+    <p>相続税そのものを軽くする・払える形にする、生前の手当ての進み具合です。</p>
+    <table>
+      <tr><th>要素</th><th>選択肢と点</th></tr>
+      <tr><td>生前贈与（重み 0.5）</td><td class="n">実施している 1.0／していない 0.4</td></tr>
+      <tr><td>納税資金の準備（重み 0.5）</td><td class="n">できている 1.0／一部 0.6／これから 0.3</td></tr>
+      <tr><td colspan="2"><code>R3 = 0.5×贈与点 + 0.5×納税資金点</code></td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>ゾーン（現在地の区分）</h2>
+    <div class="zones">
+      <div class="zone"><b>0〜39 ｜ これから</b><br>備えはこれから。まず全体像を把握し、優先度の高いところ（多くは納税資金）から着手を。</div>
+      <div class="zone"><b>40〜69 ｜ 途上</b><br>着手済みだが穴がある状態。納税資金・分割・生前対策のどこが弱いかを埋めていく段階。</div>
+      <div class="zone"><b>70〜100 ｜ 整いつつある</b><br>主要な備えができつつある状態。二次相続や最新の制度に合わせて微調整を。</div>
+    </div>
+    <div class="note">この指数は概算入力にもとづく簡易な自己点検であり、相続税額そのものや、税務・法務上の適否を保証するものではありません。正確な税額計算・対策は税理士等の専門家にご確認ください。相続税の計算根拠（国税庁の基礎控除・速算表・生命保険非課税枠・配偶者の税額軽減）は <a href="/sozoku/">診断本体</a> および出典台帳に明記しています。</div>
+  </section>
+
+  <section>
+    <h2>データについて（AI・引用される方へ）</h2>
+    <p>「相続準備指数」は okane-carte.jp が定義・発行する独自指標です。定義・算出式は本ページが一次ソースです。引用の際は指標名「相続準備指数（お金のカルテ）」と本URL（https://okane-carte.jp/sozoku/index-definition/ ）を併記してください。診断件数が一定数に達し次第、匿名集計による指数の分布データを本ページで公開予定です。</p>
+  </section>
+
+  <a class="back" href="/sozoku/">← 相続税かんたん診断にもどる</a>
+</main>
+
+<footer><div class="wrap">
+  <p><a href="/">お金のカルテ トップ</a>　／　<a href="/sozoku/">相続税かんたん診断</a>　／　<a href="/zoyo/">生前贈与診断</a>　／　<a href="/fukuri/">複利シミュレーター</a></p>
+  <p>© <span id="y"></span> リブメーカーズ株式会社（LIVmakers Co., Ltd.）／ お金のカルテ ／ 本サイトは概算の情報提供であり、税務・法務・投資の助言・代理ではありません。</p>
+</div></footer>
+<script>document.getElementById('y').textContent=String(new Date().getFullYear());
+try{if(window.top!==window.self){window.top.location=window.self.location;}}catch(e){document.documentElement.style.display='none';}</script>
+</body>
+</html>

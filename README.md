@@ -161,3 +161,123 @@
 5. （任意）`assets/ogp.png` … OGP画像をローカル同梱。
 
 > **免責**：本サイトは自社株評価の概算を提供する情報サービスであり、税務・法務・投資助言ではありません。正確な評価額の算定・申告は税理士等の専門家にご確認ください。
+
+---
+
+# 付録：不動産かんたん評価診断（/fudosan/）— 不動産の売却/購入/相続リード獲得装置
+
+自宅・収益物件・相続不動産の価値を「積算・収益・税務」の3レイヤーで**匿名・ブラウザ内**概算し、固有の「不動産カルテ指数」を発行するサブサイト。**一括査定サイトの逆設計（比較しない・営業電話なし・匿名・物件データを外部送信しない）**をポジショニングの核とし、売却/購入/相続の相談リードを リブアセッツ宛に獲得する。
+
+## F-1. ディレクトリ構成
+
+```
+fudosan/
+├─ index.html              # 診断本体（案C：等高線×スレートティール×陶土。3レイヤー診断＋カルテ発行演出）
+├─ config.json             # ★唯一の真実。数値テーブル・免責・出典・指数定義・フォーム文言。診断とpSEOビルドが共有
+├─ index-definition/       # 「不動産カルテ指数」算出式の完全公開ページ（GEO一次ソース）
+├─ sources/                # 全数値テーブルの出典・確認日一覧
+├─ p/                      # pSEO量産ページ（build_fudosan.py が生成）
+│   ├─ index.html          # 早見表ハブ
+│   ├─ zanka/{構造}-{築年}/ # 建物残価率 早見（構造4×築年6 ≒ 24p）
+│   ├─ rimawari/{エリア}-{築年帯}/ # 想定利回り 早見（エリア5×築年帯4 = 20p）
+│   └─ assets/pseo.css     # pSEO共有CSS
+└─ assets/
+    ├─ img/*.webp          # 装飾透かし写真（Unsplash・CREDITS.md）
+    ├─ ogp.jpg             # OGP（1200×630）
+    └─ CREDITS.md          # 画像ライセンス台帳
+scripts/build_fudosan.py    # pSEO静的量産スクリプト（Python3 stdlib）
+```
+
+## F-2. 計算ロジックと出典（3レイヤー＋不動産カルテ指数）
+
+- **積算**＝ 土地面積×エリア㎡単価（路線価入力時は路線価÷0.8で逆算）＋ 延床×構造別再調達価格×残価率〔残価率=(法定耐用年数−築年)/法定耐用年数、下限 salvageFloor〕。
+- **収益**（収益物件のみ）＝ 年間家賃×稼働率×(1−運営費率) ÷ 想定還元利回りレンジ。
+- **税務**＝ 土地(路線価≒公示地価×0.8) ＋ 建物(固定資産税評価の目安)〔賃貸中は貸家建付地・貸家の評価減〕。市場価値との**ギャップ率**を可視化。
+- **不動産カルテ指数(0-100)**＝ 収益性×流動性×税務効率 の加重合成。定義・重み・バンドは `fudosan/index-definition/` で完全公開。
+- 出典（確認日 2026-07-07）：国税庁「建物の標準的な建築価額表」令和5年（再調達価格）／国税庁 法定耐用年数（No.2100・耐用年数省令）／日本不動産研究所 第53回不動産投資家調査 2025年10月（想定利回り）／国交省 令和7年地価公示（地価水準）／国税庁 財産評価基本通達（路線価8割・借家権割合30%・貸家建付地26・貸家93・小規模宅地 No.4124）。全出典は `fudosan/config.json > sources[]` と `fudosan/sources/` に一覧。
+
+## F-3. 数値テーブルの年度更新（市場変動値）
+
+`fudosan/config.json > data` の **市場変動値**は毎年更新する（制度値は税制改正時のみ）。
+- `structures[].replacementCost` … 国税庁「建物の標準的な建築価額表」最新年で更新。
+- `capRates` … 日本不動産研究所 不動産投資家調査（半期）で更新。
+- `areas[].landPrice` … 国交省 地価公示（毎年3月）で更新。
+- 更新後は **`python scripts/build_fudosan.py` を再実行**して早見ページを作り直す（config が唯一の真実）。
+
+## F-4. GAS / Turnstile
+
+**GAS は jikabuka と同じ共通レシーバ（`gas/receiver.gs`）を流用**。`fudosan/config.json > gas.endpoint` は稼働中の共通 `/exec` を初期設定済み（`formName` で診断が区別され同一シートに集約）。個人オーナー向けに会社名は不要のため、送信時に hidden `company` を `gas.companyFallback`（「（個人・不動産カルテ）」）で自動補完し、GAS の必須チェックを満たす（**GAS 改修不要**）。Turnstile は `gas.turnstileSitekey` を実キーに差し替えると自動で有効化・サーバー側検証が働く。
+
+## F-5. 公開（go-live）手順（/fudosan/）
+
+1. 以下すべての `<meta name="robots" content="noindex, nofollow">` を **`index, follow`** に切替（＝公開ボタン）：
+   `fudosan/index.html` / `fudosan/index-definition/index.html` / `fudosan/sources/index.html`。あわせて `fudosan/config.json > meta.indexable` を `true` に。
+2. pSEOページの index 化は **`scripts/build_fudosan.py` の noindex 定数を index に変えて再実行**（全 `fudosan/p/` を一括再生成）。
+3. `sitemap.xml` に `fudosan/p/_urls.txt` の全URLが反映されていることを確認（本リポジトリでは統合済み。ページ追加時は `_urls.txt` を基に再統合）。
+4. Google Search Console でドメイン所有権を確認し、`https://okane-carte.jp/sitemap.xml` を**再送信**、`/fudosan/` と `/fudosan/index-definition/` をインデックス登録リクエスト。
+5. CNAME は絶対に触らない（GitHub Pages のカスタムドメイン設定）。相対パスのため /fudosan/ 一式はサブディレクトリのまま移設可。
+
+## F-6. BOSSが埋める実データ（/fudosan/ プレースホルダ）
+
+`fudosan/config.json` 内の `__...__` を実データに置換：
+1. **`gas.turnstileSitekey`** … Cloudflare Turnstile サイトキー（GAS `/exec` は共通レシーバ流用のため設定済み）。
+2. **`consult.orgName` / `orgNamePlaceholder` / `contactLine`** … 相談先「リブアセッツ」の正式会社名・宅建業免許番号・住所・電話。
+3. （GAS 側スクリプトプロパティは jikabuka のセットアップ済みなら追加設定不要。`ALLOWED_HOSTS` に `okane-carte.jp` が含まれていることのみ確認）。
+
+> **免責（宅建業法・税理士法）**：本サービスは公開データに基づく一般的な概算シミュレーションであり、宅地建物取引業者による査定・価格意見、不動産鑑定、税務相談ではありません。相続税評価の記述は「目安」です。実際の売買・相続・申告の判断は、宅地建物取引業者・不動産鑑定士・税理士にご確認ください。
+
+---
+
+# 付録：相続シリーズ（/sozoku/・/zoyo/・/fukuri/・/hayami/）— 相続・生前贈与・M&Aリード獲得装置
+
+母屋・`/jikabuka/` のデザイントークン・GAS共通レシーバ・Turnstile構成・`config.json` 登録方式を継承したファミリー実装。対象読者は経営者以外も含む資産保有者全般。
+
+## S-1. ディレクトリ構成
+
+| パス | 役割 | robots |
+|---|---|---|
+| `sozoku/index.html` ＋ `config.json` | 相続税かんたん診断（母艦）。5〜8問→相続税の概算＋独自「相続準備指数」→「家族へのカルテ」発行→3方向リード出口。 | 公開前 noindex |
+| `sozoku/index-definition/index.html` | 相続準備指数の算出式を完全公開する一次ソース（GEO被引用の核）。 | 公開前 noindex |
+| `zoyo/index.html` ＋ `config.json` | 生前贈与診断（暦年課税 vs 相続時精算課税・渡しきれる総額タイムライン）→ /sozoku/ へ送客。 | 公開前 noindex |
+| `fukuri/index.html` ＋ `config.json` | 複利体験シミュレーター（3/5/7%成長カーブ・将来成果非保証）→ /zoyo/→/sozoku/ へ送客。 | 公開前 noindex |
+| `hayami/`（35ページ） | 相続税の概算早見表 pSEO（索引1＋構成別6＋総額別28）。`scripts/build_hayami.py` で生成。 | 公開前 noindex |
+| `scripts/build_hayami.py` | 早見表ジェネレータ（Python・依存ゼロ）。詳細は `scripts/README-hayami.md`。 | — |
+| `design/tax-sources.md` | 税制数値の出典・確認日台帳（全診断共通SSoT）。 | — |
+
+## S-2. 計算ロジックと出典（design/tax-sources.md が正・2026-07-07確認）
+
+- 相続税：基礎控除＝3,000万＋600万×法定相続人（No.4152）／生命保険非課税＝500万×人数（No.4114）／速算表10〜55%（No.4155・令和7年4月1日現在法令等）／配偶者の税額軽減＝1.6億か法定相続分の多い方（No.4158）／小規模宅地330㎡80%は「適用可能性フラグ」表示のみ（No.4124）。
+- 生前贈与：暦年110万基礎控除（No.4402）／生前贈与加算3→7年・令和6年以後の贈与から・経過措置で令和13年満7年／相続時精算課税＝累計2,500万＋令和6年から年110万基礎控除（No.4103）。
+- **相続準備指数**（独自一次データ）：指数＝100×R1^0.45×R2^0.30×R3^0.25（重み付き幾何平均）。R1=納税資金カバー率／R2=分割準備度／R3=生前対策着手度。定義ページで完全公開。
+- 計算は全てブラウザ内完結（外部API・生成AIを呼ばない＝継続課金ゼロ）。財産・贈与・シミュレーション入力値はサーバー送信しない（フォーム連絡先のみ送信）。
+
+## S-3. GAS / Turnstile（jikabuka と共通の受け皿を流用）
+
+- 各 `config.json` の `gas.endpoint` は jikabuka と同一の `/exec`（全診断共通レシーバ）。`formName` で診断を判別し1枚のシートに蓄積。
+- `turnstileSitekey` は各 `config.json` の `__TURNSTILE_SITEKEY__` を実サイトキーに置換（GAS側 `TURNSTILE_SECRET`・`ALLOWED_HOSTS=okane-carte.jp` は jikabuka セットアップ済みなら追加不要）。
+- 個人向け診断のため、GAS必須項目 `company` にはフォームの「お名前」を充当（`submitLead` 参照）。
+
+## S-4. 早見表の再生成
+```bash
+python scripts/build_hayami.py   # hayami/ 35ページ＋sitemap-hayami.xml を再生成（冪等）
+```
+起動時に自己検算（遺産5,000万・配偶者+子2人→総額20万/軽減後10万）を実行し、不一致なら停止。
+
+## S-5. 公開（go-live）／デプロイ手順
+
+1. **ローカル確認**：`python -m http.server`（またはプレビュー）で `http://localhost:8801/sozoku/` 等を表示確認。診断→結果→カルテ→フォーム、早見表の表・リンクを目視。
+2. **noindex→index 切替（公開ボタン）**：公開する各ページの `<meta name="robots">` を `index, follow` に、各 `config.json > meta.indexable` を `true` に。早見表は `scripts/build_hayami.py` の `indexable=False`（`head_block` の既定）を `True` にして再生成、または一括置換。
+3. **commit・push**：`git add` → `git commit` → `git push origin main`。**CNAME は絶対に触らない**（`okane-carte.jp`）。GitHub Pages が数分で反映。
+4. **反映確認**：`https://okane-carte.jp/sozoku/`・`/zoyo/`・`/fukuri/`・`/hayami/` を実機表示確認（noindexのままでもURLは有効）。
+5. **Search Console**：ドメイン所有権確認済みのプロパティで `sitemap.xml` を（再）送信。主要URLをインデックス登録リクエスト。
+6. GitHub 2FA・（任意）SPF/DKIM/DMARC を確認。
+
+## S-6. BOSSが埋める実データ（プレースホルダ一覧）
+
+各 `sozoku/zoyo/fukuri/config.json` 内の `__...__`：
+1. **`gas.turnstileSitekey`** … Cloudflare Turnstile サイトキー（`/exec` は共通レシーバ流用のため設定済み）。
+2. **`consult.orgName` / `orgTagline` / `contactLine`** … 相談先「リブメーカーズ／リブアセッツ」の正式表示文言・会社情報。
+3. （GAS スクリプトプロパティは jikabuka セットアップ済みなら追加不要。`ALLOWED_HOSTS` に `okane-carte.jp` が含まれることのみ確認。）
+4. （任意）各 `assets/ogp.png` … OGP画像をローカル同梱（未配置時は `/sozoku/assets/ogp.png` を参照）。
+
+> **免責（税理士法）**：本シリーズは相続・贈与に関する一般的な情報提供および概算シミュレーションであり、税理士法に定める個別の税務相談・税務代理・税務書類の作成を行うものではありません。fukuri は将来の運用成果を保証しない教育目的のシミュレーションです。正確な計算・申告・対策は税理士等の専門家にご確認ください。

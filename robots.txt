@@ -1,5 +1,39 @@
-# 各ページの index/noindex は head の meta robots で制御。公開時は meta 切替のみで良い。
+# お金のカルテ（okane-carte.jp）robots
+# 各ページの index/noindex は head の meta robots で個別制御。公開前サブは noindex のまま。
+# 生成AI（LLM）クローラーを明示的に許可＝GEO/AEO（AI検索での被引用）を狙う。
+
 User-agent: *
+Allow: /
+
+# --- AI / LLM クローラー（明示Allow） ---
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://okane-carte.jp/sitemap.xml

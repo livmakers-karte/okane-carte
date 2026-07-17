@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ===== セキュリティ（静的ホスティング用・web-security-baseline J 準拠 / fudosan/index.html と同一方針） ===== -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com; form-action 'self' https://script.google.com; frame-ancestors 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<!-- 公開前は noindex。go-live（公開ボタン）時に content="index, follow" へ1行切替（README参照）。 -->
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="rRCFvRt35WuMDgaJUTpLJkmSAA1NzeVrREi59gar3B4">
+
+<title>不動産カルテ指数の定義｜算出式・重み・バンドを完全公開｜お金のカルテ</title>
+<meta name="description" content="「不動産カルテ指数」（0〜100）の算出式を完全公開。収益性・流動性・税務効率の3サブスコアの計算方法、物件種別ごとの重み、バンド区分を、実際に使う数値テーブルとともに一次ソースとして掲載します。">
+<link rel="canonical" href="https://okane-carte.jp/fudosan/index-definition/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="お金のカルテ">
+<meta property="og:title" content="不動産カルテ指数の定義｜算出式・重み・バンドを完全公開">
+<meta property="og:description" content="収益性×流動性×税務効率の加重合成で0〜100を算出する『不動産カルテ指数』。物件種別ごとの重み・スコアバンドを一次ソースとして全公開します。">
+<meta property="og:url" content="https://okane-carte.jp/fudosan/index-definition/">
+<meta property="og:image" content="https://okane-carte.jp/fudosan/assets/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="不動産カルテ指数の定義｜お金のカルテ">
+<meta name="twitter:description" content="算出式・重み・バンド区分を完全公開する一次定義ページ。">
+
+<!-- ===== 構造化データ（本文と一致・フェイクschema禁止）===== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "BreadcrumbList", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "お金のカルテ", "item": "https://okane-carte.jp/" },
+      { "@type": "ListItem", "position": 2, "name": "不動産かんたん評価診断", "item": "https://okane-carte.jp/fudosan/" },
+      { "@type": "ListItem", "position": 3, "name": "指数の定義", "item": "https://okane-carte.jp/fudosan/index-definition/" }
+    ]},
+    { "@type": "DefinedTerm",
+      "name": "不動産カルテ指数",
+      "description": "不動産の収益性・流動性・税務効率を0〜100で採点し、物件種別ごとの重みで加重合成した合成スコア（0〜100）。売却・保有・組換えの出発点となる“座標”を示す指標で、断定的な優劣評価ではない。",
+      "inDefinedTermSet": "https://okane-carte.jp/fudosan/index-definition/"
+    }
+  ]
+}
+</script>
+
+<style>
+  /* ===== セルフホスト・フォント（OFL・/assets/fonts・外部CDNなし。母屋の実ファイルを流用） ===== */
+  @font-face{font-family:"Shippori Mincho";src:url("/assets/fonts/ShipporiMincho-Bold.subset.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Marcellus";src:url("/assets/fonts/Marcellus-400.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-500.woff2") format("woff2");font-weight:500;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-600.woff2") format("woff2");font-weight:600;font-display:swap}
+
+  :root{
+    /* ===== 案C：等高線 × スレートティール × 陶土の印章 ===== */
+    --bg:#F6F1E7; --bg-2:#ECE5D6; --paper:#FCFAF4; --bg-grid:#E4DCC9;
+    --teal:#1E4A4E; --teal-2:#366B6C; --teal-3:#5C8A86; --teal-ink:#14383B;
+    --clay:#C1663C; --clay-2:#A9542F; --clay-soft:#F0E0D3;
+    --gold:#B08D45; --gold-hi:#D6BE84;
+    --ink:#2B2A26; --muted:#6D685E;
+    --line:#D9CFBB; --line-2:#C7BCA3;
+    --danger:#B4472E; --ok:#2F6B4F;
+    --radius:12px; --radius-sm:8px;
+    --shadow-card:0 10px 30px rgba(30,74,78,.08); --shadow-soft:0 1px 0 rgba(30,74,78,.04);
+    --serif-jp:"Shippori Mincho","Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+    --serif-en:"Marcellus",var(--serif-jp);
+    --num:"Cormorant","Marcellus",Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+    --mono:"DIN Alternate","Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.8;letter-spacing:.01em;
+    background:
+      radial-gradient(1000px 480px at 88% -8%, rgba(30,74,78,.07), transparent 60%),
+      radial-gradient(760px 420px at -4% 3%, rgba(193,102,60,.05), transparent 58%),
+      repeating-linear-gradient(0deg, transparent 0 27px, var(--bg-grid) 27px 28px),
+      repeating-linear-gradient(90deg, transparent 0 27px, var(--bg-grid) 27px 28px),
+      var(--bg);
+    background-size:auto,auto,100% 28px,28px 100%,auto;min-height:100vh;display:flex;flex-direction:column}
+  .wrap{max-width:940px;margin:0 auto;padding:0 22px;width:100%}
+  h1,h2,h3{font-family:var(--serif-jp);color:var(--teal);letter-spacing:.02em;line-height:1.45}
+  a{color:var(--teal-2)}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
+
+  header.site{padding:18px 0;border-bottom:1px solid var(--line);background:rgba(246,241,231,.7);backdrop-filter:saturate(1.1) blur(2px)}
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;color:var(--teal);text-decoration:none}
+  .brand .emblem{width:40px;height:40px;flex:0 0 auto}
+  .brand .mark{font-family:var(--serif-jp);font-size:20px;letter-spacing:.06em;line-height:1.1;color:var(--teal);white-space:nowrap}
+  @media(max-width:400px){.brand .mark{font-size:17px}.brand .emblem{width:34px;height:34px}}
+  .brand .sub{font-size:11px;color:var(--muted);letter-spacing:.12em}
+  .nav{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+  .navlink{font-family:var(--serif-en);color:var(--teal);text-decoration:none;font-size:12.5px;letter-spacing:.05em;border-bottom:1px solid transparent;padding-bottom:2px}
+  .navlink:hover{border-bottom-color:var(--clay)}
+
+  main{flex:1}
+  section{position:relative}
+  .pad{padding:40px 0}
+
+  .hero{position:relative;overflow:hidden;padding:46px 0 20px}
+  .eyebrow{color:var(--clay-2);font-size:12px;letter-spacing:.2em;font-weight:700;margin:2px 0 14px;display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--clay))}
+  h1.title{font-size:clamp(24px,5.4vw,38px);margin:0 0 16px;color:var(--teal)}
+  p.lead{color:var(--ink);font-size:clamp(15px,2.3vw,16.5px);max-width:44em;margin:0 0 18px}
+
+  /* 直答ブロック（GEO） */
+  .answer{position:relative;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--clay);border-radius:var(--radius);
+    padding:16px 20px;box-shadow:var(--shadow-card);margin:6px 0 22px;max-width:52em}
+  .answer .k{font-family:var(--serif-en);font-size:11px;letter-spacing:.14em;color:var(--clay-2);text-transform:uppercase;display:block;margin-bottom:4px}
+  .answer p{margin:0;font-size:14px;color:var(--ink);line-height:1.75}
+
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 4px}
+  .cta{display:inline-flex;align-items:center;gap:9px;font-family:var(--serif-jp);font-size:15px;color:#fff;text-decoration:none;
+    background:linear-gradient(135deg,var(--teal-2),var(--teal));border:1px solid var(--teal);border-radius:var(--radius-sm);
+    padding:12px 22px;box-shadow:0 8px 22px rgba(30,74,78,.18);transition:transform .15s,box-shadow .15s}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(30,74,78,.26)}
+  .cta.ghost{background:transparent;color:var(--teal);box-shadow:none}
+  .cta.ghost:hover{background:var(--paper)}
+
+  /* 区切り .orn（測量基準点） */
+  .orn{display:flex;align-items:center;gap:14px;color:var(--teal-3);margin:8px 0 20px}
+  .orn .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--teal-3),transparent)}
+  .orn .mk{width:18px;height:18px;flex:0 0 auto;color:var(--clay)}
+  .orn .lbl{font-family:var(--serif-en);font-size:12px;letter-spacing:.14em;color:var(--teal-2);white-space:nowrap}
+
+  h2{font-size:clamp(19px,3.4vw,25px);margin:0 0 8px}
+  h2 .no{font-family:var(--num);color:var(--clay-2);margin-right:8px}
+  h3{font-size:clamp(15.5px,2.6vw,17.5px);margin:22px 0 8px}
+  p{margin:0 0 14px}
+  .note{font-size:12.5px;color:var(--muted)}
+
+  .formula{background:var(--teal-ink);color:#dfe9e6;border-radius:var(--radius);padding:18px 20px;margin:14px 0 20px;font-size:13.5px;line-height:1.9}
+  .formula .hl{color:var(--gold-hi);font-family:var(--num);font-size:1.05em}
+  .formula code{font-family:var(--mono);color:#fff;background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px}
+
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);margin:0 0 20px;box-shadow:var(--shadow-soft)}
+  table{border-collapse:collapse;width:100%;min-width:480px;font-size:13px}
+  table caption{text-align:left;font-size:12px;color:var(--muted);padding:10px 14px 0}
+  th,td{padding:9px 13px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  th{background:var(--bg-2);color:var(--teal);font-weight:700;font-size:12.5px}
+  td{color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{font-family:var(--num);text-align:right}
+
+  .weightgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));margin:0 0 20px}
+  .wcard{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px 16px;box-shadow:var(--shadow-soft)}
+  .wcard .t{font-family:var(--serif-jp);color:var(--teal);font-size:14.5px;margin:0 0 8px}
+  .wcard .row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink);padding:3px 0}
+  .wcard .row b{font-family:var(--num);color:var(--teal-2)}
+
+  .placeholder{background:var(--clay-soft);border:1px dashed var(--line-2);border-radius:var(--radius-sm);padding:18px 20px;margin:0 0 20px}
+  .placeholder h3{margin:0 0 6px;color:var(--teal)}
+  .placeholder p{margin:0;font-size:13.5px;color:#5a4433}
+
+  /* 全面写真バンド（案C共通パターン） */
+  .photo-band{position:relative;overflow:hidden;height:clamp(180px,28vw,300px)}
+  .photo-band img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.03)}
+  .photo-band::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,56,59,.78),rgba(20,56,59,.34) 55%,rgba(20,56,59,.06))}
+  .photo-band .cap{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;z-index:2;color:#fff}
+  .photo-band .cap .inner{max-width:940px;margin:0 auto;padding:0 22px;width:100%}
+  .photo-band .cap .e{font-family:var(--serif-en);font-size:11px;letter-spacing:.22em;color:var(--gold-hi);display:inline-flex;align-items:center;gap:9px}
+  .photo-band .cap .e::before{content:"";width:26px;height:1px;background:var(--gold-hi)}
+  .photo-band .cap .t{font-family:var(--serif-jp);font-size:clamp(19px,3.6vw,28px);margin:8px 0 0;line-height:1.5;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+
+  /* ヒーロー横のサムネイル */
+  .hero-thumbs{display:flex;gap:12px;margin:18px 0 4px;flex-wrap:wrap}
+  .hero-thumbs img{width:150px;height:110px;object-fit:cover;border-radius:10px;box-shadow:var(--shadow-card);flex:0 0 auto}
+  @media(max-width:480px){.hero-thumbs img{width:44vw;height:32vw}}
+
+  /* FOOTER */
+  footer.site{position:relative;overflow:hidden;padding:30px 0 34px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);margin-top:20px;background:var(--bg-2)}
+  footer.site .wrap{position:relative;z-index:1}
+  footer.site .disc{border:1px solid var(--line-2);border-radius:var(--radius-sm);background:var(--paper);padding:13px 16px;margin:0 0 14px;font-size:11.5px;line-height:1.8;color:#5a554b}
+  footer.site .disc b{color:var(--teal-2)}
+  footer.site .flinks{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 12px}
+  footer.site .flinks a{color:var(--teal-2);text-decoration:none;font-size:12px}
+  footer.site .cp{font-size:11.5px}
+
+  @media(max-width:760px){.pad{padding:30px 0}.hero{padding:34px 0 18px}}
+  @media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto !important} }
+</style>
+</head>
+<body>
+<!-- ===== SVG defs（emblem＝測量基準点） ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="tg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#5C8A86"/><stop offset=".5" stop-color="#366B6C"/><stop offset="1" stop-color="#1E4A4E"/>
+  </linearGradient>
+  <linearGradient id="cg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#D6BE84"/><stop offset=".5" stop-color="#C1663C"/><stop offset="1" stop-color="#A9542F"/>
+  </linearGradient>
+  <symbol id="emblem" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="47" fill="none" stroke="url(#tg)" stroke-width="1.6"/>
+    <circle cx="50" cy="50" r="30" fill="none" stroke="url(#tg)" stroke-width="0.8"/>
+    <circle cx="50" cy="50" r="6.5" fill="none" stroke="url(#cg)" stroke-width="2"/>
+    <circle cx="50" cy="50" r="1.8" fill="url(#cg)"/>
+    <path d="M50 3v16M50 81v16M3 50h16M81 50h16" stroke="url(#tg)" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M22 66q14-10 28 0t28 0" fill="none" stroke="url(#tg)" stroke-width="0.8" opacity=".8"/>
+  </symbol>
+  <symbol id="i-mark" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></g></symbol>
+</defs></svg>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <svg class="emblem" aria-hidden="true"><use href="#emblem"/></svg>
+      <span><span class="mark">お金のカルテ</span><br><span class="sub">不動産カルテ指数の定義</span></span>
+    </a>
+    <nav class="nav">
+      <a class="navlink" href="/fudosan/#shindan">診断する</a>
+      <a class="navlink" href="/fudosan/sources/">データ出典</a>
+      <a class="navlink" href="/">お金のカルテ トップ</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">一次定義・完全公開</p>
+      <h1 class="title">不動産カルテ指数の定義。<br>算出式・重み・バンドを、すべて公開します。</h1>
+      <p class="lead">「不動産カルテ指数」（0〜100）は、収益性・流動性・税務効率の3サブスコアを、物件種別ごとの重みで加重合成した座標指標です。本ページは、その計算方法をブラックボックスにせず、使用している数値テーブルとともに一次ソースとして全公開する定義ページです。</p>
+      <div class="hero-thumbs">
+        <img src="/fudosan/assets/img/house-white.webp" width="150" height="110" alt="" loading="eager">
+        <img src="/fudosan/assets/img/room-light.webp" width="150" height="110" alt="" loading="eager">
+      </div>
+      <div class="answer">
+        <span class="k">Direct Answer</span>
+        <p id="heroAnswer">不動産カルテ指数とは、収益性・流動性・税務効率の3つを0〜100で採点し、物件種別ごとの重みで加重合成した0〜100の座標スコアである。算出式・重み・バンド区分は本ページで完全公開しており、根拠は国税庁・国土交通省・日本不動産研究所の公開統計（出典は/fudosan/sources/参照）。</p>
+      </div>
+      <div class="btnrow">
+        <a class="cta" href="/fudosan/#shindan">診断を試す（カルテを発行する）→</a>
+        <a class="cta ghost" href="/fudosan/sources/">数値の出典・確認日を見る</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 全面写真バンド① -->
+  <div class="photo-band">
+    <img src="/fudosan/assets/img/meeting-room.webp" width="1600" height="1068" alt="" loading="eager">
+    <div class="cap"><div class="inner">
+      <span class="e">OKANE CARTE / DEFINITION</span>
+      <p class="t">不動産カルテ指数の“ものさし”を、すべて公開する。</p>
+    </div></div>
+  </div>
+
+  <!-- ① 指数の定義 -->
+  <section class="pad">
+    <div class="wrap">
+      <div class="orn"><svg class="mk" aria-hidden="true"><use href="#i-mark"/></svg><span class="lbl">DEFINITION</span><span class="ln"></span></div>
+      <h2><span class="no">①</span>指数の定義</h2>
+      <p>不動産カルテ指数は、0〜100の合成スコアで、以下の3つのサブスコア（各0〜100）を、物件種別ごとに定めた重みで加重平均して算出します。指数は「売れ・持て」という断定ではなく、対象物件が持つ収益性・流動性・税務効率のバランスを示す“座標”です。</p>
+      <div class="formula">
+        <b style="color:#fff">不動産カルテ指数</b> ＝ round(<span class="hl">収益性スコアY</span> ×w<sub>Y</sub> ＋ <span class="hl">流動性スコアL</span> ×w<sub>L</sub> ＋ <span class="hl">税務効率スコアT</span> ×w<sub>T</sub>)　<code>0〜100にクランプ</code><br>
+        <span style="font-size:.9em;color:#a9c1bd">w<sub>Y</sub>+w<sub>L</sub>+w<sub>T</sub>=1.0（物件種別ごとに配分が変動。②③参照）</span>
+      </div>
+      <p class="note">実装上の計算式（TypeScript/JS相当）：<code style="font-family:var(--mono)">composite = Math.round(w.yield*Y + w.liquidity*L + w.tax*T)</code>／その後 0〜100 にクランプします。</p>
+    </div>
+  </section>
+
+  <!-- ② サブスコアの算出 -->
+  <section class="pad" style="background:linear-gradient(180deg,var(--bg-2),var(--bg))">
+    <div class="wrap">
+      <h2><span class="no">②</span>3つのサブスコアの算出方法</h2>
+
+      <h3>収益性スコア Y（実質利回り対積算のバンド化）</h3>
+      <p>収益物件（アパート・マンション等）は、年間家賃×稼働率×(1−運営費率20%) で実質収益（NOI）を出し、積算価格（土地＋建物）に対する比率＝「実質利回り(対積算)」を算出します。自用（自宅・土地・空き家）は実収益がないため、エリア×築年帯の想定還元利回りレンジの中央値を「潜在収益力（参考値）」として同じバンド表でスコア化します。</p>
+      <div class="tablewrap">
+        <table>
+          <caption>収益性スコア バンド表（yieldBands・実質利回り%→スコア）</caption>
+          <thead><tr><th>実質利回り（下限）</th><th class="num">スコア</th></tr></thead>
+          <tbody>
+            <tr><td>8.0% 以上</td><td class="num">100</td></tr>
+            <tr><td>7.0% 以上</td><td class="num">88</td></tr>
+            <tr><td>6.0% 以上</td><td class="num">74</td></tr>
+            <tr><td>5.0% 以上</td><td class="num">60</td></tr>
+            <tr><td>4.0% 以上</td><td class="num">46</td></tr>
+            <tr><td>3.0% 以上</td><td class="num">30</td></tr>
+            <tr><td>0.0% 以上</td><td class="num">16</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">値は各バンドの下限以上で該当する最初のスコアを採用（例：実質利回り6.5%→「6.0%以上」の74点）。</p>
+
+      <h3>流動性スコア L（エリア＋物件種別＋築年帯の合算）</h3>
+      <p>流動性スコアは、エリア区分の配点（最大40）＋物件種別の配点（最大35）＋築年帯の配点（最大25）を単純合算し、0〜100にクランプして算出します（合計上限=100）。</p>
+      <div class="tablewrap">
+        <table>
+          <caption>エリア区分別 流動性配点（area.liquidity）</caption>
+          <thead><tr><th>エリア区分</th><th class="num">流動性配点</th></tr></thead>
+          <tbody>
+            <tr><td>東京23区</td><td class="num">40</td></tr>
+            <tr><td>東京都下・首都圏中核</td><td class="num">33</td></tr>
+            <tr><td>政令市・県庁所在地</td><td class="num">28</td></tr>
+            <tr><td>地方都市（一般市）</td><td class="num">20</td></tr>
+            <tr><td>郊外・町村部</td><td class="num">10</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <caption>物件種別 流動性配点（propertyTypes[].liquidity）</caption>
+          <thead><tr><th>物件種別</th><th class="num">流動性配点</th></tr></thead>
+          <tbody>
+            <tr><td>自宅（マンション）</td><td class="num">35</td></tr>
+            <tr><td>自宅（戸建）</td><td class="num">30</td></tr>
+            <tr><td>収益アパート・マンション</td><td class="num">24</td></tr>
+            <tr><td>土地</td><td class="num">20</td></tr>
+            <tr><td>相続した空き家</td><td class="num">12</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <caption>築年帯別 流動性配点（ageBands[].liquidity）</caption>
+          <thead><tr><th>築年帯</th><th class="num">流動性配点</th></tr></thead>
+          <tbody>
+            <tr><td>新築〜10年</td><td class="num">25</td></tr>
+            <tr><td>11〜20年</td><td class="num">20</td></tr>
+            <tr><td>21〜30年</td><td class="num">12</td></tr>
+            <tr><td>31年以上</td><td class="num">6</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>税務効率スコア T（市場価値と相続税評価のギャップ率のバンド化）</h3>
+      <p>「(市場価値概算−相続税評価概算) ÷ 市場価値概算」で求めたギャップ率（0〜0.8にクランプ）を、下表でスコア化します。ギャップが大きいほど、相続・承継時の評価圧縮の活用余地が大きい座標であることを示します。</p>
+      <div class="tablewrap">
+        <table>
+          <caption>税務効率スコア バンド表（taxGapBands・ギャップ率→スコア）</caption>
+          <thead><tr><th>ギャップ率（下限）</th><th class="num">スコア</th></tr></thead>
+          <tbody>
+            <tr><td>45% 以上</td><td class="num">100</td></tr>
+            <tr><td>40% 以上</td><td class="num">90</td></tr>
+            <tr><td>35% 以上</td><td class="num">80</td></tr>
+            <tr><td>30% 以上</td><td class="num">68</td></tr>
+            <tr><td>25% 以上</td><td class="num">55</td></tr>
+            <tr><td>20% 以上</td><td class="num">42</td></tr>
+            <tr><td>15% 以上</td><td class="num">30</td></tr>
+            <tr><td>0% 以上</td><td class="num">18</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ 物件種別ごとの重み -->
+  <section class="pad">
+    <div class="wrap">
+      <h2><span class="no">③</span>物件種別ごとの重み w</h2>
+      <p>収益性・流動性・税務効率のどれを重視するかは、物件種別によって異なります。例えば収益物件は収益性の重みが最も高く（45%）、相続した空き家は税務効率の重みが最も高く（45%）設定しています。</p>
+      <div class="weightgrid">
+        <div class="wcard"><p class="t">自宅（戸建）</p>
+          <div class="row">収益性 w<sub>Y</sub><b>0.25</b></div>
+          <div class="row">流動性 w<sub>L</sub><b>0.45</b></div>
+          <div class="row">税務効率 w<sub>T</sub><b>0.30</b></div>
+        </div>
+        <div class="wcard"><p class="t">自宅（マンション）</p>
+          <div class="row">収益性 w<sub>Y</sub><b>0.25</b></div>
+          <div class="row">流動性 w<sub>L</sub><b>0.45</b></div>
+          <div class="row">税務効率 w<sub>T</sub><b>0.30</b></div>
+        </div>
+        <div class="wcard"><p class="t">収益アパート・マンション</p>
+          <div class="row">収益性 w<sub>Y</sub><b>0.45</b></div>
+          <div class="row">流動性 w<sub>L</sub><b>0.30</b></div>
+          <div class="row">税務効率 w<sub>T</sub><b>0.25</b></div>
+        </div>
+        <div class="wcard"><p class="t">土地</p>
+          <div class="row">収益性 w<sub>Y</sub><b>0.30</b></div>
+          <div class="row">流動性 w<sub>L</sub><b>0.40</b></div>
+          <div class="row">税務効率 w<sub>T</sub><b>0.30</b></div>
+        </div>
+        <div class="wcard"><p class="t">相続した空き家</p>
+          <div class="row">収益性 w<sub>Y</sub><b>0.20</b></div>
+          <div class="row">流動性 w<sub>L</sub><b>0.35</b></div>
+          <div class="row">税務効率 w<sub>T</sub><b>0.45</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ 合成式 -->
+  <section class="pad" style="background:linear-gradient(180deg,var(--bg-2),var(--bg))">
+    <div class="wrap">
+      <h2><span class="no">④</span>合成式</h2>
+      <div class="formula">
+        <code>composite = round( w.yield &times; Y  +  w.liquidity &times; L  +  w.tax &times; T )</code><br>
+        <span style="font-size:.9em;color:#a9c1bd">Y=収益性スコア（0〜100）、L=流動性スコア（0〜100）、T=税務効率スコア（0〜100）。w.yield / w.liquidity / w.tax は③の物件種別ごとの重み。結果は0〜100にクランプ。</span>
+      </div>
+      <p class="note">例：収益アパート・マンションで Y=74（実質利回り6%台）、L=79（東京23区・流動性配点35・築11〜20年20の合算＝79）、T=55（ギャップ率25%台）の場合、composite = round(0.45×74 + 0.30×79 + 0.25×55) = round(33.3+23.7+13.75) = 71（良好ゾーン）。</p>
+    </div>
+  </section>
+
+  <!-- ⑤ バンド区分 -->
+  <section class="pad">
+    <div class="wrap">
+      <h2><span class="no">⑤</span>バンド区分（bandsLabel）</h2>
+      <div class="tablewrap">
+        <table>
+          <caption>合成スコア→ゾーン表示</caption>
+          <thead><tr><th>合成スコア（下限）</th><th>ゾーン名</th><th>説明</th></tr></thead>
+          <tbody>
+            <tr><td class="num">80 以上</td><td>上位ゾーン</td><td>収益・流動性・税務効率のバランスに強みがある座標です。選択肢が広く、売却・保有・組換えのいずれも取りやすい位置にあります。</td></tr>
+            <tr><td class="num">60 以上</td><td>良好ゾーン</td><td>全体に良好な座標です。3つの軸のうち最も高い軸を活かす打ち手が考えられます。</td></tr>
+            <tr><td class="num">40 以上</td><td>中庸ゾーン</td><td>平均的な座標です。弱い軸（利回り・流動性・税務のいずれか）を補う工夫で位置が動きます。</td></tr>
+            <tr><td class="num">0 以上</td><td>要検討ゾーン</td><td>現状は弱めの軸が目立つ座標です。保有コストと将来の出口を早めに設計する価値があります。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">指数はあくまで概算の座標であり、断定的な優劣評価・売買の推奨ではありません。実際の売却・保有・相続の判断は宅地建物取引業者・不動産鑑定士・税理士にご確認ください。</p>
+    </div>
+  </section>
+
+  <!-- 指数分布データ（準備中） -->
+  <section class="pad" style="background:linear-gradient(180deg,var(--bg-2),var(--bg))">
+    <div class="wrap">
+      <h2>診断件数に基づく指数分布データ</h2>
+      <div class="placeholder">
+        <h3>準備中</h3>
+        <p>本診断の利用件数が一定数貯まり次第、物件種別・エリア区分ごとの不動産カルテ指数の分布（中央値・四分位）を、匿名の集計データとして本ページに追記します。個別の入力データは外部送信・保存されないため、集計は将来的な追加計測の仕組みが整い次第となります。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 全面写真バンド② -->
+  <div class="photo-band">
+    <img src="/fudosan/assets/img/city-building.webp" width="1600" height="1067" alt="" loading="eager">
+    <div class="cap"><div class="inner">
+      <span class="e">OKANE CARTE / DEFINITION</span>
+      <p class="t">この定義から、あなたの物件の座標を測る。</p>
+    </div></div>
+  </div>
+
+  <!-- CTA -->
+  <section class="pad">
+    <div class="wrap">
+      <div class="orn"><svg class="mk" aria-hidden="true"><use href="#i-mark"/></svg><span class="lbl">NEXT</span><span class="ln"></span></div>
+      <h2>この算出式で、自分の不動産を診断する</h2>
+      <p>ここまでの算出式・重み・バンドは、実際の診断エンジンがそのまま使用している数値です。ご自身の物件を入力すると、この定義に基づく不動産カルテ指数がその場で（匿名・外部送信なしで）算出されます。</p>
+      <div class="btnrow">
+        <a class="cta" href="/fudosan/#shindan">カルテを発行する（診断へ戻る）→</a>
+        <a class="cta ghost" href="/fudosan/sources/">数値の出典・確認日を見る</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="disc"><b>宅建業法に関する注記：</b>本サービスは、宅地建物取引業法上の「媒介」「代理」「価格査定」には該当しません。表示される金額・指数は、公開統計と一般的な計算式に基づく“おおよその目安”であり、特定物件の売買価格・成約可能性を保証するものではありません。実際の売却・購入の判断は、宅地建物取引業者や不動産鑑定士にご確認ください。</div>
+    <div class="disc"><b>税理士法に関する注記：</b>相続税評価に関する記述は、税理士法に配慮し、一般的な計算の“目安”を示すものです。個別の相続税・贈与税の正確な評価額の算定および申告は、必ず税理士にご確認ください。</div>
+    <div class="flinks">
+      <a href="/">お金のカルテ トップ</a>
+      <a href="/fudosan/">不動産かんたん評価診断</a>
+      <a href="/fudosan/sources/">データ出典</a>
+      <a href="/sozoku/">相続のカルテ</a>
+      <a href="/jikabuka/">自社株評価</a>
+    </div>
+    <div class="cp">&copy; <span id="y"></span> リブメーカーズ株式会社（LIVmakers Co., Ltd.）／ お金のカルテ ／ 本サイトは公開データに基づく概算の情報提供であり、宅地建物取引業者の査定・不動産鑑定・税務助言ではありません。正式な判断は専門家にご確認ください。</div>
+  </div>
+</footer>
+
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>

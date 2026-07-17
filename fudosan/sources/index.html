@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ===== セキュリティ（静的ホスティング用・web-security-baseline J 準拠 / fudosan/index.html と同一方針） ===== -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com; form-action 'self' https://script.google.com; frame-ancestors 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<!-- 公開前は noindex。go-live（公開ボタン）時に content="index, follow" へ1行切替（README参照）。 -->
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="rRCFvRt35WuMDgaJUTpLJkmSAA1NzeVrREi59gar3B4">
+
+<title>不動産カルテ指数のデータ出典｜数値テーブルの一次ソースと確認日｜お金のカルテ</title>
+<meta name="description" content="不動産かんたん評価診断が用いる数値テーブル（再調達価格・法定耐用年数・想定還元利回り・路線価割合・借家権割合など）の一次ソースと確認日を一覧化。制度値と市場変動値を区別して掲載します。">
+<link rel="canonical" href="https://okane-carte.jp/fudosan/sources/">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="お金のカルテ">
+<meta property="og:title" content="不動産カルテ指数のデータ出典｜一次ソースと確認日">
+<meta property="og:description" content="診断で使う数値テーブルの出典・確認日を制度値／市場変動値に分けて全公開します。">
+<meta property="og:url" content="https://okane-carte.jp/fudosan/sources/">
+<meta property="og:image" content="https://okane-carte.jp/fudosan/assets/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="不動産カルテ指数のデータ出典｜お金のカルテ">
+<meta name="twitter:description" content="数値テーブルの一次ソース・確認日の一覧ページ。">
+
+<!-- ===== 構造化データ（本文と一致・フェイクschema禁止）===== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "BreadcrumbList", "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "お金のカルテ", "item": "https://okane-carte.jp/" },
+      { "@type": "ListItem", "position": 2, "name": "不動産かんたん評価診断", "item": "https://okane-carte.jp/fudosan/" },
+      { "@type": "ListItem", "position": 3, "name": "データ出典", "item": "https://okane-carte.jp/fudosan/sources/" }
+    ]}
+  ]
+}
+</script>
+
+<style>
+  /* ===== セルフホスト・フォント（OFL・/assets/fonts・外部CDNなし。母屋の実ファイルを流用） ===== */
+  @font-face{font-family:"Shippori Mincho";src:url("/assets/fonts/ShipporiMincho-Bold.subset.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Marcellus";src:url("/assets/fonts/Marcellus-400.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-500.woff2") format("woff2");font-weight:500;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-600.woff2") format("woff2");font-weight:600;font-display:swap}
+
+  :root{
+    --bg:#F6F1E7; --bg-2:#ECE5D6; --paper:#FCFAF4; --bg-grid:#E4DCC9;
+    --teal:#1E4A4E; --teal-2:#366B6C; --teal-3:#5C8A86; --teal-ink:#14383B;
+    --clay:#C1663C; --clay-2:#A9542F; --clay-soft:#F0E0D3;
+    --gold:#B08D45; --gold-hi:#D6BE84;
+    --ink:#2B2A26; --muted:#6D685E;
+    --line:#D9CFBB; --line-2:#C7BCA3;
+    --danger:#B4472E; --ok:#2F6B4F;
+    --radius:12px; --radius-sm:8px;
+    --shadow-card:0 10px 30px rgba(30,74,78,.08); --shadow-soft:0 1px 0 rgba(30,74,78,.04);
+    --serif-jp:"Shippori Mincho","Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+    --serif-en:"Marcellus",var(--serif-jp);
+    --num:"Cormorant","Marcellus",Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+    --mono:"DIN Alternate","Roboto Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.8;letter-spacing:.01em;
+    background:
+      radial-gradient(1000px 480px at 88% -8%, rgba(30,74,78,.07), transparent 60%),
+      radial-gradient(760px 420px at -4% 3%, rgba(193,102,60,.05), transparent 58%),
+      repeating-linear-gradient(0deg, transparent 0 27px, var(--bg-grid) 27px 28px),
+      repeating-linear-gradient(90deg, transparent 0 27px, var(--bg-grid) 27px 28px),
+      var(--bg);
+    background-size:auto,auto,100% 28px,28px 100%,auto;min-height:100vh;display:flex;flex-direction:column}
+  .wrap{max-width:940px;margin:0 auto;padding:0 22px;width:100%}
+  h1,h2,h3{font-family:var(--serif-jp);color:var(--teal);letter-spacing:.02em;line-height:1.45}
+  a{color:var(--teal-2)}
+  :focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
+
+  header.site{padding:18px 0;border-bottom:1px solid var(--line);background:rgba(246,241,231,.7);backdrop-filter:saturate(1.1) blur(2px)}
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;color:var(--teal);text-decoration:none}
+  .brand .emblem{width:40px;height:40px;flex:0 0 auto}
+  .brand .mark{font-family:var(--serif-jp);font-size:20px;letter-spacing:.06em;line-height:1.1;color:var(--teal);white-space:nowrap}
+  @media(max-width:400px){.brand .mark{font-size:17px}.brand .emblem{width:34px;height:34px}}
+  .brand .sub{font-size:11px;color:var(--muted);letter-spacing:.12em}
+  .nav{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+  .navlink{font-family:var(--serif-en);color:var(--teal);text-decoration:none;font-size:12.5px;letter-spacing:.05em;border-bottom:1px solid transparent;padding-bottom:2px}
+  .navlink:hover{border-bottom-color:var(--clay)}
+
+  main{flex:1}
+  section{position:relative}
+  .pad{padding:40px 0}
+
+  .hero{position:relative;overflow:hidden;padding:46px 0 20px}
+  .eyebrow{color:var(--clay-2);font-size:12px;letter-spacing:.2em;font-weight:700;margin:2px 0 14px;display:inline-flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:28px;height:1px;background:linear-gradient(90deg,transparent,var(--clay))}
+  h1.title{font-size:clamp(24px,5.4vw,38px);margin:0 0 16px;color:var(--teal)}
+  p.lead{color:var(--ink);font-size:clamp(15px,2.3vw,16.5px);max-width:44em;margin:0 0 18px}
+
+  .answer{position:relative;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--clay);border-radius:var(--radius);
+    padding:16px 20px;box-shadow:var(--shadow-card);margin:6px 0 22px;max-width:52em}
+  .answer .k{font-family:var(--serif-en);font-size:11px;letter-spacing:.14em;color:var(--clay-2);text-transform:uppercase;display:block;margin-bottom:4px}
+  .answer p{margin:0;font-size:14px;color:var(--ink);line-height:1.75}
+
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 4px}
+  .cta{display:inline-flex;align-items:center;gap:9px;font-family:var(--serif-jp);font-size:15px;color:#fff;text-decoration:none;
+    background:linear-gradient(135deg,var(--teal-2),var(--teal));border:1px solid var(--teal);border-radius:var(--radius-sm);
+    padding:12px 22px;box-shadow:0 8px 22px rgba(30,74,78,.18);transition:transform .15s,box-shadow .15s}
+  .cta:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(30,74,78,.26)}
+  .cta.ghost{background:transparent;color:var(--teal);box-shadow:none}
+  .cta.ghost:hover{background:var(--paper)}
+
+  .orn{display:flex;align-items:center;gap:14px;color:var(--teal-3);margin:8px 0 20px}
+  .orn .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--teal-3),transparent)}
+  .orn .mk{width:18px;height:18px;flex:0 0 auto;color:var(--clay)}
+  .orn .lbl{font-family:var(--serif-en);font-size:12px;letter-spacing:.14em;color:var(--teal-2);white-space:nowrap}
+
+  h2{font-size:clamp(19px,3.4vw,25px);margin:0 0 8px}
+  h2 .no{font-family:var(--num);color:var(--clay-2);margin-right:8px}
+  h3{font-size:clamp(15.5px,2.6vw,17.5px);margin:22px 0 8px}
+  p{margin:0 0 14px}
+  .note{font-size:12.5px;color:var(--muted)}
+
+  .tag{display:inline-block;font-family:var(--serif-en);font-size:10.5px;letter-spacing:.08em;border-radius:20px;padding:2px 11px;margin:0 0 10px}
+  .tag.system{color:#fff;background:var(--teal-2)}
+  .tag.market{color:#fff;background:var(--clay-2)}
+
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--paper);margin:0 0 20px;box-shadow:var(--shadow-soft)}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:13px}
+  table caption{text-align:left;font-size:12px;color:var(--muted);padding:10px 14px 0}
+  th,td{padding:9px 13px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:var(--bg-2);color:var(--teal);font-weight:700;font-size:12.5px;white-space:nowrap}
+  td{color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{font-family:var(--num);text-align:right;white-space:nowrap}
+  td a{word-break:break-all}
+
+  .placeholder{background:var(--clay-soft);border:1px dashed var(--line-2);border-radius:var(--radius-sm);padding:16px 18px;margin:20px 0 0}
+  .placeholder p{margin:0;font-size:13px;color:#5a4433}
+
+  /* 全面写真バンド（案C共通パターン） */
+  .photo-band{position:relative;overflow:hidden;height:clamp(180px,28vw,300px)}
+  .photo-band img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.03)}
+  .photo-band::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,56,59,.78),rgba(20,56,59,.34) 55%,rgba(20,56,59,.06))}
+  .photo-band .cap{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;z-index:2;color:#fff}
+  .photo-band .cap .inner{max-width:940px;margin:0 auto;padding:0 22px;width:100%}
+  .photo-band .cap .e{font-family:var(--serif-en);font-size:11px;letter-spacing:.22em;color:var(--gold-hi);display:inline-flex;align-items:center;gap:9px}
+  .photo-band .cap .e::before{content:"";width:26px;height:1px;background:var(--gold-hi)}
+  .photo-band .cap .t{font-family:var(--serif-jp);font-size:clamp(19px,3.6vw,28px);margin:8px 0 0;line-height:1.5;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+
+  /* ヒーロー横のサムネイル */
+  .hero-thumbs{display:flex;gap:12px;margin:18px 0 4px;flex-wrap:wrap}
+  .hero-thumbs img{width:150px;height:110px;object-fit:cover;border-radius:10px;box-shadow:var(--shadow-card);flex:0 0 auto}
+  @media(max-width:480px){.hero-thumbs img{width:44vw;height:32vw}}
+
+  footer.site{position:relative;overflow:hidden;padding:30px 0 34px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);margin-top:20px;background:var(--bg-2)}
+  footer.site .wrap{position:relative;z-index:1}
+  footer.site .disc{border:1px solid var(--line-2);border-radius:var(--radius-sm);background:var(--paper);padding:13px 16px;margin:0 0 14px;font-size:11.5px;line-height:1.8;color:#5a554b}
+  footer.site .disc b{color:var(--teal-2)}
+  footer.site .flinks{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 12px}
+  footer.site .flinks a{color:var(--teal-2);text-decoration:none;font-size:12px}
+  footer.site .cp{font-size:11.5px}
+
+  @media(max-width:760px){.pad{padding:30px 0}.hero{padding:34px 0 18px}}
+  @media (prefers-reduced-motion: reduce){ *{scroll-behavior:auto !important} }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="tg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#5C8A86"/><stop offset=".5" stop-color="#366B6C"/><stop offset="1" stop-color="#1E4A4E"/>
+  </linearGradient>
+  <linearGradient id="cg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#D6BE84"/><stop offset=".5" stop-color="#C1663C"/><stop offset="1" stop-color="#A9542F"/>
+  </linearGradient>
+  <symbol id="emblem" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="47" fill="none" stroke="url(#tg)" stroke-width="1.6"/>
+    <circle cx="50" cy="50" r="30" fill="none" stroke="url(#tg)" stroke-width="0.8"/>
+    <circle cx="50" cy="50" r="6.5" fill="none" stroke="url(#cg)" stroke-width="2"/>
+    <circle cx="50" cy="50" r="1.8" fill="url(#cg)"/>
+    <path d="M50 3v16M50 81v16M3 50h16M81 50h16" stroke="url(#tg)" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M22 66q14-10 28 0t28 0" fill="none" stroke="url(#tg)" stroke-width="0.8" opacity=".8"/>
+  </symbol>
+  <symbol id="i-mark" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></g></symbol>
+</defs></svg>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <svg class="emblem" aria-hidden="true"><use href="#emblem"/></svg>
+      <span><span class="mark">お金のカルテ</span><br><span class="sub">データ出典・確認日</span></span>
+    </a>
+    <nav class="nav">
+      <a class="navlink" href="/fudosan/#shindan">診断する</a>
+      <a class="navlink" href="/fudosan/index-definition/">指数の定義</a>
+      <a class="navlink" href="/">お金のカルテ トップ</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">一次ソース・完全公開</p>
+      <h1 class="title">数値の出典と確認日を、<br>すべて明示します。</h1>
+      <p class="lead">不動産かんたん評価診断が使用する数値テーブルは、税制など変わりにくい「制度値」と、地価・利回り・建築費など毎年変動する「市場変動値」に分かれます。本ページは、その両方の一次ソースと確認日を一覧化したものです。</p>
+      <div class="hero-thumbs">
+        <img src="/fudosan/assets/img/keys.webp" width="150" height="110" alt="" loading="eager">
+        <img src="/fudosan/assets/img/apartment-exterior.webp" width="150" height="110" alt="" loading="eager">
+      </div>
+      <div class="answer">
+        <span class="k">Direct Answer</span>
+        <p id="heroAnswer">本診断の数値は「制度値」（法定耐用年数・路線価割合・借家権割合など）と「市場変動値」（再調達価格・想定還元利回り・地価レンジなど）に分かれ、各々の一次ソースと確認日をこのページに明示している。市場変動値は毎年、一次ソースに基づき更新する。</p>
+      </div>
+      <div class="btnrow">
+        <a class="cta" href="/fudosan/#shindan">診断を試す →</a>
+        <a class="cta ghost" href="/fudosan/index-definition/">指数の算出式を見る</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 全面写真バンド① -->
+  <div class="photo-band">
+    <img src="/fudosan/assets/img/consult-desk.webp" width="1600" height="1067" alt="" loading="eager">
+    <div class="cap"><div class="inner">
+      <span class="e">OKANE CARTE / SOURCES</span>
+      <p class="t">数値の出典と確認日を、すべて明示する。</p>
+    </div></div>
+  </div>
+
+  <!-- 出典一覧（制度値／市場変動値） -->
+  <section class="pad">
+    <div class="wrap">
+      <div class="orn"><svg class="mk" aria-hidden="true"><use href="#i-mark"/></svg><span class="lbl">SOURCES</span><span class="ln"></span></div>
+      <h2>出典一覧</h2>
+
+      <span class="tag system">制度値</span>
+      <div class="tablewrap">
+        <table>
+          <caption>税制・法令に基づく安定した数値（税制改正がない限り毎年更新不要）</caption>
+          <thead><tr><th>出典</th><th>URL</th><th>確認日</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>国税庁 タックスアンサー No.2100・耐用年数省令 別表第一（法定耐用年数 住宅用：木造22・軽量鉄骨19/27・重量鉄骨34・RC/SRC47）</td>
+              <td><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2100.htm" rel="noopener">nta.go.jp/.../2100.htm</a></td>
+              <td>現行省令（制度値）／2026-07-07</td>
+            </tr>
+            <tr>
+              <td>国税庁 財産評価基本通達（路線価＝公示地価の概ね8割・借家権割合 全国一律30%・貸家建付地／貸家 No.4602／4614）</td>
+              <td><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/hyoka/4614.htm" rel="noopener">nta.go.jp/.../4614.htm</a></td>
+              <td>現行通達（制度値）／2026-07-07</td>
+            </tr>
+            <tr>
+              <td>国税庁 No.4124 小規模宅地等の特例（貸付事業用宅地等：200㎡まで50%減額）</td>
+              <td><a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/sozoku/4124.htm" rel="noopener">nta.go.jp/.../4124.htm</a></td>
+              <td>現行制度／2026-07-07</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="tag market">市場変動値</span>
+      <div class="tablewrap">
+        <table>
+          <caption>地価・利回り・建築費など、市況で毎年変動する数値（年次更新の対象）</caption>
+          <thead><tr><th>出典</th><th>URL</th><th>確認日</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>国税庁『建物の標準的な建築価額表』（令和5年＝2023年／再調達価格の基準：木造204,170・S造281,120・RC314,350・SRC366,770 円/㎡）</td>
+              <td><a href="https://www.nta.go.jp/taxes/shiraberu/shinkoku/syotoku/joto/pdf/001.pdf" rel="noopener">nta.go.jp/.../001.pdf</a></td>
+              <td>令和5年値（公表）／2026-07-07</td>
+            </tr>
+            <tr>
+              <td>日本不動産研究所『第53回 不動産投資家調査』（2025年10月現在／賃貸住宅の期待利回り。例：東京城南 ワンルーム3.7%・ファミリー3.8%）</td>
+              <td><a href="https://www.reinet.or.jp/visitors-report.html" rel="noopener">reinet.or.jp/visitors-report.html</a></td>
+              <td>2025年10月調査／2026-07-07</td>
+            </tr>
+            <tr>
+              <td>国土交通省『令和7年 地価公示』（2025年／住宅地 全国平均 約137,000円/㎡・東京都 約515,000円/㎡）</td>
+              <td><a href="https://www.mlit.go.jp/tochi_fudousan_kensetsugyo/tochi_fudousan_kensetsugyo_fr4_000001_00265.html" rel="noopener">mlit.go.jp/.../00265.html</a></td>
+              <td>令和7年地価公示（2025年3月公表）／2026-07-07</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">市場変動値は毎年変わります。本ツールの数値はここに記載の一次ソースの確認時点のものです。最新・正確な値は各一次ソースと専門家にご確認ください（更新手順はREADME参照・年次更新）。</p>
+    </div>
+  </section>
+
+  <!-- 実データテーブル -->
+  <section class="pad" style="background:linear-gradient(180deg,var(--bg-2),var(--bg))">
+    <div class="wrap">
+      <h2>実際に使用している数値テーブル</h2>
+      <p>診断エンジンが実際に参照している config.json の数値テーブルを、確認日 2026-07-07 時点で全掲載します。</p>
+
+      <span class="tag market">市場変動値</span>
+      <h3>構造別 再調達価格レンジ・法定耐用年数・固定資産税評価割合</h3>
+      <div class="tablewrap">
+        <table>
+          <caption>国税庁「標準的な建築価額表」令和5年基準を軸に、2024-25年の建築費上昇を織り込み上限を広げたレンジ。法定耐用年数・koteiRatioは通説の目安。</caption>
+          <thead><tr><th>構造</th><th class="num">再調達価格（円/㎡）</th><th class="num">法定耐用年数</th><th class="num">koteiRatio</th></tr></thead>
+          <tbody>
+            <tr><td>木造</td><td class="num">200,000〜260,000</td><td class="num">22年</td><td class="num">0.55</td></tr>
+            <tr><td>軽量鉄骨造</td><td class="num">210,000〜280,000</td><td class="num">27年</td><td class="num">0.58</td></tr>
+            <tr><td>重量鉄骨造（S造）</td><td class="num">280,000〜350,000</td><td class="num">34年</td><td class="num">0.60</td></tr>
+            <tr><td>鉄筋コンクリート造（RC・SRC）</td><td class="num">300,000〜390,000</td><td class="num">47年</td><td class="num">0.62</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">koteiRatio＝建物の固定資産税評価額／再調達価格の目安（通説5〜6割）。軽量鉄骨は国税庁表に独立値がなく、木造とS造の中間で概算。</p>
+
+      <span class="tag market">市場変動値</span>
+      <h3>エリア区分別 地価レンジ・流動性配点・借地権割合</h3>
+      <div class="tablewrap">
+        <table>
+          <caption>国土交通省「令和7年地価公示」等を基準としたエリア区分別の㎡単価レンジ。</caption>
+          <thead><tr><th>エリア区分</th><th class="num">流動性配点</th><th class="num">地価レンジ（円/㎡）</th><th class="num">借地権割合</th></tr></thead>
+          <tbody>
+            <tr><td>東京23区</td><td class="num">40</td><td class="num">500,000〜1,500,000</td><td class="num">0.7</td></tr>
+            <tr><td>東京都下・首都圏中核</td><td class="num">33</td><td class="num">180,000〜450,000</td><td class="num">0.6</td></tr>
+            <tr><td>政令市・県庁所在地</td><td class="num">28</td><td class="num">120,000〜320,000</td><td class="num">0.6</td></tr>
+            <tr><td>地方都市（一般市）</td><td class="num">20</td><td class="num">55,000〜150,000</td><td class="num">0.5</td></tr>
+            <tr><td>郊外・町村部</td><td class="num">10</td><td class="num">15,000〜70,000</td><td class="num">0.4</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="tag market">市場変動値</span>
+      <h3>想定還元利回り（capRates）：エリア×築年帯レンジ</h3>
+      <div class="tablewrap">
+        <table>
+          <caption>日本不動産研究所 第53回 不動産投資家調査（2025年10月基準）等を軸にした期待利回りレンジ（%）。収益物件の収益還元法に使用。</caption>
+          <thead><tr><th>エリア区分</th><th class="num">新築〜10年</th><th class="num">11〜20年</th><th class="num">21〜30年</th><th class="num">31年以上</th></tr></thead>
+          <tbody>
+            <tr><td>東京23区</td><td class="num">3.7〜4.8</td><td class="num">4.2〜5.4</td><td class="num">5.0〜6.4</td><td class="num">6.0〜8.0</td></tr>
+            <tr><td>東京都下・首都圏中核</td><td class="num">4.4〜5.6</td><td class="num">5.0〜6.4</td><td class="num">6.0〜7.6</td><td class="num">7.0〜9.2</td></tr>
+            <tr><td>政令市・県庁所在地</td><td class="num">4.6〜6.0</td><td class="num">5.4〜7.0</td><td class="num">6.4〜8.6</td><td class="num">7.8〜10.5</td></tr>
+            <tr><td>地方都市（一般市）</td><td class="num">6.2〜7.8</td><td class="num">7.2〜9.0</td><td class="num">8.4〜11.0</td><td class="num">10.0〜14.0</td></tr>
+            <tr><td>郊外・町村部</td><td class="num">7.8〜10.0</td><td class="num">9.0〜12.0</td><td class="num">11.0〜15.0</td><td class="num">13.0〜20.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="tag system">制度値</span>
+      <h3>税務ルール（taxRules）</h3>
+      <div class="tablewrap">
+        <table>
+          <caption>国税庁 財産評価基本通達・小規模宅地特例に基づく制度値。</caption>
+          <thead><tr><th>項目</th><th class="num">値</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>路線価割合（rosenkaRatio）</td><td class="num">0.8</td><td>路線価は公示地価のおおむね8割。市場価格→相続税路線価評価の概算に使用。</td></tr>
+            <tr><td>建物固定資産税評価割合（buildingKoteiRatio）</td><td class="num">0.6</td><td>建物の固定資産税評価額は新築時の再調達（建築費）のおおむね5〜7割が目安。中央0.6で概算。相続税の建物評価額＝固定資産税評価額。</td></tr>
+            <tr><td>借家権割合（shakuyaKen）</td><td class="num">0.3</td><td>借家権割合は全国一律30%（財産評価基本通達）。貸家建付地＝自用地評価×(1−借地権割合×借家権割合30%×賃貸割合)。貸家＝固定資産税評価×(1−借家権割合30%×賃貸割合)。</td></tr>
+            <tr><td>小規模宅地特例（貸付事業用宅地等）</td><td class="num">200㎡まで50%減額</td><td>貸付事業用宅地等の小規模宅地特例：200㎡まで50%減額（要件あり・目安）。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="tag market">市場変動値</span>
+      <h3>運営費率・残価率の下限</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>項目</th><th class="num">値</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>運営費率（opexRatio）</td><td class="num">0.20</td><td>収益物件の概算運営費率（管理・修繕・空室・公租公課の合算目安）。実質収益＝満室想定家賃×稼働率×(1−opexRatio)。</td></tr>
+            <tr><td>残価率の下限（salvageFloor）</td><td class="num">0.10</td><td>法定耐用年数を超えても再調達価格の10%を名目残価として建物に残す（実際の市場では建物価値ほぼ0のこともある旨は結果に注記）。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="placeholder">
+        <p><b>年次更新について：</b>市場変動値（capRates・replacementCost・areas.landPrice）は、毎年、上表の一次ソースの最新版を確認のうえ更新する運用です。更新手順は本サイトのREADMEに従います。制度値は税制改正がない限り更新不要です。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 全面写真バンド② -->
+  <div class="photo-band">
+    <img src="/fudosan/assets/img/townscape.webp" width="1600" height="1067" alt="" loading="eager">
+    <div class="cap"><div class="inner">
+      <span class="e">OKANE CARTE / SOURCES</span>
+      <p class="t">公開データの平均から、概算レンジを出す。</p>
+    </div></div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="disc"><b>宅建業法に関する注記：</b>本サービスは、宅地建物取引業法上の「媒介」「代理」「価格査定」には該当しません。表示される金額・指数は、公開統計と一般的な計算式に基づく“おおよその目安”であり、特定物件の売買価格・成約可能性を保証するものではありません。実際の売却・購入の判断は、宅地建物取引業者や不動産鑑定士にご確認ください。</div>
+    <div class="disc"><b>税理士法に関する注記：</b>相続税評価に関する記述は、税理士法に配慮し、一般的な計算の“目安”を示すものです。個別の相続税・贈与税の正確な評価額の算定および申告は、必ず税理士にご確認ください。</div>
+    <div class="flinks">
+      <a href="/">お金のカルテ トップ</a>
+      <a href="/fudosan/">不動産かんたん評価診断</a>
+      <a href="/fudosan/index-definition/">指数の定義</a>
+      <a href="/sozoku/">相続のカルテ</a>
+      <a href="/jikabuka/">自社株評価</a>
+    </div>
+    <div class="cp">&copy; <span id="y"></span> リブメーカーズ株式会社（LIVmakers Co., Ltd.）／ お金のカルテ ／ 本サイトは公開データに基づく概算の情報提供であり、宅地建物取引業者の査定・不動産鑑定・税務助言ではありません。正式な判断は専門家にご確認ください。</div>
+  </div>
+</footer>
+
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>

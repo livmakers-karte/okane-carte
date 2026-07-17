@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' 'unsafe-inline'; frame-src 'none'; connect-src 'self'; form-action 'self'; frame-ancestors 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- 公開前は noindex。go-live 時に index, follow へ一括切替（オーケストレーター担当）。 -->
+<meta name="robots" content="index, follow">
+<title>相続税の概算早見表｜遺産総額・相続人構成でわかる目安一覧｜お金のカルテ</title>
+<meta name="description" content="遺産総額3,000万円〜3億円×相続人構成6パターンの相続税を早見表で一覧化。基礎控除・速算表・配偶者の税額軽減を反映した概算。あなたの財産で正確に試算するなら相続税かんたん診断へ。">
+<link rel="canonical" href="https://okane-carte.jp/hayami/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="お金のカルテ">
+<meta property="og:title" content="相続税の概算早見表｜遺産総額・相続人構成でわかる目安一覧｜お金のカルテ">
+<meta property="og:description" content="遺産総額3,000万円〜3億円×相続人構成6パターンの相続税を早見表で一覧化。基礎控除・速算表・配偶者の税額軽減を反映した概算。あなたの財産で正確に試算するなら相続税かんたん診断へ。">
+<meta property="og:url" content="https://okane-carte.jp/hayami/">
+<meta property="og:image" content="https://okane-carte.jp/sozoku/assets/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="相続税の概算早見表｜遺産総額・相続人構成でわかる目安一覧｜お金のカルテ">
+<meta name="twitter:description" content="遺産総額3,000万円〜3億円×相続人構成6パターンの相続税を早見表で一覧化。基礎控除・速算表・配偶者の税額軽減を反映した概算。あなたの財産で正確に試算するなら相続税かんたん診断へ。">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "お金のカルテ",
+      "item": "https://okane-carte.jp/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "相続税早見表",
+      "item": "https://okane-carte.jp/hayami/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "相続税の早見表はどのように使えばいいですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "まずお手元の財産のおおよその合計に近い「遺産総額別ページ」を開くと、配偶者の有無や子の人数による違いを一覧で比較できます。逆に相続人構成が決まっている場合は「構成別ページ」で金額の刻みごとの目安を確認できます。どちらも概算であり、正確な試算はご自身の財産を入力する診断ツールをご利用ください。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "なぜ早見表と実際の申告額が違うことがあるのですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "早見表は基礎控除・速算表・配偶者の税額軽減という基本要素のみを反映した概算だからです。実際の相続税は、土地建物の評価方法（路線価や小規模宅地等の特例）、生命保険金の非課税枠、二次相続、実際の遺産分割の仕方などによって変動します。正確な金額は税理士等の専門家にご確認ください。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "相続人構成が早見表の6パターンに当てはまらない場合は？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "早見表は代表的な6パターン（配偶者＋子1〜3人、子のみ2〜3人、配偶者のみ）に絞っています。それ以外の構成（親や兄弟姉妹が相続人になる場合など）や、財産の内訳（不動産・現預金・生命保険など）を反映した概算は、無料の相続税かんたん診断でブラウザ内試算できます。"
+      }
+    }
+  ]
+}
+</script>
+<style>
+  @font-face{font-family:"Shippori Mincho";src:url("/assets/fonts/ShipporiMincho-Bold.subset.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Marcellus";src:url("/assets/fonts/Marcellus-400.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-500.woff2") format("woff2");font-weight:500;font-display:swap}
+  @font-face{font-family:"Cormorant";src:url("/assets/fonts/Cormorant-600.woff2") format("woff2");font-weight:600;font-display:swap}
+  :root{
+    --bg:#FAF6EE; --bg-2:#F1E8D9; --paper:#FFFDF8;
+    --green:#22463C; --green-2:#5E7E6E;
+    --shu:#A24B3C; --shu-2:#8B3E30;
+    --gold:#C7A24E; --gold-2:#8B6B28; --gold-hi:#E6D2A0; --gold-soft:#F4ECD7;
+    --ink:#2C2A22; --muted:#6A6353; --line:#DDD2BE;
+    --radius:14px; --radius-sm:9px;
+    --shadow-card:0 10px 30px rgba(34,70,60,.08);
+    --serif-jp:"Shippori Mincho","Yu Mincho","YuMincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+    --serif-en:"Marcellus",var(--serif-jp);
+    --num:"Cormorant","Marcellus",Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.8;letter-spacing:.01em;
+    background:radial-gradient(1100px 520px at 86% -8%, rgba(199,162,78,.11), transparent 58%),
+      radial-gradient(820px 460px at 0% 3%, rgba(34,70,60,.05), transparent 55%), var(--bg);
+    min-height:100vh;display:flex;flex-direction:column}
+  .wrap{max-width:880px;margin:0 auto;padding:0 22px;width:100%}
+  h1,h2,h3{font-family:var(--serif-jp);color:var(--green);letter-spacing:.02em;line-height:1.5;font-weight:700}
+  a{color:var(--green)}
+  ::selection{background:var(--gold-soft)}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:4px}
+  header{padding:18px 0;border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:11px;color:var(--green);text-decoration:none}
+  .brand .mark{font-family:var(--serif-jp);font-size:19px;letter-spacing:.06em;line-height:1.1;color:var(--green)}
+  .brand .sub{font-size:11px;color:var(--muted);letter-spacing:.1em}
+  .navlinks{display:flex;gap:14px;flex-wrap:wrap}
+  .navlink{font-family:var(--serif-en);color:var(--green);text-decoration:none;font-size:12.5px;letter-spacing:.04em;white-space:nowrap}
+  .navlink:hover{color:var(--gold-2)}
+  main{flex:1}
+  .crumbs{font-size:12px;color:var(--muted);margin:18px 0 6px}
+  .crumbs a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+  .crumbs a:hover{color:var(--green)}
+  .eyebrow{color:var(--gold-2);font-size:11.5px;letter-spacing:.16em;font-weight:700;margin:14px 0 12px;display:inline-flex;align-items:center;gap:9px}
+  .eyebrow::before{content:"";width:24px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+  h1{font-size:clamp(23px,4.6vw,34px);margin:0 0 14px}
+  p.lead{color:var(--ink);font-size:clamp(14px,2.1vw,15.5px);max-width:42em;margin:0 0 18px}
+  .answer{position:relative;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--gold);
+    border-radius:var(--radius-sm);padding:16px 18px;margin:8px 0 22px}
+  .answer .k{font-family:var(--serif-en);font-size:10.5px;letter-spacing:.14em;color:var(--gold-2);display:block;margin-bottom:5px}
+  .answer p{margin:0;font-size:13.5px;color:var(--ink);line-height:1.75}
+  .answer .src{display:block;margin-top:8px;font-size:11px;color:var(--muted)}
+  section{padding:8px 0}
+  .sec-sub{color:var(--muted);font-size:13px;margin:2px 0 16px}
+  .orn{display:flex;align-items:center;gap:14px;color:var(--gold);margin:32px 0 18px}
+  .orn .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  .orn .lbl{font-family:var(--serif-en);font-size:11.5px;letter-spacing:.14em;color:var(--gold-2);white-space:nowrap}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-card)}
+  .card-pad{padding:22px 22px 20px}
+  table.hayami{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}
+  table.hayami caption{text-align:left;font-size:12px;color:var(--muted);margin-bottom:8px}
+  table.hayami th,table.hayami td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:right;white-space:nowrap}
+  table.hayami th:first-child,table.hayami td:first-child{text-align:left;color:var(--ink)}
+  table.hayami thead th{color:var(--green);font-family:var(--serif-jp);font-weight:700;border-bottom:1px solid var(--gold-hi);background:var(--gold-soft)}
+  table.hayami tbody tr:hover{background:var(--bg-2)}
+  table.hayami tbody tr.hl{background:#FBF3E1}
+  table.hayami tbody tr.hl td:first-child{font-weight:700;color:var(--green)}
+  .num{font-family:var(--num);font-weight:600}
+  .wrap-table{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 20px}
+  .note-box{background:var(--gold-soft);border:1px solid var(--gold-hi);border-radius:var(--radius-sm);padding:13px 15px;font-size:12.5px;color:var(--ink);line-height:1.75;margin:16px 0}
+  .note-box strong{color:var(--shu-2)}
+  .explain{font-size:14px;line-height:1.85;margin:14px 0}
+  .explain .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}
+  .stat{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px 14px}
+  .stat .l{font-size:11px;color:var(--muted);margin-bottom:4px}
+  .stat .v{font-family:var(--num);font-weight:600;font-size:19px;color:var(--green)}
+  .cta-band{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+    background:linear-gradient(180deg,#2b5245,var(--green));border-radius:var(--radius);padding:22px 24px;color:#eef3ef;margin:26px 0}
+  .cta-band h3{color:#fff;font-size:17px;margin:0 0 4px}
+  .cta-band p{color:#cddbd3;font-size:12.5px;margin:0;max-width:36em}
+  .btn{font-family:var(--sans);font-size:14.5px;font-weight:700;border:none;border-radius:var(--radius-sm);padding:12px 22px;cursor:pointer;
+    transition:transform .12s,box-shadow .15s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+  .btn.gold{background:linear-gradient(120deg,var(--gold-hi),var(--gold),var(--gold-2));color:#3a2e0f}
+  .btn.gold:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(199,162,78,.32)}
+  .btn.ghost{background:transparent;color:#eaf1ec;border:1px solid rgba(255,255,255,.4)}
+  .btn.ghost:hover{border-color:#fff}
+  .linklist{display:flex;flex-wrap:wrap;gap:8px 16px;margin:0 0 8px;font-size:13px}
+  .linklist a{text-decoration:underline;text-underline-offset:2px}
+  .crossgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:16px 0}
+  .crosscard{display:block;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--green-2);border-radius:var(--radius-sm);
+    padding:13px 15px;text-decoration:none;color:inherit;font-size:12.5px;transition:transform .12s,border-color .15s}
+  .crosscard:hover{transform:translateY(-2px);border-color:var(--green)}
+  .crosscard .t{font-family:var(--serif-jp);font-size:14px;color:var(--green);margin:0 0 4px}
+  #faq{padding:26px 0}
+  .faq details{border-bottom:1px solid var(--line)}
+  .faq summary{cursor:pointer;padding:14px 26px 14px 4px;font-family:var(--serif-jp);font-size:14.5px;color:var(--green);position:relative;list-style:none}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"＋";position:absolute;right:6px;top:13px;color:var(--gold-2);font-size:15px}
+  .faq details[open] summary::after{content:"−"}
+  .faq .a{padding:0 4px 16px;font-size:13px;color:var(--ink);line-height:1.85}
+  .disclaimer-box{margin:18px 0;background:var(--gold-soft);border:1px solid var(--gold-hi);border-radius:var(--radius-sm);padding:14px 16px;font-size:12px;color:var(--ink);line-height:1.8}
+  .disclaimer-box strong{color:var(--shu-2)}
+  footer.site{position:relative;background:var(--green);color:#c9d6ce;padding:28px 0 24px;margin-top:32px;font-size:12px;line-height:1.85}
+  footer.site a{color:#e6d2a0;text-decoration:none}
+  footer.site a:hover{text-decoration:underline}
+  .footlinks{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 12px;font-size:12.5px}
+  .foot-discl{color:#9fb6a9;margin:6px 0 0}
+  @media(max-width:640px){ table.hayami{font-size:12.5px} }
+</style>
+<script>if (window.top !== window.self) { window.top.location = window.self.location; }</script>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span><span class="mark">お金のカルテ</span><br><span class="sub">相続税の概算早見表</span></span>
+    </a>
+    <div class="navlinks">
+      <a class="navlink" href="/sozoku/">相続税かんたん診断 →</a>
+      <a class="navlink" href="/hayami/">早見表トップ</a>
+    </div>
+  </div>
+</header>
+<main>
+
+  <div class="wrap">
+    <p class="crumbs"><a href="/">お金のカルテ</a> ＞ 相続税早見表</p>
+    <p class="eyebrow">相続税の概算早見表</p>
+    <h1>相続税の概算早見表<br>遺産総額 × 相続人構成で見る目安</h1>
+    <p class="lead">遺産総額3,000万円〜3億円（1,000万円刻み・28通り）と、代表的な相続人構成6パターンを組み合わせ、相続税の概算を一覧にしました。基礎控除・相続税の速算表・配偶者の税額軽減を反映しています。</p>
+    <div class="answer">
+      <span class="k">DIRECT ANSWER</span>
+      <p>相続税は「財産合計−基礎控除（3,000万円＋600万円×法定相続人の数）」を法定相続分で按分し、10〜55%の累進税率（速算表）を適用して合計し、配偶者の税額軽減を反映して求めます。本早見表は、この計算を遺産総額と相続人構成の代表的な組み合わせであらかじめ算出した一覧です。出典：国税庁No.4152・4155・4158、2026-07-07確認。</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="cta-band">
+  <div>
+    <h3>あなたの財産で、正確に概算する</h3>
+    <p>早見表は「区切りのよい金額」での目安です。ご自身の財産（不動産・現預金・有価証券・生命保険など）を入れて、5分・匿名・登録不要で「家族へのカルテ」を発行できます。</p>
+  </div>
+  <a class="btn gold" href="/sozoku/">あなたの相続税を概算する →</a>
+</div>
+  </div>
+
+  <div class="wrap"><div class="orn"><span class="ln"></span><span class="lbl">BY COMPOSITION</span><span class="ln"></span></div></div>
+
+  <div class="wrap">
+    <h2>相続人構成から探す</h2>
+    <p class="sec-sub">構成ごとに、遺産総額3,000万〜3億円の相続税を一覧表示します。</p>
+    <div class="crossgrid">
+      <a class="crosscard" href="/hayami/haigusha-ko1/"><p class="t">配偶者＋子1人 →</p><p>遺産3,000万〜3億円の相続税を一覧（法定相続人2人・基礎控除4,200万円）</p></a>
+      <a class="crosscard" href="/hayami/haigusha-ko2/"><p class="t">配偶者＋子2人 →</p><p>遺産3,000万〜3億円の相続税を一覧（法定相続人3人・基礎控除4,800万円）</p></a>
+      <a class="crosscard" href="/hayami/haigusha-ko3/"><p class="t">配偶者＋子3人 →</p><p>遺産3,000万〜3億円の相続税を一覧（法定相続人4人・基礎控除5,400万円）</p></a>
+      <a class="crosscard" href="/hayami/ko2/"><p class="t">子のみ2人 →</p><p>遺産3,000万〜3億円の相続税を一覧（法定相続人2人・基礎控除4,200万円）</p></a>
+      <a class="crosscard" href="/hayami/ko3/"><p class="t">子のみ3人 →</p><p>遺産3,000万〜3億円の相続税を一覧（法定相続人3人・基礎控除4,800万円）</p></a>
+      <a class="crosscard" href="/hayami/haigusha-nomi/"><p class="t">配偶者のみ（子なし・親兄弟なし） →</p><p>遺産3,000万〜3億円の相続税を一覧（法定相続人1人・基礎控除3,600万円）</p></a>
+    </div>
+  </div>
+
+  <div class="wrap"><div class="orn"><span class="ln"></span><span class="lbl">BY AMOUNT</span><span class="ln"></span></div></div>
+
+  <div class="wrap">
+    <h2>遺産総額から探す</h2>
+    <p class="sec-sub">3,000万円〜3億円まで1,000万円刻み・全28通り。各ページで相続人構成6パターンを比較できます。</p>
+    <div class="crossgrid">
+      <a class="crosscard" href="/hayami/isan-3000man/"><p class="t">遺産3,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-4000man/"><p class="t">遺産4,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-5000man/"><p class="t">遺産5,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-6000man/"><p class="t">遺産6,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-7000man/"><p class="t">遺産7,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-8000man/"><p class="t">遺産8,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-9000man/"><p class="t">遺産9,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-10000man/"><p class="t">遺産1億円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-11000man/"><p class="t">遺産1億1,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-12000man/"><p class="t">遺産1億2,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-13000man/"><p class="t">遺産1億3,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-14000man/"><p class="t">遺産1億4,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-15000man/"><p class="t">遺産1億5,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-16000man/"><p class="t">遺産1億6,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-17000man/"><p class="t">遺産1億7,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-18000man/"><p class="t">遺産1億8,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-19000man/"><p class="t">遺産1億9,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-20000man/"><p class="t">遺産2億円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-21000man/"><p class="t">遺産2億1,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-22000man/"><p class="t">遺産2億2,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-23000man/"><p class="t">遺産2億3,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-24000man/"><p class="t">遺産2億4,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-25000man/"><p class="t">遺産2億5,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-26000man/"><p class="t">遺産2億6,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-27000man/"><p class="t">遺産2億7,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-28000man/"><p class="t">遺産2億8,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-29000man/"><p class="t">遺産2億9,000万円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+      <a class="crosscard" href="/hayami/isan-30000man/"><p class="t">遺産3億円 →</p><p>相続人構成6パターンの相続税を一覧</p></a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="disclaimer-box">
+  <strong>この早見表について：</strong> 本ページの金額は、遺産総額（課税価格）と相続人構成の代表的な組み合わせについて、
+  基礎控除・相続税の速算表・配偶者の税額軽減のみを反映した<strong>簡易な概算</strong>です。
+  生命保険金の非課税枠（500万円×法定相続人の数）は、早見表では財産区分を設けていないため反映していません
+  （その分、実際の税額はここに示す概算より低くなる場合があります）。
+  土地建物の個別評価・小規模宅地等の特例・二次相続・各種税額控除・実際の遺産分割の仕方は未反映です。
+  
+  正確な相続税額の計算・申告は、必ず税理士等の専門家にご確認ください。
+  出典：国税庁 No.4152（基礎控除・計算方法）／No.4155（速算表・令和7年4月1日現在法令等）／No.4158（配偶者の税額軽減）。確認日 2026-07-07。詳細は design/tax-sources.md。
+</div>
+  </div>
+
+  <div class="wrap"><div class="orn"><span class="ln"></span><span class="lbl">FAQ</span><span class="ln"></span></div></div>
+
+  <section id="faq">
+    <div class="wrap">
+      <h2>よくある質問</h2>
+      <p class="sec-sub">相続税の早見表について</p>
+      <div class="faq">
+        <details>
+          <summary>相続税の早見表はどのように使えばいいですか？</summary>
+          <div class="a">まずお手元の財産のおおよその合計に近い「遺産総額別ページ」を開くと、配偶者の有無や子の人数による違いを一覧で比較できます。逆に相続人構成が決まっている場合は「構成別ページ」で金額の刻みごとの目安を確認できます。どちらも概算であり、正確な試算はご自身の財産を入力する診断ツールをご利用ください。</div>
+        </details>
+        <details>
+          <summary>なぜ早見表と実際の申告額が違うことがあるのですか？</summary>
+          <div class="a">早見表は基礎控除・速算表・配偶者の税額軽減という基本要素のみを反映した概算だからです。実際の相続税は、土地建物の評価方法（路線価や小規模宅地等の特例）、生命保険金の非課税枠、二次相続、実際の遺産分割の仕方などによって変動します。正確な金額は税理士等の専門家にご確認ください。</div>
+        </details>
+        <details>
+          <summary>相続人構成が早見表の6パターンに当てはまらない場合は？</summary>
+          <div class="a">早見表は代表的な6パターン（配偶者＋子1〜3人、子のみ2〜3人、配偶者のみ）に絞っています。それ以外の構成（親や兄弟姉妹が相続人になる場合など）や、財産の内訳（不動産・現預金・生命保険など）を反映した概算は、無料の相続税かんたん診断でブラウザ内試算できます。</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="linklist">
+      <a href="/sozoku/">相続税かんたん診断</a>
+      <a href="/sozoku/index-definition/">相続準備指数の定義</a>
+    </div>
+  </div>
+
+</main>
+<footer class="site">
+  <div class="wrap">
+    <div class="footlinks">
+      <a href="/">お金のカルテ トップ</a>
+      <a href="/sozoku/">相続税かんたん診断</a>
+      <a href="/zoyo/">生前贈与診断</a>
+      <a href="/fukuri/">複利シミュレーター</a>
+      <a href="/jikabuka/">自社株評価診断</a>
+      <a href="/hayami/">相続税の概算早見表</a>
+    </div>
+    <p class="foot-discl">本ページの数値は一般的な速算による概算の目安であり、個別の税務相談・税額計算の代行ではありません。土地建物の評価（路線価・小規模宅地等の特例）、生命保険の非課税枠、二次相続、実際の遺産分割の仕方などは反映していません。正確な税額計算・申告は税理士等の専門家にご確認ください。</p>
+    <p class="foot-discl">出典：国税庁 No.4152（基礎控除・計算方法）／No.4155（速算表・令和7年4月1日現在法令等）／No.4158（配偶者の税額軽減）。確認日 2026-07-07。詳細は design/tax-sources.md。</p>
+    <p class="foot-discl">© 2026 リブメーカーズ株式会社（LIVmakers Co., Ltd.）／ お金のカルテ ／ 本サイトは相続の一般的な情報提供および概算シミュレーションであり、税務・法務・投資に関する助言・代理を行うものではありません。</p>
+  </div>
+</footer>
+</body>
+</html>

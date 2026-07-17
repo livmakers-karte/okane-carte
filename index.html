@@ -80,8 +80,8 @@
   /* HERO */
   .hero{position:relative;overflow:hidden;padding:44px 0 30px}
   .hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-    background:var(--ph-hero) right center/cover no-repeat;opacity:.08;filter:grayscale(.3) sepia(.15);
-    -webkit-mask:radial-gradient(120% 90% at 108% 40%,#000,transparent 62%);mask:radial-gradient(120% 90% at 108% 40%,#000,transparent 62%)}
+    background:var(--ph-hero) 76% center/cover no-repeat;opacity:.2;filter:sepia(.2) saturate(1.05);
+    -webkit-mask:linear-gradient(90deg,transparent 34%,#000 92%);mask:linear-gradient(90deg,transparent 34%,#000 92%)}
   .hero .wrap{position:relative;z-index:1}
   .eyebrow{color:var(--gold-2);font-size:12px;letter-spacing:.22em;font-weight:700;margin:6px 0 16px;display:inline-flex;align-items:center;gap:10px}
   .eyebrow::before{content:"";width:30px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
@@ -109,6 +109,17 @@
   .feature .t{font-family:var(--serif-jp);font-size:clamp(18px,3.3vw,21px);color:var(--green);margin:2px 0 5px}
   .feature .d{font-size:13px;color:var(--muted);margin:0;line-height:1.7}
   .feature .arw{margin-left:auto;color:var(--gold);font-size:22px;flex:0 0 auto;font-family:var(--serif-en)}
+  .feature .thumb{width:108px;height:84px;object-fit:cover;border-radius:10px;flex:0 0 auto;filter:saturate(1.04)}
+  @media(max-width:520px){.feature .thumb{display:none}}
+
+  /* 全幅の写真帯（可視・大判） */
+  .photo-band{position:relative;height:clamp(180px,32vw,250px);margin:34px 0;overflow:hidden;border-radius:var(--radius)}
+  .photo-band img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.04)}
+  .photo-band::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(31,75,62,.72),rgba(31,75,62,.14) 60%,transparent)}
+  .photo-band .band-cap{position:absolute;left:0;top:0;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 28px;max-width:600px;z-index:1;color:#fff}
+  .photo-band .band-cap .e{font-family:var(--serif-en);font-size:11px;letter-spacing:.2em;color:var(--gold-hi);margin:0 0 7px}
+  .photo-band .band-cap .t{font-family:var(--serif-jp);font-size:clamp(19px,3.6vw,26px);margin:0;line-height:1.5;text-shadow:0 1px 10px rgba(0,0,0,.4)}
+  @media(max-width:520px){.photo-band .band-cap{background:linear-gradient(90deg,rgba(31,75,62,.55),rgba(31,75,62,.3))}}
 
   /* 領域グリッド（写真の帯を背景に） */
   .domains{position:relative;overflow:hidden;border-radius:var(--radius);padding:18px 0}
@@ -161,7 +172,10 @@
       <svg class="emblem" aria-hidden="true"><use href="#emblem"/></svg>
       <span><span class="mark">お金のカルテ</span><br><span class="sub">くらしと経済の お金の診断</span></span>
     </a>
-    <a class="navlink" href="/jikabuka/">自社株評価診断 →</a>
+    <span style="display:flex;gap:18px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+      <a class="navlink" href="/fudosan/">不動産評価診断 →</a>
+      <a class="navlink" href="/jikabuka/">自社株評価診断 →</a>
+    </span>
   </div>
 </header>
 
@@ -176,23 +190,72 @@
   </div>
 
   <div class="wrap">
+    <div class="photo-band">
+      <img src="/assets/photos/retire-beach.jpg" alt="" aria-hidden="true">
+      <div class="band-cap">
+        <p class="e">OKANE NO CARTE</p>
+        <p class="t">専門家に相談する前に、<br>まず「概算の目安」で。</p>
+      </div>
+    </div>
+
     <div class="orn"><span class="lbl">いま使える診断</span><span class="ln"></span></div>
 
-    <a class="feature" href="/jikabuka/">
-      <span class="badge">公開中</span>
-      <svg class="ic" aria-hidden="true"><use href="#emblem"/></svg>
-      <span>
-        <p class="t">自社株評価シミュレーター</p>
-        <p class="d">非上場株式（自社株）の相続税評価額を、国税庁の類似業種比準方式（簡易版）で概算。事業承継・株価対策の出発点に。</p>
-      </span>
-      <span class="arw">→</span>
-    </a>
+    <div style="display:grid;gap:12px">
+      <a class="feature" href="/fudosan/">
+        <span class="badge">公開中</span>
+        <img class="thumb" src="/assets/photos/morning-room.jpg" alt="" aria-hidden="true">
+        <span>
+          <p class="t">不動産かんたん評価診断</p>
+          <p class="d">自宅・収益物件・相続不動産の価値を、積算・収益・税務の3レイヤーで匿名概算。比較しない・電話は鳴らない、固有の「不動産カルテ指数」であなたの物件の座標を。</p>
+        </span>
+        <span class="arw">→</span>
+      </a>
+
+      <a class="feature" href="/sozoku/">
+        <span class="badge">公開中</span>
+        <img class="thumb" src="/assets/photos/couple-happy.jpg" alt="" aria-hidden="true">
+        <span>
+          <p class="t">相続税かんたん診断</p>
+          <p class="d">配偶者・子の数と財産のおおよそから、相続税の概算と独自の「相続準備指数」を5分・匿名で。家族に残るお金を数字で見てから。</p>
+        </span>
+        <span class="arw">→</span>
+      </a>
+
+      <a class="feature" href="/zoyo/">
+        <span class="badge">公開中</span>
+        <img class="thumb" src="/assets/photos/retire-street.jpg" alt="" aria-hidden="true">
+        <span>
+          <p class="t">生前贈与診断</p>
+          <p class="d">暦年贈与（年110万円）と相続時精算課税、どちらで渡すか。相手・予算・期間から「渡しきれる総額」を比較。</p>
+        </span>
+        <span class="arw">→</span>
+      </a>
+
+      <a class="feature" href="/fukuri/">
+        <span class="badge">公開中</span>
+        <img class="thumb" src="/assets/photos/forest-autumn.jpg" alt="" aria-hidden="true">
+        <span>
+          <p class="t">複利体験シミュレーター</p>
+          <p class="d">孫・子のために。毎年の贈与が年率3/5/7%の複利でどこまで育つかを、美しいグラフで体験する。</p>
+        </span>
+        <span class="arw">→</span>
+      </a>
+
+      <a class="feature" href="/jikabuka/">
+        <span class="badge">公開中</span>
+        <img class="thumb" src="/assets/photos/skyline-water.jpg" alt="" aria-hidden="true">
+        <span>
+          <p class="t">自社株評価シミュレーター</p>
+          <p class="d">非上場株式（自社株）の相続税評価額を、国税庁の類似業種比準方式（簡易版）で概算。事業承継・株価対策の出発点に。</p>
+        </span>
+        <span class="arw">→</span>
+      </a>
+    </div>
 
     <div class="orn"><span class="lbl">これから広げていく領域</span><span class="ln"></span></div>
 
     <div class="domains">
       <div class="grid">
-        <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-doc"/></svg><p class="t">相続税の概算</p><p class="d">財産の全体像から相続税のおおよそを試算</p><span class="st">準備中</span></div>
         <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-coin"/></svg><p class="t">家計・貯蓄の健康度</p><p class="d">収支と貯蓄バランスをスコアで可視化</p><span class="st">準備中</span></div>
         <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-house"/></svg><p class="t">住まい・住宅ローン</p><p class="d">借入余力と返済負担の目安を診断</p><span class="st">準備中</span></div>
         <div class="tile"><svg class="ic" aria-hidden="true"><use href="#ic-clock"/></svg><p class="t">年金・老後資金</p><p class="d">老後に向けた資金ギャップを概算</p><span class="st">準備中</span></div>

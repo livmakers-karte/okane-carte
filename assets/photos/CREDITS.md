@@ -33,7 +33,8 @@
 | forest-light.jpg | 森の木漏れ日（人物なし） | Unsplash License | images.unsplash.com/photo-1752257297778 |
 | forest-autumn.jpg | 霧の秋の森の木漏れ日（人物なし） | Unsplash License | images.unsplash.com/photo-1762755126280 |
 | garden-pond.jpg | 池のある日本庭園（人物なし） | Unsplash License | images.unsplash.com/photo-1772311288990 |
+| couple-happy.jpg | 手を取り合い微笑む70代のご夫婦（明るい室内・ゆとり/幸せの雰囲気） | Pexels License | pexels.com/photo/7477750 |
 
 - Unsplash License: 商用・非商用 とも無料、帰属表示不要（推奨）、再配布素材化は不可。
 - Pexels License: 商用・非商用 とも無料、帰属表示不要。
-- ここに置く画像は「装飾透かし」用途。人物が特定できる写真は使用していない。
+- ここに置く画像は主に「装飾透かし／イメージ」用途。/sozoku/ ヒーローの couple-happy.jpg のみ主役級に大きく表示（モデルリリース済みのフリー素材・商用可）。
